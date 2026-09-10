@@ -2,7 +2,7 @@
 
 Sistema inteligente de roteirização de entregas para pequenos negócios locais.
 
-Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avançados em Ciência da Computação**, desenvolvido pela turma 8NA da UNINASSAU no semestre 2026.2.
+Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avançados em Ciência da Computação**
 
 ## Status da Sprint 1
 
