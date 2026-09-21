@@ -1,8 +1,10 @@
 # Módulo de otimização
 
-Este pacote concentrará o componente de Tópicos Avançados.
+Este pacote implementa a primeira evolução prática do componente de Tópicos
+Avançados. A proposta usa otimização de processamento e paralelização; não
+depende de uma funcionalidade superficial de inteligência artificial.
 
-Implementações previstas:
+Implementações disponíveis:
 
 - linha de base sequencial com vizinho mais próximo;
 - refinamento de rota com 2-opt;
@@ -10,4 +12,13 @@ Implementações previstas:
 - coleta de tempo de execução, distância total, quantidade de pedidos e número de workers;
 - comparação reproduzível entre as versões sequencial e paralela.
 
-A interface do módulo deverá receber entregadores, pedidos e uma matriz de distâncias e retornar rotas ordenadas acompanhadas das métricas da execução.
+A API expõe `POST /optimizer/compare`. O endpoint recebe o depósito e as paradas
+previamente atribuídas a cada entregador, executa a mesma heurística nos dois
+modos e retorna rotas, distâncias, tempos, número de workers, speedup e uma
+verificação de equivalência.
+
+Os testes podem ser executados na raiz do repositório:
+
+```bash
+python -m unittest discover backend/tests -v
+```

@@ -291,7 +291,7 @@ def build():
     doc.add_page_break()
     add_heading(doc, "Apresentação", 1)
     add_body(doc, "Este documento reúne as entregas da Sprint 01 e da Sprint 02 do projeto RotaCerta. A primeira parte registra o problema, os objetivos, os requisitos e o planejamento inicial. A segunda parte apresenta a arquitetura, os modelos de software e dados, os protótipos, a estrutura inicial do banco de dados e a organização do repositório que servirão de base para a implementação.")
-    add_body(doc, "A revisão incorpora as orientações recebidas após a Sprint 01. O cronograma passa a adotar cadência semanal, com exceção do período estendido da Sprint 02 informado pela professora. A comparação entre as versões sequencial e paralela do motor de otimização também passa a ter métricas e protocolo de medição definidos.")
+    add_body(doc, "A revisão incorpora as orientações recebidas após a Sprint 01. O cronograma passa a adotar cadência semanal, com exceção do período estendido da Sprint 02 informado pela professora. A comparação entre as versões sequencial e paralela do motor de otimização passa a ter métricas, protocolo de medição e uma primeira implementação executável com testes automatizados.")
 
     add_heading(doc, "Sumário", 1)
     toc_items = [
@@ -309,6 +309,7 @@ def build():
         "10  Protótipos das telas",
         "11  Banco de dados e projeto no GitHub",
         "12  Avaliação sequencial e paralela",
+        "13  Aderência às orientações da disciplina",
     ]
     for item in toc_items:
         p = doc.add_paragraph()
@@ -415,6 +416,7 @@ def build():
     add_table(doc, ["Camada", "Tecnologia", "Responsabilidade"], tech, [3.0, 4.5, 9.7], 8.5)
     add_figure(doc, "arquitetura.png", "Figura 1  Arquitetura lógica e comunicação entre os componentes")
     add_body(doc, "O navegador envia requisições HTTPS em JSON para a API. A API executa regras de negócio, persiste dados no PostgreSQL e aciona o motor de otimização. O motor recebe pedidos, entregadores e uma matriz de distâncias por meio de uma interface estável. A mesma interface atende aos modos sequencial e paralelo, o que permite comparar desempenho sem alterar os dados de entrada.")
+    add_body(doc, "A escolha de Python não pressupõe o uso de inteligência artificial. As orientações da disciplina aceitam inteligência artificial e/ou otimização de processamento, paralelização e alto desempenho. No RotaCerta, o componente avançado é a otimização de rotas integrada ao fluxo principal. React e TypeScript permanecem restritos à interface, enquanto Python executa o núcleo computacional.")
 
     add_heading(doc, "7  Diagrama de classes", 2)
     add_figure(doc, "diagrama_classes.png", "Figura 2  Classes de domínio e serviço previstas")
@@ -465,6 +467,8 @@ def build():
     add_heading(doc, "Estrutura do repositório", 3)
     repository_rows = [
         ["backend/", "API FastAPI e limite do módulo de otimização"],
+        ["backend/app/optimizer/", "Vizinho mais próximo, 2-opt e execução sequencial ou paralela"],
+        ["backend/tests/", "Testes automatizados do núcleo de roteirização"],
         ["frontend/", "Aplicação React e TypeScript"],
         ["database/", "DDL, instruções e inicialização do PostgreSQL"],
         ["docs/sprint-02/assets/", "Diagramas e protótipos incorporados ao documento"],
@@ -486,7 +490,7 @@ def build():
 
     doc.add_page_break()
     add_heading(doc, "12  Avaliação sequencial e paralela", 2)
-    add_body(doc, "A orientação da Sprint 01 exige manter a comparação entre as versões sequencial e paralela. As duas versões usarão os mesmos pedidos, entregadores, matriz de distâncias, heurística de vizinho mais próximo e refinamento 2-opt. A única variável controlada será o modo de execução.")
+    add_body(doc, "A orientação da Sprint 01 exige manter a comparação entre as versões sequencial e paralela. A primeira implementação já executa vizinho mais próximo e refinamento 2-opt nos dois modos. As versões usam os mesmos pedidos, entregadores e coordenadas; a única variável controlada é o modo de execução.")
     metrics = [
         ["Tempo de execução", "Milissegundos", "Média, mediana e percentil 95 de dez repetições"],
         ["Distância total", "Quilômetros", "Confirma que a paralelização não altera a qualidade da rota"],
@@ -497,7 +501,23 @@ def build():
     add_table(doc, ["Métrica", "Cálculo ou unidade", "Critério"], metrics, [4.0, 4.0, 9.2], 8.5)
     add_body(doc, "Cada cenário terá uma execução de aquecimento e dez repetições válidas. O relatório registrará processador, memória, sistema operacional, versão do código, número de workers e semente dos dados. A tabela optimization_runs armazenará cada medição para permitir auditoria e reprodução.")
 
+    add_heading(doc, "Evidência prática", 3)
+    add_body(doc, "O arquivo backend/app/optimizer/routing.py contém a heurística determinística, o cálculo de distância geodésica, o refinamento 2-opt e a execução com processos independentes. O endpoint POST /optimizer/compare retorna rotas, distâncias, tempos, workers, speedup e a confirmação de equivalência entre os modos. Cinco testes automatizados validam rota vazia, preservação das paradas, melhoria do 2-opt, resultado da otimização e equivalência sequencial/paralela.")
+
     doc.add_page_break()
+    add_heading(doc, "13  Aderência às orientações da disciplina", 2)
+    alignment = [
+        ["Projeto integrado", "Atendido", "Um único sistema reúne interface, API, banco e otimização"],
+        ["Componente avançado", "Atendido", "Otimização e paralelização fazem parte da geração de rotas"],
+        ["Tecnologia prioritária", "Atendido", "Python no núcleo; JavaScript e TypeScript apenas na interface"],
+        ["Integração não superficial", "Atendido", "O endpoint compara os modos sobre os mesmos dados"],
+        ["Evolução prática", "Atendido", "Código executável e cinco testes automatizados no repositório"],
+        ["GitHub atualizado", "Atendido", "Branch da Sprint 02 e Pull Request número 1"],
+        ["Participação da equipe", "Contínuo", "Cada integrante deve registrar contribuições próprias nas próximas tarefas"],
+    ]
+    add_table(doc, ["Orientação", "Situação", "Evidência"], alignment, [4.1, 2.8, 10.3], 8.5)
+    add_body(doc, "Os requisitos de software completo, autenticação, perfis, funcionalidades integradas e demonstração final pertencem à evolução do semestre. A Sprint 02 estabelece a base verificável para essas implementações sem declarar como concluído o produto final.")
+
     add_heading(doc, "Situação da Sprint 02", 2)
     checklist = [
         ["Arquitetura do sistema", "Concluído", "Tecnologias, responsabilidades, comunicação e componente avançado definidos"],
@@ -506,13 +526,14 @@ def build():
         ["Modelo relacional", "Concluído", "Tabelas, PKs, FKs e finalidade documentadas"],
         ["Protótipos", "Concluído", "Seis telas principais em baixa fidelidade"],
         ["Banco de dados", "Concluído", "DDL PostgreSQL e inicialização via Compose"],
-        ["GitHub", "Concluído", "Estrutura, padrões de contribuição e branch de Sprint"],
+        ["Motor de otimização", "Concluído", "Primeira versão sequencial/paralela com cinco testes"],
+        ["GitHub", "Concluído", "Estrutura, padrões, branch da Sprint e Pull Request número 1"],
         ["Número do grupo", "Pendente", "Substituir [INFORMAR] na capa e no nome do arquivo antes do envio"],
     ]
     add_table(doc, ["Entrega", "Situação", "Evidência"], checklist, [4.0, 2.8, 10.4], 8.5)
 
     add_heading(doc, "Próxima etapa", 2)
-    add_body(doc, "A Sprint 03 deve validar o ambiente em uma máquina da equipe, confirmar a criação do PostgreSQL, definir os primeiros contratos da API e integrar a página inicial ao endpoint de saúde. A equipe também deve transformar os casos de uso prioritários em tarefas semanais com critérios de aceite.")
+    add_body(doc, "A Sprint 03 deve validar o ambiente em uma máquina da equipe, confirmar a criação do PostgreSQL e integrar o frontend aos endpoints de saúde e comparação do otimizador. A equipe também deve transformar os casos de uso prioritários em tarefas semanais com critérios de aceite e registrar contribuições individuais no GitHub.")
 
     doc.save(OUTPUT)
     print(OUTPUT)
