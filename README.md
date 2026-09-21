@@ -33,7 +33,7 @@ Prazo informado pela professora: **19/09/2026**.
 - [x] Estrutura inicial do banco implementada
 - [x] Projeto organizado em branch própria no GitHub
 - [x] Cronograma corrigido para cadência semanal
-- [x] Plano de comparação sequencial e paralela definido
+- [x] Primeira versão do motor sequencial e paralelo implementada e testada
 
 ## 1. Formação da equipe
 
@@ -180,3 +180,26 @@ O projeto será mantido atualizado ao longo das sprints, com código, documenta�
 - **Execução local:** Docker Compose para frontend, API e banco.
 
 Copie `.env.example` para `.env` e execute `docker compose up --build`. A API disponibiliza o endpoint de verificação em `http://localhost:8000/health` e a documentação em `http://localhost:8000/docs`.
+
+## Componente computacional avançado
+
+O RotaCerta atende à integração com Tópicos Avançados por meio de otimização de
+processamento e paralelização. A proposta não depende de adicionar uma
+funcionalidade superficial de inteligência artificial. Python foi escolhido
+porque é uma das linguagens prioritárias indicadas para o núcleo computacional
+e permite manter a API e os experimentos reproduzíveis no mesmo ambiente.
+
+O endpoint `POST /optimizer/compare` executa vizinho mais próximo e 2-opt nos
+modos sequencial e paralelo sobre a mesma entrada. A resposta informa rotas,
+distâncias, tempos, workers, speedup e se os dois modos produziram as mesmas
+rotas.
+
+Execute os testes do núcleo de otimização na raiz do projeto:
+
+```bash
+python -m unittest discover backend/tests -v
+```
+
+A implementação inicial possui cinco testes automatizados. As próximas sprints
+ampliarão os cenários, persistirão as medições em `optimization_runs` e
+integrarão os resultados às telas do sistema.
