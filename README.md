@@ -6,7 +6,7 @@ Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avança
 
 ## Status da Sprint 1
 
-Período previsto: **03/09/2026 a 14/09/2026**.
+Período concluído: **03/09/2026 a 05/09/2026**.
 
 - [x] Formação da equipe
 - [x] Escolha do tema
@@ -20,6 +20,20 @@ Período previsto: **03/09/2026 a 14/09/2026**.
 - [x] Repositório GitHub criado
 
 O documento oficial da entrega está disponível em [Documento de Abertura - Sprint 1](./RotaCerta_Documento_Abertura_Sprint1.pdf).
+
+## Status da Sprint 2
+
+Prazo informado pela professora: **19/09/2026**.
+
+- [x] Arquitetura definida
+- [x] Diagrama de classes elaborado
+- [x] Modelo Entidade-Relacionamento elaborado
+- [x] Modelo relacional definido
+- [x] Protótipos das telas principais elaborados
+- [x] Estrutura inicial do banco implementada
+- [x] Projeto organizado em branch própria no GitHub
+- [x] Cronograma corrigido para cadência semanal
+- [x] Plano de comparação sequencial e paralela definido
 
 ## 1. Formação da equipe
 
@@ -137,16 +151,32 @@ Os fluxos principais e alternativos, as pré-condições e as pós-condições s
 
 | Sprint | Período previsto | Principais entregas |
 | --- | --- | --- |
-| Sprint 1 | 03/09 a 14/09 | Formação da equipe, escolha do tema e levantamento de requisitos. |
-| Sprint 2 | 15/09 a 28/09 | Casos de uso detalhados, modelagem do banco de dados e protótipo de telas. |
-| Sprint 3 | 29/09 a 12/10 | Arquitetura do sistema e configuração do repositório e do ambiente de desenvolvimento. |
-| Sprint 4 | 13/10 a 26/10 | Autenticação e banco de dados funcionando. |
-| Sprint 5 | 27/10 a 09/11 | CRUD de pedidos e entregadores e versão sequencial do motor de otimização. |
-| Sprint 6 | 10/11 a 23/11 | Paralelização do motor de otimização e relatórios de desempenho. |
-| Sprint Final | 24/11 a 05/12 | Testes finais, documentação, gravação dos vídeos e preparação para a banca. |
+| Sprint 1 | 03/09 a 05/09 | Formação da equipe, tema, problema, requisitos e backlog inicial. |
+| Sprint 2 | 06/09 a 19/09 | Arquitetura, classes, MER, modelo relacional, protótipos, banco inicial e estrutura do projeto. Prazo excepcional devido à liberação tardia. |
+| Sprint 3 | 20/09 a 26/09 | Ambiente executável, contrato inicial da API e integração frontend/backend. |
+| Sprint 4 | 27/09 a 03/10 | Autenticação, hash de senha e autorização por perfil. |
+| Sprint 5 | 04/10 a 10/10 | CRUD de clientes e pedidos. |
+| Sprint 6 | 11/10 a 17/10 | CRUD de entregadores, disponibilidade e capacidade. |
+| Sprint 7 | 18/10 a 24/10 | Atribuição de pedidos e visualização inicial das rotas. |
+| Sprint 8 | 25/10 a 31/10 | Algoritmo sequencial de vizinho mais próximo. |
+| Sprint 9 | 01/11 a 07/11 | Refinamento 2-opt e coleta da linha de base. |
+| Sprint 10 | 08/11 a 14/11 | Paralelização do cálculo para múltiplos entregadores. |
+| Sprint 11 | 15/11 a 21/11 | Experimentos e comparação sequencial versus paralela. |
+| Sprint 12 | 22/11 a 28/11 | Relatórios, testes, usabilidade e documentação. |
+| Sprint Final | 29/11 a 05/12 | Correções finais, vídeos e preparação para a banca. |
 
 ## 11. Repositório
 
 Repositório oficial: [github.com/alvccpj/rota-certa](https://github.com/alvccpj/rota-certa)
 
 O projeto será mantido atualizado ao longo das sprints, com código, documentação e histórico de evolução versionados no GitHub.
+
+## Arquitetura inicial
+
+- **Frontend:** React, TypeScript e Vite.
+- **Backend:** FastAPI em Python, com API REST documentada por OpenAPI.
+- **Banco de dados:** PostgreSQL 16, inicializado por `database/schema.sql`.
+- **Otimização:** módulo Python isolado para vizinho mais próximo, 2-opt e execução paralela.
+- **Execução local:** Docker Compose para frontend, API e banco.
+
+Copie `.env.example` para `.env` e execute `docker compose up --build`. A API disponibiliza o endpoint de verificação em `http://localhost:8000/health` e a documentação em `http://localhost:8000/docs`.
