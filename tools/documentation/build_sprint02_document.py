@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "docs" / "sprint-02" / "assets"
 OUT = ROOT / "output" / "docx"
 OUT.mkdir(parents=True, exist_ok=True)
-OUTPUT = OUT / "Grupo_INFORMAR_RotaCerta_Sprints_01_02.docx"
+OUTPUT = OUT / "Grupo_04_RotaCerta_Sprints_01_02.docx"
 
 NAVY = "173B67"
 PALE_BLUE = "EAF2FF"
@@ -273,7 +273,7 @@ def build():
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(64)
-    r = p.add_run("Grupo [INFORMAR]")
+    r = p.add_run("Grupo 04")
     set_font(r, size=14, bold=True)
 
     for text in ("Álvaro Jordão  |  01748200", "Arthur Sales  |  01593811", "Vinícius Trigueiro  |  01794959"):
@@ -528,7 +528,7 @@ def build():
         ["Banco de dados", "Concluído", "DDL PostgreSQL e inicialização via Compose"],
         ["Motor de otimização", "Concluído", "Primeira versão sequencial/paralela com cinco testes"],
         ["GitHub", "Concluído", "Estrutura, padrões, branch da Sprint e Pull Request número 1"],
-        ["Número do grupo", "Pendente", "Substituir [INFORMAR] na capa e no nome do arquivo antes do envio"],
+        ["Identificação do grupo", "Concluído", "Grupo 04 informado na capa e no nome do arquivo"],
     ]
     add_table(doc, ["Entrega", "Situação", "Evidência"], checklist, [4.0, 2.8, 10.4], 8.5)
 
