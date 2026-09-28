@@ -19,7 +19,7 @@ from app.database import (
 )
 from app.optimizer.routing import Stop, compare_modes
 from app.optimizer.schemas import OptimizationRequest
-from app.routers import auth, customers, orders, users
+from app.routers import auth, customers, geocoding, orders, users
 from app.seed import DEMO_PASSWORD, seed_demo_data
 
 
@@ -59,6 +59,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(customers.router)
 app.include_router(orders.router)
+app.include_router(geocoding.router)
 
 
 @app.get("/health", tags=["system"])

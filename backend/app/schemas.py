@@ -213,3 +213,11 @@ class HistoryOut(BaseModel):
 
 class OrderDetailOut(OrderOut):
     history: list[HistoryOut]
+
+
+# Busca de endereço
+
+class GeocodeResult(BaseModel):
+    label: str
+    latitude: float
+    longitude: float
