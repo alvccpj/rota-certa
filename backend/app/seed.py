@@ -6,7 +6,7 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import Courier, Customer, Establishment, Order, User
+from app.models import Courier, Customer, Establishment, Order, OrderStatusEvent, User
 from app.security import ADMIN, ATTENDANT, COURIER, hash_password
 
 DEMO_PASSWORD = "rotacerta123"
@@ -44,6 +44,7 @@ def seed_demo_data(db: Session) -> bool:
     db.flush()
 
     couriers: list[Courier] = []
+    attendant: User | None = None
     for full_name, email, role, capacity in DEMO_USERS:
         user = User(
             establishment_id=establishment.id,
@@ -55,25 +56,47 @@ def seed_demo_data(db: Session) -> bool:
         if capacity is not None:
             user.courier = Courier(establishment_id=establishment.id, load_capacity_kg=Decimal(capacity))
             couriers.append(user.courier)
+        if role == ATTENDANT:
+            attendant = user
         db.add(user)
 
+    now = datetime.now(timezone.utc)
     today = datetime.now(RECIFE).date()
     for index, (name, phone, address, lat, lon, weight, priority, status, courier_index) in enumerate(DEMO_ORDERS):
         start = datetime.combine(today, time(9 + index), tzinfo=RECIFE)
-        db.add(
-            Order(
-                establishment_id=establishment.id,
-                customer=Customer(establishment_id=establishment.id, full_name=name, phone=phone),
-                courier=couriers[courier_index] if courier_index is not None else None,
-                delivery_address=f"{address}, Recife - PE",
-                latitude=Decimal(lat),
-                longitude=Decimal(lon),
-                weight_kg=Decimal(weight),
-                priority=priority,
-                desired_start=start,
-                desired_end=start + timedelta(hours=2),
-                status=status,
-            )
+        courier = couriers[courier_index] if courier_index is not None else None
+        order = Order(
+            establishment_id=establishment.id,
+            customer=Customer(establishment_id=establishment.id, full_name=name, phone=phone),
+            courier=courier,
+            delivery_address=f"{address}, Recife - PE",
+            latitude=Decimal(lat),
+            longitude=Decimal(lon),
+            weight_kg=Decimal(weight),
+            priority=priority,
+            desired_start=start,
+            desired_end=start + timedelta(hours=2),
+            status=status,
         )
+        order.history = demo_history(order, attendant, courier, now - timedelta(minutes=120 - index * 12))
+        db.add(order)
     db.commit()
     return True
+
+
+def demo_history(order: Order, attendant: User, courier: Courier | None, created: datetime) -> list[OrderStatusEvent]:
+    """Monta o histórico coerente com a situação do pedido de demonstração."""
+
+    events = [OrderStatusEvent(status="PENDING", note="Pedido cadastrado", author=attendant, changed_at=created)]
+    if courier is None:
+        return events
+    steps = [("ASSIGNED", f"Atribuído a {courier.user.full_name}", attendant, 5)]
+    if order.status in ("IN_ROUTE", "DELIVERED"):
+        steps.append(("IN_ROUTE", "Saiu para entrega", courier.user, 30))
+    if order.status == "DELIVERED":
+        steps.append(("DELIVERED", "Entrega confirmada", courier.user, 55))
+    for status, note, author, minutes in steps:
+        events.append(
+            OrderStatusEvent(status=status, note=note, author=author, changed_at=created + timedelta(minutes=minutes))
+        )
+    return events

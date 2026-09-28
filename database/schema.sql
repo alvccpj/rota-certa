@@ -57,6 +57,16 @@ CREATE TABLE orders (
     CHECK (desired_end IS NULL OR desired_start IS NULL OR desired_end >= desired_start)
 );
 
+CREATE TABLE order_status_history (
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL
+        CHECK (status IN ('PENDING', 'ASSIGNED', 'IN_ROUTE', 'DELIVERED', 'CANCELLED')),
+    note VARCHAR(255),
+    changed_by BIGINT REFERENCES users(id),
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE routes (
     id BIGSERIAL PRIMARY KEY,
     establishment_id BIGINT NOT NULL REFERENCES establishments(id),
@@ -101,6 +111,7 @@ CREATE TABLE optimization_runs (
 CREATE INDEX idx_users_establishment ON users(establishment_id);
 CREATE INDEX idx_orders_establishment_status ON orders(establishment_id, status);
 CREATE INDEX idx_orders_courier ON orders(assigned_courier_id);
+CREATE INDEX idx_order_status_history_order ON order_status_history(order_id, changed_at);
 CREATE INDEX idx_routes_courier_date ON routes(courier_id, route_date);
 CREATE INDEX idx_optimization_runs_mode ON optimization_runs(establishment_id, execution_mode);
 
