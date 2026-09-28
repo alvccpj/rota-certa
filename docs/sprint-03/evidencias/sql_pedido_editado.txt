@@ -1,0 +1,7 @@
+-- Pedido #7 gravado no PostgreSQL após cadastro e edição pela interface
+SELECT o.id, c.full_name AS cliente, o.priority AS prioridade, o.status, u.full_name AS entregador, o.weight_kg AS peso_kg, to_char(o.desired_end AT TIME ZONE 'America/Recife', 'DD/MM HH24:MI') AS entregar_ate FROM orders o JOIN customers c ON c.id = o.customer_id LEFT JOIN couriers co ON co.id = o.assigned_courier_id LEFT JOIN users u ON u.id = co.user_id WHERE o.id = 7
+
+id | cliente        | prioridade | status   | entregador        | peso_kg | entregar_ate
+---+----------------+------------+----------+-------------------+---------+-------------
+7  | Luciana Barros | 2          | ASSIGNED | Carla Entregadora | 2.50    | 28/09 17:30 
+(1 linha)

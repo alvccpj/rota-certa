@@ -1,0 +1,24 @@
+$ python -m unittest discover backend/tests -v
+test_admin_creates_user_who_can_log_in (test_api.ApiTestCase.test_admin_creates_user_who_can_log_in) ... ok
+test_courier_advances_status_in_order (test_api.ApiTestCase.test_courier_advances_status_in_order) ... ok
+test_courier_cannot_create_orders (test_api.ApiTestCase.test_courier_cannot_create_orders) ... ok
+test_courier_requires_load_capacity (test_api.ApiTestCase.test_courier_requires_load_capacity) ... ok
+test_courier_sees_only_own_orders (test_api.ApiTestCase.test_courier_sees_only_own_orders) ... ok
+test_deactivated_user_cannot_log_in (test_api.ApiTestCase.test_deactivated_user_cannot_log_in) ... ok
+test_delivered_order_cannot_be_edited (test_api.ApiTestCase.test_delivered_order_cannot_be_edited) ... ok
+test_duplicate_email_is_rejected (test_api.ApiTestCase.test_duplicate_email_is_rejected) ... ok
+test_login_rejects_wrong_password (test_api.ApiTestCase.test_login_rejects_wrong_password) ... ok
+test_login_returns_token_and_profile (test_api.ApiTestCase.test_login_returns_token_and_profile) ... ok
+test_only_admin_manages_users (test_api.ApiTestCase.test_only_admin_manages_users) ... ok
+test_order_crud (test_api.ApiTestCase.test_order_crud) ... ok
+test_order_window_must_be_valid (test_api.ApiTestCase.test_order_window_must_be_valid) ... ok
+test_password_is_stored_as_hash (test_api.ApiTestCase.test_password_is_stored_as_hash) ... ok
+test_protected_routes_require_token (test_api.ApiTestCase.test_protected_routes_require_token) ... ok
+test_register_creates_isolated_establishment (test_api.ApiTestCase.test_register_creates_isolated_establishment) ... ok
+test_empty_route_has_zero_distance (test_optimizer.RoutingTestCase.test_empty_route_has_zero_distance) ... ok
+test_nearest_neighbor_keeps_every_stop_once (test_optimizer.RoutingTestCase.test_nearest_neighbor_keeps_every_stop_once) ... ok
+test_optimize_route_returns_order_and_distance (test_optimizer.RoutingTestCase.test_optimize_route_returns_order_and_distance) ... ok
+test_parallel_and_sequential_return_same_routes (test_optimizer.RoutingTestCase.test_parallel_and_sequential_return_same_routes) ... ok
+test_two_opt_never_worsens_route (test_optimizer.RoutingTestCase.test_two_opt_never_worsens_route) ... ok
+Ran 21 tests in 4.576s
+OK
