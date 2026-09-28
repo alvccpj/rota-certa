@@ -30,6 +30,14 @@ class HistoryTestCase(ApiTestCase):
         self.assertEqual(history[1]["note"], "Atribuído a Carla Entregadora")
         self.assertEqual(history[3]["changed_by"], "Carla Entregadora")
 
+    def test_creation_with_courier_records_two_steps(self) -> None:
+        payload = self.order_payload(assigned_courier_id=self.courier_id())
+        created = self.client.post("/orders", headers=self.attendant, json=payload).json()
+        history = self.history(created["id"])
+        self.assertEqual([event["status"] for event in history], ["PENDING", "ASSIGNED"])
+        self.assertEqual(history[0]["note"], "Pedido cadastrado")
+        self.assertEqual(history[1]["note"], "Atribuído a Carla Entregadora")
+
     def test_cancellation_keeps_the_reason(self) -> None:
         order = self.client.post("/orders", headers=self.admin, json=self.order_payload()).json()
         response = self.client.patch(
