@@ -1,0 +1,14 @@
+-- Tabelas do banco rotacerta e quantidade de registros
+SELECT 'establishments' AS tabela, count(*) AS registros FROM establishments UNION ALL ... (uma consulta por tabela)
+
+tabela            | registros
+------------------+----------
+establishments    | 2        
+users             | 6        
+couriers          | 3        
+customers         | 7        
+orders            | 6        
+routes            | 0        
+route_stops       | 0        
+optimization_runs | 0        
+(8 linhas)

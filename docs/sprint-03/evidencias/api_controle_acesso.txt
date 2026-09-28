@@ -1,0 +1,22 @@
+GET /orders sem token
+  -> HTTP 401 Sessão inválida ou expirada. Faça login novamente.
+POST /auth/login com senha errada
+  -> HTTP 401 E-mail ou senha inválidos.
+POST /auth/login (Administrador)
+  -> HTTP 200 token JWT emitido
+POST /auth/login (Atendente)
+  -> HTTP 200 token JWT emitido
+POST /auth/login (Entregador)
+  -> HTTP 200 token JWT emitido
+GET /users como Administrador
+  -> HTTP 200 5 registros
+GET /users como Atendente
+  -> HTTP 403 Seu perfil não tem permissão para esta ação.
+GET /users como Entregador
+  -> HTTP 403 Seu perfil não tem permissão para esta ação.
+POST /orders como Entregador
+  -> HTTP 403 Seu perfil não tem permissão para esta ação.
+GET /orders como Entregador
+  -> HTTP 200 2 pedidos, todos atribuídos a ele
+DELETE /orders/6 como Atendente
+  -> HTTP 403 Seu perfil não tem permissão para esta ação.

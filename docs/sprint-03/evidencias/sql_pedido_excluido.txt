@@ -1,0 +1,7 @@
+-- Consulta ao pedido #7 depois da exclusão pela interface
+SELECT count(*) AS pedidos_encontrados FROM orders WHERE id = 7
+
+pedidos_encontrados
+-------------------
+0                  
+(1 linha)
