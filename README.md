@@ -47,6 +47,20 @@ Entrega: **estrutura inicial funcionando**.
 - [x] Execução local com Docker Compose ou sem Docker
 - [x] 21 testes automatizados (16 da API e 5 do otimizador)
 
+## Status da Sprint 4
+
+Entrega: **primeiro módulo completo, Pedidos e entregas**.
+
+- [x] Cadastro de clientes com telefone validado e último endereço de entrega
+- [x] Busca de endereço pelo OpenStreetMap e marcação do local no mapa
+- [x] Atribuição respeitando disponibilidade, capacidade de carga e raio de entrega
+- [x] Histórico de cada mudança de situação do pedido (tabela `order_status_history`)
+- [x] Entregador informa a própria disponibilidade e conclui as entregas pelo celular
+- [x] Validações na interface e na API, com mensagens junto a cada campo
+- [x] Navegação por URL com React Router, rotas protegidas por perfil e páginas de acesso negado e inexistente
+- [x] Persistência demonstrada desligando e religando o banco e a API
+- [x] 48 testes automatizados (43 da API e 5 do otimizador)
+
 ## Como executar
 
 ### Opção 1: Docker Compose
@@ -118,13 +132,17 @@ python -m unittest discover backend/tests -v
 
 ### Documento da entrega
 
-O documento cumulativo das Sprints 01 a 03 está em `output/pdf/Grupo_04_RotaCerta_Sprints_01_a_03.pdf` (e em `.docx` na pasta `output/docx`). Para regenerá-lo, com o sistema rodando sobre um banco recém-criado e o Google Chrome instalado:
+O documento cumulativo das Sprints 01 a 04 está em `output/pdf/Grupo_04_RotaCerta_Sprints_01_a_04.pdf` (e em `.docx` na pasta `output/docx`). Para regenerá-lo, com o sistema rodando sobre um banco recém-criado e o Google Chrome instalado:
 
 ```bash
 pip install playwright httpx "psycopg[binary]" python-docx
-python tools/documentation/capture_sprint03_evidence.py   # capturas de tela e saídas em docs/sprint-03
-python tools/documentation/build_document.py              # HTML, PDF e DOCX em output/
+python tools/documentation/capture_sprint04_evidence.py fluxo      # sistema no ar
+python tools/documentation/capture_sprint04_evidence.py sem-api    # depois de desligar API e banco
+python tools/documentation/capture_sprint04_evidence.py reinicio   # depois de religar API e banco
+python tools/documentation/build_document.py                        # HTML, PDF e DOCX em output/
 ```
+
+As evidências da Sprint 03 ficam em `docs/sprint-03` e foram geradas por `capture_sprint03_evidence.py`, que trabalha com a versão da API daquela Sprint.
 
 ## 1. Formação da equipe
 
@@ -265,7 +283,8 @@ O projeto será mantido atualizado ao longo das sprints, com código, documenta�
 
 ## Arquitetura
 
-- **Frontend:** React, TypeScript e Vite; mapa com Leaflet e OpenStreetMap.
+- **Frontend:** React, TypeScript e Vite; navegação com React Router; mapa com Leaflet e OpenStreetMap.
+- **Busca de endereço:** Nominatim (OpenStreetMap), consultado pela API.
 - **Backend:** FastAPI em Python, com API REST documentada por OpenAPI.
 - **Autenticação:** token JWT, senhas com hash Argon2 e autorização por perfil em cada rota.
 - **Banco de dados:** PostgreSQL 16, estrutura em `database/schema.sql`, acesso via SQLAlchemy.
@@ -280,10 +299,14 @@ O projeto será mantido atualizado ao longo das sprints, com código, documenta�
 | `POST /auth/register` | Público | Cadastra um estabelecimento e o seu administrador |
 | `GET /auth/me` | Todos | Dados do usuário logado |
 | `GET/POST /users`, `GET/PUT/DELETE /users/{id}` | Administrador | Cadastro, edição e desativação de usuários |
-| `GET /couriers` | Administrador, atendente | Entregadores ativos para atribuição |
-| `GET /orders`, `GET /orders/{id}` | Todos | Pedidos do estabelecimento; o entregador vê só os seus |
-| `POST /orders`, `PUT /orders/{id}` | Administrador, atendente | Cadastro e edição de pedidos |
-| `PATCH /orders/{id}/status` | Todos | Andamento; o entregador só avança Atribuído, Em rota e Entregue |
+| `GET /couriers` | Administrador, atendente | Entregadores ativos com a carga atual de cada um |
+| `PATCH /couriers/me/availability` | Entregador | Informa se está disponível ou fora de serviço |
+| `GET/POST /customers`, `GET/PUT /customers/{id}` | Administrador, atendente | Cadastro e busca de clientes |
+| `DELETE /customers/{id}` | Administrador | Exclusão de cliente sem pedidos |
+| `GET /geocode?q=` | Administrador, atendente | Sugestões de endereço com coordenadas |
+| `GET /orders`, `GET /orders/{id}` | Todos | Pedidos do estabelecimento; o detalhe inclui o histórico; o entregador vê só os seus |
+| `POST /orders`, `PUT /orders/{id}` | Administrador, atendente | Cadastro e edição de pedidos, com as regras de atribuição |
+| `PATCH /orders/{id}/status` | Todos | Andamento com observação; o entregador só avança Atribuído, Em rota e Entregue |
 | `DELETE /orders/{id}` | Administrador | Exclusão de pedido |
 | `GET /health` | Público | Situação da API e da conexão com o banco |
 | `POST /optimizer/compare` | Público | Comparação sequencial e paralela do otimizador |
