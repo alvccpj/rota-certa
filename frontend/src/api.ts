@@ -23,6 +23,32 @@ export interface CourierOption {
   full_name: string;
   availability: Availability;
   load_capacity_kg: number;
+  active_load_kg: number;
+  active_orders: number;
+}
+
+export interface Customer {
+  id: number;
+  full_name: string;
+  phone: string | null;
+  order_count: number;
+  last_address: string | null;
+  last_latitude: number | null;
+  last_longitude: number | null;
+  created_at: string;
+}
+
+export interface HistoryEvent {
+  status: OrderStatus;
+  note: string | null;
+  changed_by: string | null;
+  changed_at: string;
+}
+
+export interface GeocodeResult {
+  label: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Order {
@@ -40,9 +66,12 @@ export interface Order {
   created_at: string;
 }
 
+export interface OrderDetail extends Order {
+  history: HistoryEvent[];
+}
+
 export interface OrderInput {
-  customer_name: string;
-  customer_phone: string | null;
+  customer_id: number;
   delivery_address: string;
   latitude: number;
   longitude: number;
