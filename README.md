@@ -35,6 +35,97 @@ Prazo informado pela professora: **19/09/2026**.
 - [x] Cronograma corrigido para cadência semanal
 - [x] Primeira versão do motor sequencial e paralelo implementada e testada
 
+## Status da Sprint 3
+
+Entrega: **estrutura inicial funcionando**.
+
+- [x] Banco de dados PostgreSQL conectado à API (SQLAlchemy + psycopg)
+- [x] Login funcional com token JWT e senhas armazenadas com hash Argon2
+- [x] Cadastro de usuários pelo administrador e cadastro de novo estabelecimento
+- [x] Controle de perfis: administrador, atendente e entregador
+- [x] CRUD principal de pedidos persistido no banco
+- [x] Execução local com Docker Compose ou sem Docker
+- [x] 21 testes automatizados (16 da API e 5 do otimizador)
+
+## Como executar
+
+### Opção 1: Docker Compose
+
+Requer o [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+```bash
+cp .env.example .env        # no PowerShell: copy .env.example .env
+docker compose up --build
+```
+
+Se já existir um PostgreSQL instalado usando a porta 5432, altere `POSTGRES_PORT` no `.env` para `5433`.
+
+### Opção 2: sem Docker
+
+Requer Python 3.12 ou superior, Node.js 20 ou superior e um PostgreSQL 16 ou superior instalado.
+
+1. Crie o usuário e o banco no PostgreSQL (pelo pgAdmin ou pelo `psql` com o usuário `postgres`):
+
+   ```sql
+   CREATE ROLE rotacerta LOGIN PASSWORD 'rotacerta_dev';
+   CREATE DATABASE rotacerta OWNER rotacerta;
+   ```
+
+2. Suba a API. Na primeira execução ela cria as tabelas a partir de `database/schema.sql` e cadastra os dados de demonstração.
+
+   ```powershell
+   cd backend
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1          # Linux/macOS: source .venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload
+   ```
+
+   Para usar outra porta, usuário ou senha do banco, copie `backend/.env.example` para `backend/.env` e ajuste `DATABASE_URL`.
+
+3. Em outro terminal, suba o frontend:
+
+   ```powershell
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+### Endereços
+
+| Serviço | Endereço |
+| --- | --- |
+| Sistema | http://localhost:5173 |
+| Documentação interativa da API | http://localhost:8000/docs |
+| Verificação da API e do banco | http://localhost:8000/health |
+
+### Contas de demonstração
+
+Todas usam a senha `rotacerta123`.
+
+| Perfil | E-mail | Pode fazer |
+| --- | --- | --- |
+| Administrador | admin@rotacerta.com.br | Gerencia usuários e pedidos, inclusive exclusões |
+| Atendente | atendente@rotacerta.com.br | Cadastra, edita e acompanha pedidos |
+| Entregador | entregador@rotacerta.com.br | Vê só as próprias entregas e atualiza o andamento |
+
+### Testes
+
+```bash
+pip install -r backend/requirements-dev.txt
+python -m unittest discover backend/tests -v
+```
+
+### Documento da entrega
+
+O documento cumulativo das Sprints 01 a 03 está em `output/pdf/Grupo_04_RotaCerta_Sprints_01_a_03.pdf` (e em `.docx` na pasta `output/docx`). Para regenerá-lo, com o sistema rodando sobre um banco recém-criado e o Google Chrome instalado:
+
+```bash
+pip install playwright httpx "psycopg[binary]" python-docx
+python tools/documentation/capture_sprint03_evidence.py   # capturas de tela e saídas em docs/sprint-03
+python tools/documentation/build_document.py              # HTML, PDF e DOCX em output/
+```
+
 ## 1. Formação da equipe
 
 | Integrante | Matrícula | Responsabilidade sugerida |
@@ -42,6 +133,7 @@ Prazo informado pela professora: **19/09/2026**.
 | Álvaro Jordão | 01748200 | Scrum Master e Product Owner: organização das entregas, levantamento e priorização de requisitos e articulação com as orientações |
 | Arthur Sales | 01593811 | Desenvolvimento backend e núcleo de otimização/paralelização |
 | Vinícius Trigueiro | 01794959 | Desenvolvimento frontend, banco de dados e documentação |
+| William Coelho de Morais | 01263977 | Desenvolvimento e testes |
 
 As responsabilidades servem para organizar o trabalho. Todos os integrantes participam do desenvolvimento do sistema como um todo.
 
@@ -171,15 +263,30 @@ Repositório oficial: [github.com/alvccpj/rota-certa](https://github.com/alvccpj
 
 O projeto será mantido atualizado ao longo das sprints, com código, documentação e histórico de evolução versionados no GitHub.
 
-## Arquitetura inicial
+## Arquitetura
 
-- **Frontend:** React, TypeScript e Vite.
+- **Frontend:** React, TypeScript e Vite; mapa com Leaflet e OpenStreetMap.
 - **Backend:** FastAPI em Python, com API REST documentada por OpenAPI.
-- **Banco de dados:** PostgreSQL 16, inicializado por `database/schema.sql`.
+- **Autenticação:** token JWT, senhas com hash Argon2 e autorização por perfil em cada rota.
+- **Banco de dados:** PostgreSQL 16, estrutura em `database/schema.sql`, acesso via SQLAlchemy.
 - **Otimização:** módulo Python isolado para vizinho mais próximo, 2-opt e execução paralela.
-- **Execução local:** Docker Compose para frontend, API e banco.
+- **Execução local:** Docker Compose para frontend, API e banco, ou execução manual.
 
-Copie `.env.example` para `.env` e execute `docker compose up --build`. A API disponibiliza o endpoint de verificação em `http://localhost:8000/health` e a documentação em `http://localhost:8000/docs`.
+### Endpoints principais
+
+| Método e rota | Perfis | Função |
+| --- | --- | --- |
+| `POST /auth/login` | Público | Autentica e devolve o token |
+| `POST /auth/register` | Público | Cadastra um estabelecimento e o seu administrador |
+| `GET /auth/me` | Todos | Dados do usuário logado |
+| `GET/POST /users`, `GET/PUT/DELETE /users/{id}` | Administrador | Cadastro, edição e desativação de usuários |
+| `GET /couriers` | Administrador, atendente | Entregadores ativos para atribuição |
+| `GET /orders`, `GET /orders/{id}` | Todos | Pedidos do estabelecimento; o entregador vê só os seus |
+| `POST /orders`, `PUT /orders/{id}` | Administrador, atendente | Cadastro e edição de pedidos |
+| `PATCH /orders/{id}/status` | Todos | Andamento; o entregador só avança Atribuído, Em rota e Entregue |
+| `DELETE /orders/{id}` | Administrador | Exclusão de pedido |
+| `GET /health` | Público | Situação da API e da conexão com o banco |
+| `POST /optimizer/compare` | Público | Comparação sequencial e paralela do otimizador |
 
 ## Componente computacional avançado
 

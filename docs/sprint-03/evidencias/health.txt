@@ -1,0 +1,2 @@
+GET http://localhost:8000/health
+{'status': 'ok', 'database': 'connected', 'dialect': 'postgresql', 'server_version': '16.13'}
