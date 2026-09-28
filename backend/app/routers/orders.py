@@ -125,7 +125,11 @@ def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> No
         order.status = "PENDING"
 
     if order.id is None:
-        note = "Pedido cadastrado" + (f" e atribuído a {courier.user.full_name}" if courier else "")
+        # Cadastro e atribuição aparecem como etapas separadas no histórico.
+        order.history.append(OrderStatusEvent(status="PENDING", note="Pedido cadastrado", changed_by=user.id))
+        if courier is None:
+            return
+        note = f"Atribuído a {courier.user.full_name}"
     elif courier is not None and courier.id != previous_courier_id:
         note = f"Atribuído a {courier.user.full_name}"
     elif courier is None and previous_courier_id is not None:
