@@ -13,6 +13,7 @@ venv/
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
 
 # IDE and operating system
 .idea/
@@ -23,6 +24,7 @@ Thumbs.db
 # Generated document QA files
 tmp/
 docs/_rendered/
+output/html/
 
 # Local database artifacts
 *.db
