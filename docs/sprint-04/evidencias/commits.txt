@@ -1,0 +1,9 @@
+$ git log --reverse master..HEAD
+5368fad 28/09 12:17 feat: adiciona cadastro de clientes com validação de nome e telefone
+3bcaf0c 28/09 12:19 feat: valida atribuição por disponibilidade, capacidade e raio de entrega
+b16b967 28/09 12:22 feat: registra histórico de situação dos pedidos
+43ec835 28/09 12:23 feat: adiciona busca de endereço pelo OpenStreetMap
+d9b0753 28/09 12:26 feat: adiciona validação de campos e componentes de mensagens de erro
+a1fbf62 28/09 12:33 feat: organiza pedidos e entregas em páginas com navegação por URL
+2a83d43 28/09 12:35 feat: adiciona telas de clientes integradas ao cadastro de pedidos
+c221bdc 28/09 12:37 fix: registra cadastro e atribuição como etapas separadas no histórico
