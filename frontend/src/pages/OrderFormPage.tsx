@@ -102,6 +102,17 @@ export default function OrderFormPage() {
         if (current) {
           setOrder(current);
           setForm(fromOrder(current));
+          return;
+        }
+        const preselected = customerList.find((c) => String(c.id) === params.get("cliente"));
+        if (preselected?.last_address) {
+          setForm((form) => ({
+            ...form,
+            delivery_address: preselected.last_address!,
+            latitude: String(preselected.last_latitude),
+            longitude: String(preselected.last_longitude),
+          }));
+          setAddressHint(`Preenchido com a última entrega de ${preselected.full_name}. Confira antes de salvar.`);
         }
       })
       .catch((err: ApiError) => active && setLoadError(err.message))

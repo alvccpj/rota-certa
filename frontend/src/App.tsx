@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router";
 import { HomeRedirect, PublicOnly, RequireAuth, RequireRole } from "./components/guards";
 import Layout from "./components/Layout";
 import { STAFF_ROLES } from "./labels";
+import CustomerFormPage from "./pages/CustomerFormPage";
+import CustomersPage from "./pages/CustomersPage";
 import DeliveriesPage from "./pages/DeliveriesPage";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -24,6 +26,9 @@ export default function App() {
         <Route path="pedidos/:id" element={<OrderDetailPage />} />
         <Route path="pedidos/:id/editar" element={<RequireRole roles={STAFF_ROLES}><OrderFormPage /></RequireRole>} />
         <Route path="entregas" element={<RequireRole roles={["COURIER"]}><DeliveriesPage /></RequireRole>} />
+        <Route path="clientes" element={<RequireRole roles={STAFF_ROLES}><CustomersPage /></RequireRole>} />
+        <Route path="clientes/novo" element={<RequireRole roles={STAFF_ROLES}><CustomerFormPage /></RequireRole>} />
+        <Route path="clientes/:id/editar" element={<RequireRole roles={STAFF_ROLES}><CustomerFormPage /></RequireRole>} />
         <Route path="usuarios" element={<RequireRole roles={["ADMIN"]}><UsersPage /></RequireRole>} />
         <Route path="usuarios/novo" element={<RequireRole roles={["ADMIN"]}><UserFormPage /></RequireRole>} />
         <Route path="usuarios/:id/editar" element={<RequireRole roles={["ADMIN"]}><UserFormPage /></RequireRole>} />
