@@ -127,6 +127,12 @@ class CourierOption(BaseModel):
     full_name: str
     availability: Availability
     load_capacity_kg: float
+    active_load_kg: float
+    active_orders: int
+
+
+class AvailabilityIn(BaseModel):
+    availability: Availability
 
 
 # Clientes

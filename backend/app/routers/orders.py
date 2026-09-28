@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Courier, Customer, Order, User
+from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_within_radius
 from app.schemas import AssignedCourierOut, CustomerRef, OrderIn, OrderOut, OrderStatus, StatusIn
 from app.security import ADMIN, ATTENDANT, COURIER, get_current_user, require_roles
 
@@ -79,11 +80,17 @@ def get_customer(db: Session, user: User, customer_id: int) -> Customer:
 
 def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> None:
     courier = get_courier(db, user, data.assigned_courier_id)
-    order.customer = get_customer(db, user, data.customer_id)
+    customer = get_customer(db, user, data.customer_id)
+    weight = Decimal(f"{data.weight_kg:.2f}")
+    ensure_within_radius(user.establishment, data.latitude, data.longitude)
+    if courier is not None and (courier.id != order.assigned_courier_id or weight != order.weight_kg):
+        ensure_courier_can_take(db, courier, order, weight)
+
+    order.customer = customer
     order.delivery_address = data.delivery_address
     order.latitude = Decimal(f"{data.latitude:.6f}")
     order.longitude = Decimal(f"{data.longitude:.6f}")
-    order.weight_kg = Decimal(f"{data.weight_kg:.2f}")
+    order.weight_kg = weight
     order.priority = data.priority
     order.desired_start = data.desired_start
     order.desired_end = data.desired_end
@@ -121,6 +128,7 @@ def create_order(
     user: User = Depends(require_roles(ADMIN, ATTENDANT)),
     db: Session = Depends(get_db),
 ) -> OrderOut:
+    ensure_window_not_past(data.desired_end)
     order = Order(establishment_id=user.establishment_id, status="PENDING")
     apply_order_data(db, user, order, data)
     db.add(order)

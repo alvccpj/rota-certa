@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     jwt_secret: str = "rotacerta-chave-local-de-desenvolvimento-troque-em-producao"
     access_token_minutes: int = 480
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    max_delivery_radius_km: float = 30
     auto_create_schema: bool = True
     seed_demo_data: bool = True
     schema_path: Path = Path(__file__).resolve().parents[2] / "database" / "schema.sql"
