@@ -175,6 +175,7 @@ class OrderIn(BaseModel):
 
 class StatusIn(BaseModel):
     status: OrderStatus
+    note: Annotated[str, Field(max_length=255), AfterValidator(clean_text)] | None = None
 
 
 class CustomerRef(ORMModel):
@@ -201,3 +202,14 @@ class OrderOut(BaseModel):
     status: OrderStatus
     assigned_courier: AssignedCourierOut | None
     created_at: datetime
+
+
+class HistoryOut(BaseModel):
+    status: OrderStatus
+    note: str | None
+    changed_by: str | None
+    changed_at: datetime
+
+
+class OrderDetailOut(OrderOut):
+    history: list[HistoryOut]
