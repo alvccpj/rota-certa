@@ -1,4 +1,4 @@
-"""Gera o documento técnico cumulativo das Sprints 01 a 03.
+"""Gera o documento técnico cumulativo das Sprints 01 a 04.
 
 O mesmo conteúdo é renderizado em HTML, PDF (Chrome headless via Playwright) e
 DOCX (python-docx). As evidências da Sprint 03 são produzidas antes por
@@ -33,8 +33,11 @@ ROOT = Path(__file__).resolve().parents[2]
 SPRINT02 = ROOT / "docs" / "sprint-02" / "assets"
 SPRINT03 = ROOT / "docs" / "sprint-03" / "assets"
 EVIDENCE = ROOT / "docs" / "sprint-03" / "evidencias"
-NAME = "Grupo_04_RotaCerta_Sprints_01_a_03"
-TITLE = "Documento Técnico Cumulativo das Sprints 01 a 03"
+SPRINT04 = ROOT / "docs" / "sprint-04" / "assets"
+EVIDENCE04 = ROOT / "docs" / "sprint-04" / "evidencias"
+NAME = "Grupo_04_RotaCerta_Sprints_01_a_04"
+TITLE = "Documento Técnico Cumulativo das Sprints 01 a 04"
+FOOTER = "RotaCerta  |  Grupo 04  |  Sprints 01 a 04  |  Página "
 REPOSITORY = "https://github.com/alvccpj/rota-certa"
 TEAM = (
     ("Álvaro Jordão", "01748200"),
@@ -114,11 +117,19 @@ def s3(name: str) -> Path:
     return SPRINT03 / name
 
 
+def s4(name: str) -> Path:
+    return SPRINT04 / name
+
+
+def evidence04(name: str) -> str:
+    return (EVIDENCE04 / name).read_text(encoding="utf-8").rstrip()
+
+
 # Conteúdo
 
 PRESENTATION = [
-    "Este documento reúne as entregas das Sprints 01, 02 e 03 do projeto RotaCerta. A Parte I registra o problema, os objetivos, os requisitos e o planejamento inicial. A Parte II apresenta a arquitetura, os modelos de software e de dados, os protótipos e a estrutura inicial do banco. A Parte III demonstra a estrutura funcionando: banco conectado, login, cadastro de usuários, controle de perfis e o CRUD de pedidos, com evidências capturadas do sistema em execução.",
-    "As Partes I e II mantêm o conteúdo entregue anteriormente, incluindo as revisões feitas após as orientações da Sprint 01. Os ajustes de planejamento decorrentes da Sprint 03 estão registrados e justificados na seção 22.",
+    "Este documento reúne as entregas das Sprints 01 a 04 do projeto RotaCerta. A Parte I registra o problema, os objetivos, os requisitos e o planejamento inicial. A Parte II apresenta a arquitetura, os modelos de software e de dados, os protótipos e a estrutura inicial do banco. A Parte III demonstra a estrutura inicial funcionando: banco conectado, login, cadastro de usuários, controle de perfis e o CRUD de pedidos. A Parte IV apresenta o primeiro módulo completo, Pedidos e entregas, com persistência, validações, mensagens de erro e navegação entre as telas.",
+    "As Partes I a III mantêm o conteúdo entregue anteriormente. Os ajustes de planejamento, arquitetura e modelagem feitos na Sprint 04 estão registrados e justificados na seção 32. Todas as telas e respostas mostradas nas Partes III e IV foram capturadas do sistema em execução.",
 ]
 
 TOC = [
@@ -149,6 +160,17 @@ TOC = [
     "22  Ajustes no planejamento e na modelagem",
     "23  Repositório GitHub",
     "24  Dificuldades encontradas e próximos passos",
+    "Parte IV  Sprint 04 Primeiro módulo completo",
+    "25  Módulo implementado: Pedidos e entregas",
+    "26  Evidências do módulo funcionando",
+    "27  Persistência de dados",
+    "28  Validações",
+    "29  Mensagens de erro",
+    "30  Navegação entre as telas",
+    "31  Commits organizados e repositório",
+    "32  Ajustes no planejamento, na arquitetura e na modelagem",
+    "33  Testes automatizados",
+    "34  Dificuldades encontradas e próximos passos",
 ]
 
 
@@ -229,7 +251,7 @@ def sprint01(doc: Document) -> None:
         P("Evolução. Relatórios, painel consolidado, notificações e avaliação futura de C++ com OpenMP ou CUDA.", "Evolução."),
         PageBreak(),
         H("5  Cronograma semanal revisado"),
-        P("O cronograma abaixo substituiu, na Sprint 02, a periodicidade quinzenal apresentada inicialmente. A Sprint 02 manteve o prazo excepcional de 19 de setembro comunicado pela professora; as etapas seguintes usam ciclos semanais. A versão vigente, ajustada na Sprint 03, está na seção 22."),
+        P("O cronograma abaixo substituiu, na Sprint 02, a periodicidade quinzenal apresentada inicialmente. A Sprint 02 manteve o prazo excepcional de 19 de setembro comunicado pela professora; as etapas seguintes usam ciclos semanais. A versão vigente, com os ajustes das Sprints 03 e 04, está na seção 32."),
         Table(
             ["Sprint", "Período", "Entrega principal"],
             [
@@ -595,11 +617,207 @@ def sprint03(doc: Document) -> None:
     )
 
 
+def sprint04(doc: Document) -> None:
+    doc.add(
+        PageBreak(),
+        H("Parte IV  Sprint 04 Primeiro módulo completo", 1),
+        P("A Sprint 04 consolida o primeiro módulo completo do RotaCerta: Pedidos e entregas. O módulo cobre o ciclo inteiro de um pedido, do cadastro do cliente até a confirmação da entrega pelo entregador, com dados gravados no PostgreSQL, validações na interface e na API, mensagens de erro que orientam o usuário e navegação por páginas com endereço próprio."),
+        H("25  Módulo implementado: Pedidos e entregas"),
+        P("O módulo atende aos casos de uso UC01 (cadastrar pedido), UC04 (visualizar a rota atribuída) e UC05 (atualizar o status da entrega) e aos requisitos RF02, RF05, RF07 e RF08. Ele usa a estrutura da Sprint 03 (login, perfis e usuários) e acrescenta o cadastro de clientes, a busca de endereço, as regras de atribuição e o histórico de cada pedido."),
+        Table(
+            ["Funcionalidade", "Perfis", "Tela"],
+            [
+                ["Cadastro, busca, edição e exclusão de clientes", "Administrador e atendente", "/clientes"],
+                ["Cadastro de pedido com cliente, endereço, local no mapa, peso, prioridade e horário", "Administrador e atendente", "/pedidos/novo"],
+                ["Busca de endereço no OpenStreetMap com preferência para a região do ponto de saída", "Administrador e atendente", "/pedidos/novo"],
+                ["Atribuição a um entregador respeitando disponibilidade e capacidade de carga", "Administrador e atendente", "/pedidos/novo e /pedidos/:id/editar"],
+                ["Lista de pedidos com busca e filtro por situação guardados no endereço da página", "Administrador e atendente", "/pedidos"],
+                ["Detalhe do pedido com mapa e histórico de cada mudança de situação", "Todos", "/pedidos/:id"],
+                ["Cancelamento com motivo obrigatório, reabertura e exclusão com confirmação", "Administrador e atendente; exclusão só administrador", "/pedidos/:id"],
+                ["Entregas do dia no celular: sair para entrega, confirmar entrega e informar disponibilidade", "Entregador", "/entregas"],
+            ],
+            [7.8, 4.4, 5.0],
+        ),
+        H("Fluxo completo de utilização", 3),
+        Numbered([
+            "O atendente abre Novo pedido e, como a cliente ainda não tem cadastro, usa Cadastrar cliente. Ao salvar, o sistema volta ao pedido com a cliente já escolhida.",
+            "O atendente digita o endereço e usa Buscar endereço. O ponto escolhido aparece no mapa e pode ser ajustado com um clique.",
+            "O atendente informa peso, prioridade e horário e escolhe o entregador. A lista mostra a carga atual de cada um e o sistema impede ultrapassar a capacidade.",
+            "Ao salvar, o pedido é gravado como Atribuído e o sistema abre a página do pedido com o histórico.",
+            "No celular, a entregadora vê o pedido em Minhas entregas, toca em Sair para entrega e, ao chegar, em Confirmar entrega.",
+            "O administrador acompanha o histórico completo, com quem fez cada mudança e quando, e pode cancelar, reabrir ou excluir pedidos.",
+        ]),
+        H("26  Evidências do módulo funcionando"),
+        P("As figuras a seguir seguem o fluxo acima com a cliente Luciana Barros, cadastrada durante a captura. Os dados de demonstração (Farmácia Boa Saúde, com dois entregadores e seis pedidos) são criados automaticamente quando o banco está vazio."),
+        Figure([s4("s04_02_pedidos.png")], "Lista de pedidos do atendente, com busca e filtros por situação"),
+        Figure([s4("s04_05_busca_endereco.png")], "Pedido com a cliente recém-cadastrada já escolhida e o endereço encontrado pela busca"),
+        Figure([s4("s04_07_pedido_criado.png")], "Página do pedido criado, com dados, mapa e histórico"),
+        Figure(
+            [s4("s04_10_entregas_celular.png"), s4("s04_12_entregador_detalhe.png")],
+            "Entregadora no celular: lista de entregas e confirmação da entrega na página do pedido",
+            36,
+        ),
+        Figure([s4("s04_13_historico_completo.png")], "Visão do administrador: o histórico registra cadastro, atribuição, saída e entrega com autor e horário"),
+        Figure([s4("s04_16_pedido_cancelado.png")], "Pedido cancelado com o motivo registrado no histórico"),
+        H("27  Persistência de dados"),
+        P("Todos os dados do módulo ficam no PostgreSQL: clientes na tabela customers, pedidos em orders e cada mudança de situação na nova tabela order_status_history. Para demonstrar a persistência, depois do fluxo completo a API e o próprio PostgreSQL foram desligados. Com a API fora do ar, o sistema informou que o servidor não respondia. Em seguida o banco e a API foram religados e o mesmo pedido foi consultado, com os mesmos dados e o mesmo histórico."),
+        Code(evidence04("persistencia.txt"), "Registro com horário de cada etapa do teste de persistência"),
+        Code(evidence04("sql_pedido_criado.txt"), "Pedido e histórico no banco logo depois do cadastro pela interface"),
+        Figure([s4("s04_20_api_fora.png")], "Tentativa de entrar com a API desligada: o sistema explica o problema em vez de travar"),
+        Code(evidence04("sql_apos_reinicio.txt"), "O mesmo pedido consultado no banco depois de desligar e religar o PostgreSQL e a API"),
+        Figure([s4("s04_21_apos_reinicio.png")], "Página do pedido depois da reabertura do sistema, com o histórico preservado"),
+        P("Na execução com Docker Compose os dados ficam no volume postgres_data, que é mantido ao parar e subir os contêineres. Apenas docker compose down -v apaga o volume e recomeça o banco do zero."),
+        H("28  Validações"),
+        P("As validações existem em duas camadas. A interface verifica os campos antes de enviar, mostra a mensagem junto ao campo e leva o foco ao primeiro campo com problema. A API repete as mesmas regras e aplica as regras de negócio que dependem do banco, de modo que nenhum dado inválido é gravado mesmo que alguém chame a API diretamente."),
+        Table(
+            ["Campo ou regra", "Onde", "Regra"],
+            [
+                ["E-mail e senha no login", "Interface", "Obrigatórios; e-mail em formato válido"],
+                ["Senha de novos usuários", "Interface e API", "Mínimo de 8 caracteres, com letras e números"],
+                ["Nome de cliente e de usuário", "Interface e API", "Obrigatório, com pelo menos duas letras; espaços extras são removidos"],
+                ["Telefone do cliente", "Interface e API", "Opcional; se informado, precisa ter DDD. É gravado no formato (81) 98800-1001"],
+                ["Cliente duplicado", "API", "Não permite outro cliente com o mesmo nome e telefone no estabelecimento"],
+                ["Cliente, endereço e local do pedido", "Interface e API", "Cliente do próprio estabelecimento; endereço com pelo menos 5 caracteres; coordenadas marcadas no mapa"],
+                ["Peso do pedido", "Interface e API", "Maior que zero e até 500 kg"],
+                ["Janela de entrega", "Interface e API", "Fim depois do início; no cadastro, o horário final não pode estar no passado"],
+                ["Raio de entrega", "API", "O local precisa estar a até 30 km do ponto de saída do estabelecimento"],
+                ["Capacidade do entregador", "Interface e API", "A soma dos pedidos atribuídos e em rota não pode passar da capacidade de carga"],
+                ["Disponibilidade", "Interface e API", "Entregador fora de serviço não recebe pedidos e só fica fora de serviço sem entregas em rota"],
+                ["Mudança de situação", "API", "O entregador só avança de Atribuído para Em rota e para Entregue; pedidos entregues ou cancelados não são editados"],
+                ["Motivo do cancelamento", "Interface", "Obrigatório, com pelo menos 5 caracteres, e registrado no histórico"],
+            ],
+            [4.6, 3.0, 9.6],
+        ),
+        Figure([s4("s04_01_login_validacao.png")], "Login enviado sem preencher os campos"),
+        Figure([s4("s04_03_pedido_validacao.png")], "Pedido enviado vazio: cada campo obrigatório indica o que falta e o mapa fica destacado"),
+        Figure([s4("s04_04_cliente_validacao.png")], "Telefone sem DDD recusado no cadastro de cliente"),
+        Figure([s4("s04_06_capacidade.png")], "Pedido de 30 kg recusado para uma entregadora com capacidade de 25 kg"),
+        Figure([s4("s04_15_cancelamento_validacao.png")], "Cancelamento sem motivo não é aceito"),
+        Code(evidence04("api_validacoes.txt"), "Respostas da API às mesmas regras quando chamada diretamente"),
+        P("As mensagens de validação padrão da API aparecem em inglês quando ela é chamada diretamente, como no quadro acima. A interface traduz essas mensagens e as exibe em português junto ao campo correspondente."),
+        H("29  Mensagens de erro"),
+        P("Cada tipo de falha tem uma mensagem própria, escrita para orientar o próximo passo do usuário. Nenhuma tela mostra erros técnicos, códigos internos ou páginas em branco."),
+        Table(
+            ["Situação", "Como o sistema responde"],
+            [
+                ["Campo inválido", "Mensagem abaixo do campo, borda vermelha, resumo no topo do formulário e foco no primeiro campo com erro"],
+                ["Regra de negócio recusada pela API", "A mensagem da API aparece junto ao campo relacionado, como entregador, local no mapa ou horário"],
+                ["Ação que não pode ser concluída", "Aviso vermelho temporário explicando o motivo, como cliente com pedidos ou entrega em rota"],
+                ["Ação irreversível", "Janela de confirmação antes de excluir pedidos, clientes ou desativar usuários"],
+                ["Página de outro perfil", "Tela Acesso negado indicando quais perfis usam a página"],
+                ["Endereço inexistente", "Tela Página não encontrada com o endereço digitado e link para o início"],
+                ["API ou internet fora do ar", "Mensagem de servidor indisponível e, nas listas, a opção Tentar de novo"],
+                ["Busca de endereço indisponível", "Orientação para marcar o local direto no mapa"],
+                ["Sessão expirada", "Volta para o login com o aviso Sua sessão expirou"],
+                ["Falha inesperada ao exibir uma tela", "Tela de erro com o botão Recarregar a página, sem afetar o restante do sistema"],
+            ],
+            [5.0, 12.2],
+        ),
+        Figure([s4("s04_11_indisponivel_erro.png")], "Entregadora com entrega em rota tentando ficar fora de serviço", 40),
+        Figure([s4("s04_17_confirmacao.png")], "Confirmação antes de excluir um cliente"),
+        Figure([s4("s04_18_cliente_com_pedidos.png")], "Cliente com pedidos não pode ser excluído"),
+        Figure([s4("s04_19_raio_entrega.png")], "Local de entrega fora do raio de 30 km, recusado pela API e indicado no mapa"),
+        Figure([s4("s04_08_acesso_negado.png")], "Atendente tentando abrir a página de usuários"),
+        Figure([s4("s04_09_pagina_inexistente.png")], "Endereço que não existe no sistema"),
+        H("30  Navegação entre as telas"),
+        P("O frontend passou a usar o React Router. Cada tela tem um endereço próprio, o botão Voltar do navegador funciona, a busca e o filtro da lista ficam no endereço e podem ser compartilhados, e as páginas internas mostram o caminho de navegação (Pedidos / Pedido #7). As rotas são protegidas: sem login o sistema leva para a tela de entrada e, depois do login, abre a página pedida originalmente."),
+        Figure([s4("s04_00_mapa_navegacao.png")], "Mapa de navegação entre as telas do módulo"),
+        Table(
+            ["Endereço", "Tela", "Perfis"],
+            [
+                ["/login e /cadastro", "Entrada e cadastro de novo negócio", "Público"],
+                ["/pedidos", "Lista de pedidos com busca e filtros", "Administrador e atendente"],
+                ["/pedidos/novo", "Cadastro de pedido", "Administrador e atendente"],
+                ["/pedidos/:id", "Detalhe e histórico do pedido", "Todos; o entregador só abre os seus"],
+                ["/pedidos/:id/editar", "Edição do pedido", "Administrador e atendente"],
+                ["/clientes, /clientes/novo e /clientes/:id/editar", "Clientes", "Administrador e atendente"],
+                ["/entregas", "Entregas do entregador", "Entregador"],
+                ["/usuarios, /usuarios/novo e /usuarios/:id/editar", "Usuários", "Administrador"],
+            ],
+            [6.4, 5.8, 5.0],
+        ),
+        Figure([s4("s04_14_filtro_url.png")], "Filtro por situação guardado no endereço /pedidos?situacao=PENDING"),
+        Code(evidence04("navegacao.txt"), "Retorno à página pedida depois do login"),
+        H("31  Commits organizados e repositório"),
+        P(f"Repositório oficial. {REPOSITORY}", "Repositório oficial."),
+        P("A Sprint 04 foi desenvolvida na branch sprint/04-modulo-pedidos-entregas, criada a partir da master com a Sprint 03 já integrada pelo Pull Request número 2. Cada etapa foi registrada em um commit próprio no momento em que ficou pronta e testada, seguindo o padrão do CONTRIBUTING.md (feat, fix, docs)."),
+        Code(evidence04("commits.txt"), "Commits da Sprint 04 em ordem cronológica"),
+        H("32  Ajustes no planejamento, na arquitetura e na modelagem"),
+        H("Modelagem", 3),
+        P("Foi criada a tabela order_status_history (id, order_id, status, note, changed_by, changed_at), ligada a orders com exclusão em cascata e a users pelo autor da mudança. Ela atende ao RF08, manter o histórico das entregas, que o modelo da Sprint 02 cobria apenas pela situação atual do pedido. Bancos criados antes desta versão recebem a tabela automaticamente quando a API inicia. As demais tabelas não mudaram."),
+        H("Arquitetura e API", 3),
+        Bullets([
+            "O pedido passou a referenciar um cliente cadastrado (customer_id), em vez de criar o cliente pelo nome digitado, o que evita cadastros duplicados.",
+            "Novas rotas: /customers, /geocode, /couriers/me/availability e o histórico em GET /orders/{id}.",
+            "As regras de atribuição ficaram concentradas no módulo backend/app/rules.py, usado pelas rotas de pedidos e de entregadores.",
+            "A busca de endereço usa o serviço Nominatim do OpenStreetMap por meio da API, que identifica o sistema como exige a política do serviço. Se ele estiver indisponível, o usuário marca o ponto no mapa.",
+            "No frontend, o React Router substituiu a troca de telas por abas, e os formulários laterais viraram páginas próprias.",
+        ]),
+        H("Planejamento", 3),
+        P("O módulo escolhido reúne o que o cronograma previa para as Sprints 04 e 05 (clientes, busca de endereço, entregadores e disponibilidade) e antecipa o histórico de entregas. As etapas seguintes continuam priorizando o componente de otimização."),
+        Table(
+            ["Sprint", "Período", "Entrega principal", "Situação"],
+            [
+                ["1", "03/09 a 05/09", "Planejamento, requisitos e backlog", "Concluída"],
+                ["2", "06/09 a 19/09", "Arquitetura, modelos, protótipos, banco e estrutura", "Concluída"],
+                ["3", "20/09 a 26/09", "Banco conectado, login, perfis, usuários e CRUD de pedidos", "Concluída"],
+                ["4", "27/09 a 03/10", "Módulo Pedidos e entregas completo", "Concluída"],
+                ["5", "04/10 a 10/10", "Rotas do dia no mapa e atribuição automática de pedidos", "Planejada"],
+                ["6", "11/10 a 17/10", "Vizinho mais próximo integrado aos pedidos do dia", "Planejada"],
+                ["7", "18/10 a 24/10", "2-opt, gravação das rotas e linha de base", "Planejada"],
+                ["8", "25/10 a 31/10", "Paralelização para múltiplos entregadores", "Planejada"],
+                ["9", "01/11 a 07/11", "Experimentos sequencial versus paralelo", "Planejada"],
+                ["10", "08/11 a 14/11", "Relatórios e painel do dia", "Planejada"],
+                ["11", "15/11 a 21/11", "Testes, usabilidade e segurança", "Planejada"],
+                ["12", "22/11 a 28/11", "Documentação e ajustes", "Planejada"],
+                ["Final", "29/11 a 05/12", "Correções, vídeos e preparação para a banca", "Planejada"],
+            ],
+            [1.6, 3.0, 9.6, 3.0],
+        ),
+        H("33  Testes automatizados"),
+        P("A suíte passou de 21 para 48 testes. Os novos testes cobrem clientes, validações de telefone, nome e senha, regras de capacidade, disponibilidade, raio e horário, o histórico de situação e a busca de endereço, esta sem acessar a internet."),
+        Code(evidence04("testes.txt"), "Execução da suíte de testes"),
+        H("34  Dificuldades encontradas e próximos passos"),
+        H("Dificuldades", 3),
+        Table(
+            ["Dificuldade", "Como foi tratada"],
+            [
+                ["O mapa escapava do formulário quando o campo entrava em estado de erro", "O React substituía as classes que o Leaflet adiciona ao elemento do mapa. O mapa passou a ficar em um elemento interno que o React não altera"],
+                ["Dependência de um serviço externo para buscar endereços", "A API identifica o sistema, limita os resultados à região e, se o serviço falhar, orienta a marcar o ponto no mapa. Os testes simulam o serviço"],
+                ["Bancos da Sprint 03 sem a tabela de histórico", "A API cria a tabela ao iniciar quando ela não existe, sem apagar dados"],
+                ["Manter commits organizados durante o desenvolvimento", "O trabalho foi dividido em etapas testadas separadamente e cada etapa gerou um commit próprio"],
+            ],
+            [6.2, 11.0],
+        ),
+        H("Próximos passos", 3),
+        Bullets([
+            "Mostrar no mapa as rotas do dia de cada entregador e sugerir a atribuição automática dos pedidos pendentes.",
+            "Integrar o otimizador sequencial e paralelo aos pedidos reais e gravar as rotas em routes e route_stops.",
+            "Registrar as execuções em optimization_runs para os experimentos de desempenho.",
+            "Distribuir as próximas tarefas entre os integrantes, cada um com os próprios commits e pull requests revisados por outro colega.",
+        ]),
+        H("Situação da Sprint 04", 2),
+        Table(
+            ["Entrega obrigatória", "Situação", "Evidência"],
+            [
+                ["Primeiro módulo totalmente funcional", "Concluído", "Seções 25 e 26: fluxo completo de Pedidos e entregas"],
+                ["Persistência de dados", "Concluído", "Seção 27: dados preservados depois de desligar e religar banco e API"],
+                ["Validações", "Concluído", "Seção 28: regras na interface e na API"],
+                ["Mensagens de erro", "Concluído", "Seção 29: validação, regras, permissões, servidor indisponível"],
+                ["Navegação entre telas", "Concluído", "Seção 30: rotas, mapa de navegação e caminho da página"],
+                ["Commits organizados", "Concluído", "Seção 31: um commit por etapa na branch da Sprint 04"],
+            ],
+            [4.4, 2.6, 10.2],
+        ),
+    )
+
+
 def build_content() -> Document:
     doc = Document()
     sprint01(doc)
     sprint02(doc)
     sprint03(doc)
+    sprint04(doc)
     return doc
 
 
@@ -710,7 +928,7 @@ def render_pdf(html_path: Path, pdf_path: Path) -> None:
 
     footer = (
         "<div style='width:100%;font-family:Arial;font-size:8px;color:#58606e;text-align:center'>"
-        "RotaCerta  |  Grupo 04  |  Sprints 01 a 03  |  Página <span class='pageNumber'></span></div>"
+        f"{FOOTER}<span class='pageNumber'></span></div>"
     )
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(channel="chrome")
@@ -758,7 +976,7 @@ def add_caption_docx(document, caption: str) -> None:
 def render_docx(doc: Document, path: Path) -> None:
     document = setup_document()
     footer = document.sections[0].footer.paragraphs[0]
-    footer.runs[0].text = "RotaCerta  |  Grupo 04  |  Sprints 01 a 03  |  Página "
+    footer.runs[0].text = FOOTER
     document.core_properties.title = f"RotaCerta {TITLE}"
     document.core_properties.keywords = "RotaCerta, Sprint 01, Sprint 02, Sprint 03"
 

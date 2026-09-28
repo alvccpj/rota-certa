@@ -1,0 +1,8 @@
+[28/09/2026 12:38:49] Fase 1: fluxo completo executado com o sistema no ar.
+[28/09/2026 12:39:35] API encerrada (processo uvicorn finalizado).
+[28/09/2026 12:39:36] PostgreSQL encerrado com pg_ctl stop.
+[28/09/2026 12:39:44] Fase 2: tentativa de uso com a API desligada.
+[28/09/2026 12:40:02] PostgreSQL iniciado novamente.
+[28/09/2026 12:40:17] API iniciada novamente (sem recriar tabelas nem dados de demonstração, pois o banco já tinha registros).
+[28/09/2026 12:40:17] Fase 3: sistema reaberto; consulta ao pedido #7.
+GET /health -> {'status': 'ok', 'database': 'connected', 'dialect': 'postgresql', 'server_version': '16.13'}
