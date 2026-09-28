@@ -12,7 +12,7 @@ from app.config import settings
 from app.database import SessionLocal, apply_schema_if_missing, database_status, get_db, logger
 from app.optimizer.routing import Stop, compare_modes
 from app.optimizer.schemas import OptimizationRequest
-from app.routers import auth, orders, users
+from app.routers import auth, customers, orders, users
 from app.seed import DEMO_PASSWORD, seed_demo_data
 
 
@@ -49,6 +49,7 @@ app.add_middleware(
 )
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(customers.router)
 app.include_router(orders.router)
 
 

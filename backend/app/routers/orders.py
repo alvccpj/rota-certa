@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Courier, Customer, Order, User
-from app.schemas import AssignedCourierOut, CustomerOut, OrderIn, OrderOut, OrderStatus, StatusIn
+from app.schemas import AssignedCourierOut, CustomerRef, OrderIn, OrderOut, OrderStatus, StatusIn
 from app.security import ADMIN, ATTENDANT, COURIER, get_current_user, require_roles
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -23,7 +23,7 @@ def order_out(order: Order) -> OrderOut:
     courier = order.courier
     return OrderOut(
         id=order.id,
-        customer=CustomerOut.model_validate(order.customer),
+        customer=CustomerRef.model_validate(order.customer),
         delivery_address=order.delivery_address,
         latitude=order.latitude,
         longitude=order.longitude,
@@ -70,25 +70,17 @@ def get_courier(db: Session, user: User, courier_id: int | None) -> Courier | No
     return courier
 
 
-def find_or_create_customer(db: Session, establishment_id: int, name: str, phone: str | None) -> Customer:
-    name = name.strip()
-    phone = (phone or "").strip() or None
-    query = select(Customer).where(
-        Customer.establishment_id == establishment_id,
-        Customer.full_name == name,
-        Customer.phone.is_(None) if phone is None else Customer.phone == phone,
-    )
-    customer = db.scalar(query)
-    if customer is None:
-        customer = Customer(establishment_id=establishment_id, full_name=name, phone=phone)
-        db.add(customer)
+def get_customer(db: Session, user: User, customer_id: int) -> Customer:
+    customer = db.get(Customer, customer_id)
+    if customer is None or customer.establishment_id != user.establishment_id:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Cliente inválido para este estabelecimento.")
     return customer
 
 
 def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> None:
     courier = get_courier(db, user, data.assigned_courier_id)
-    order.customer = find_or_create_customer(db, user.establishment_id, data.customer_name, data.customer_phone)
-    order.delivery_address = data.delivery_address.strip()
+    order.customer = get_customer(db, user, data.customer_id)
+    order.delivery_address = data.delivery_address
     order.latitude = Decimal(f"{data.latitude:.6f}")
     order.longitude = Decimal(f"{data.longitude:.6f}")
     order.weight_kg = Decimal(f"{data.weight_kg:.2f}")
