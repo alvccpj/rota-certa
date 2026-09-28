@@ -1,13 +1,14 @@
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Courier, User
+from app.models import Courier, Order, User
 from app.routers.auth import ensure_email_available
-from app.schemas import CourierOption, UserCreate, UserOut, UserUpdate
+from app.rules import active_loads
+from app.schemas import AvailabilityIn, CourierOption, CourierOut, UserCreate, UserOut, UserUpdate
 from app.security import ADMIN, ATTENDANT, COURIER, hash_password, require_roles
 
 router = APIRouter(tags=["users"])
@@ -139,12 +140,41 @@ def list_couriers(
         )
         .order_by(User.full_name)
     )
+    rows = list(db.execute(query))
+    loads = active_loads(db, [courier.id for courier, _ in rows])
     return [
         CourierOption(
             id=courier.id,
             full_name=courier_user.full_name,
             availability=courier.availability,
             load_capacity_kg=courier.load_capacity_kg,
+            active_load_kg=loads.get(courier.id, (0, 0))[0],
+            active_orders=loads.get(courier.id, (0, 0))[1],
         )
-        for courier, courier_user in db.execute(query)
+        for courier, courier_user in rows
     ]
+
+
+@router.patch("/couriers/me/availability", response_model=CourierOut, tags=["couriers"])
+def update_my_availability(
+    data: AvailabilityIn,
+    user: User = Depends(require_roles(COURIER)),
+    db: Session = Depends(get_db),
+) -> Courier:
+    """O entregador informa se está disponível para receber pedidos."""
+
+    courier = user.courier
+    if courier is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Cadastro de entregador não encontrado.")
+    if data.availability == "OFFLINE":
+        in_route = db.scalar(
+            select(func.count(Order.id)).where(Order.assigned_courier_id == courier.id, Order.status == "IN_ROUTE")
+        )
+        if in_route:
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "Finalize as entregas em rota antes de ficar fora de serviço.",
+            )
+    courier.availability = data.availability
+    db.commit()
+    return courier

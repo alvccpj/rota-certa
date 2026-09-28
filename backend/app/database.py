@@ -51,3 +51,13 @@ def apply_schema_if_missing() -> bool:
         connection.execute(settings.schema_path.read_text(encoding="utf-8"))
     logger.info("Esquema do banco criado a partir de %s.", settings.schema_path)
     return True
+
+
+def create_missing_tables() -> None:
+    """Cria as tabelas adicionadas depois da Sprint 03 em bancos que já existiam."""
+
+    from app.models import OrderStatusEvent
+
+    if not inspect(engine).has_table(OrderStatusEvent.__tablename__):
+        Base.metadata.create_all(engine, tables=[OrderStatusEvent.__table__])
+        logger.info("Tabela %s criada.", OrderStatusEvent.__tablename__)

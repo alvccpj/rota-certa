@@ -7,12 +7,15 @@ const RECIFE: [number, number] = [-8.0476, -34.877];
 interface Props {
   latitude: number | null;
   longitude: number | null;
-  onPick: (latitude: number, longitude: number) => void;
+  /** Sem onPick o mapa só mostra o ponto, sem permitir marcar outro. */
+  onPick?: (latitude: number, longitude: number) => void;
+  zoom?: number;
+  invalid?: boolean;
 }
 
 const round = (value: number) => Math.round(value * 1e6) / 1e6;
 
-export default function MapPicker({ latitude, longitude, onPick }: Props) {
+export default function MapPicker({ latitude, longitude, onPick, zoom = 13, invalid = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.CircleMarker | null>(null);
@@ -21,14 +24,15 @@ export default function MapPicker({ latitude, longitude, onPick }: Props) {
 
   useEffect(() => {
     const start: [number, number] = latitude != null && longitude != null ? [latitude, longitude] : RECIFE;
-    const map = L.map(containerRef.current!, { scrollWheelZoom: false }).setView(start, 13);
+    const map = L.map(containerRef.current!, { scrollWheelZoom: false }).setView(start, zoom);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap",
     }).addTo(map);
-    map.on("click", (event: L.LeafletMouseEvent) => pickRef.current(round(event.latlng.lat), round(event.latlng.lng)));
+    map.on("click", (event: L.LeafletMouseEvent) =>
+      pickRef.current?.(round(event.latlng.lat), round(event.latlng.lng)),
+    );
     mapRef.current = map;
-    // O painel lateral entra com animação; recalcula o tamanho depois dela.
     const timer = window.setTimeout(() => map.invalidateSize(), 250);
     return () => {
       window.clearTimeout(timer);
@@ -57,8 +61,18 @@ export default function MapPicker({ latitude, longitude, onPick }: Props) {
         fillColor: "#F2B705",
         fillOpacity: 1,
       }).addTo(map);
-    if (!map.getBounds().contains(position)) map.panTo(position);
+    if (!map.getBounds().pad(-0.1).contains(position)) map.setView(position, Math.max(map.getZoom(), 15));
   }, [latitude, longitude]);
 
-  return <div ref={containerRef} className="map-picker" aria-label="Mapa para marcar o local de entrega" />;
+  // O Leaflet adiciona classes próprias ao contêiner; por isso as classes que
+  // mudam com o estado ficam no elemento de fora, que o React controla.
+  return (
+    <div className={`map-picker${onPick ? "" : " read-only"}${invalid ? " invalid" : ""}`}>
+      <div
+        ref={containerRef}
+        className="map-canvas"
+        aria-label={onPick ? "Mapa para marcar o local de entrega" : "Local de entrega no mapa"}
+      />
+    </div>
+  );
 }

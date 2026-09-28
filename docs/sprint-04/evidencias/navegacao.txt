@@ -1,0 +1,2 @@
+Sem sessão, o endereço http://localhost:5173/pedidos/7 levou para http://localhost:5173/login.
+Depois do login, o sistema abriu http://localhost:5173/pedidos/7, a página pedida originalmente.

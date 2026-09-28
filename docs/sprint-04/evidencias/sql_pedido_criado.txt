@@ -1,0 +1,12 @@
+-- Pedido #7 na tabela orders
+id | cliente        | status   | entregador        | peso_kg | latitude  | longitude 
+---+----------------+----------+-------------------+---------+-----------+-----------
+7  | Luciana Barros | ASSIGNED | Carla Entregadora | 2.50    | -8.047960 | -34.901177
+(1 linha)
+
+-- Histórico do pedido #7 na tabela order_status_history
+status   | observacao                    | autor           | horario       
+---------+-------------------------------+-----------------+---------------
+PENDING  | Pedido cadastrado             | Bruno Atendente | 28/09 12:38:56
+ASSIGNED | Atribuído a Carla Entregadora | Bruno Atendente | 28/09 12:38:56
+(2 linhas)

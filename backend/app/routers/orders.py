@@ -8,8 +8,18 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Courier, Customer, Order, User
-from app.schemas import AssignedCourierOut, CustomerOut, OrderIn, OrderOut, OrderStatus, StatusIn
+from app.models import Courier, Customer, Order, OrderStatusEvent, User
+from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_within_radius
+from app.schemas import (
+    AssignedCourierOut,
+    CustomerRef,
+    HistoryOut,
+    OrderDetailOut,
+    OrderIn,
+    OrderOut,
+    OrderStatus,
+    StatusIn,
+)
 from app.security import ADMIN, ATTENDANT, COURIER, get_current_user, require_roles
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -17,13 +27,20 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 STATUSES_WITH_COURIER = {"ASSIGNED", "IN_ROUTE", "DELIVERED"}
 LOCKED_STATUSES = {"DELIVERED", "CANCELLED"}
 COURIER_TRANSITIONS = {"ASSIGNED": "IN_ROUTE", "IN_ROUTE": "DELIVERED"}
+STATUS_NOTES = {
+    "PENDING": "Pedido voltou para pendente",
+    "ASSIGNED": "Pedido marcado como atribuído",
+    "IN_ROUTE": "Saiu para entrega",
+    "DELIVERED": "Entrega confirmada",
+    "CANCELLED": "Pedido cancelado",
+}
 
 
 def order_out(order: Order) -> OrderOut:
     courier = order.courier
     return OrderOut(
         id=order.id,
-        customer=CustomerOut.model_validate(order.customer),
+        customer=CustomerRef.model_validate(order.customer),
         delivery_address=order.delivery_address,
         latitude=order.latitude,
         longitude=order.longitude,
@@ -70,28 +87,31 @@ def get_courier(db: Session, user: User, courier_id: int | None) -> Courier | No
     return courier
 
 
-def find_or_create_customer(db: Session, establishment_id: int, name: str, phone: str | None) -> Customer:
-    name = name.strip()
-    phone = (phone or "").strip() or None
-    query = select(Customer).where(
-        Customer.establishment_id == establishment_id,
-        Customer.full_name == name,
-        Customer.phone.is_(None) if phone is None else Customer.phone == phone,
-    )
-    customer = db.scalar(query)
-    if customer is None:
-        customer = Customer(establishment_id=establishment_id, full_name=name, phone=phone)
-        db.add(customer)
+def get_customer(db: Session, user: User, customer_id: int) -> Customer:
+    customer = db.get(Customer, customer_id)
+    if customer is None or customer.establishment_id != user.establishment_id:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Cliente inválido para este estabelecimento.")
     return customer
 
 
+def record(order: Order, user: User, note: str) -> None:
+    order.history.append(OrderStatusEvent(status=order.status, note=note, changed_by=user.id))
+
+
 def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> None:
+    previous_courier_id = order.assigned_courier_id
     courier = get_courier(db, user, data.assigned_courier_id)
-    order.customer = find_or_create_customer(db, user.establishment_id, data.customer_name, data.customer_phone)
-    order.delivery_address = data.delivery_address.strip()
+    customer = get_customer(db, user, data.customer_id)
+    weight = Decimal(f"{data.weight_kg:.2f}")
+    ensure_within_radius(user.establishment, data.latitude, data.longitude)
+    if courier is not None and (courier.id != order.assigned_courier_id or weight != order.weight_kg):
+        ensure_courier_can_take(db, courier, order, weight)
+
+    order.customer = customer
+    order.delivery_address = data.delivery_address
     order.latitude = Decimal(f"{data.latitude:.6f}")
     order.longitude = Decimal(f"{data.longitude:.6f}")
-    order.weight_kg = Decimal(f"{data.weight_kg:.2f}")
+    order.weight_kg = weight
     order.priority = data.priority
     order.desired_start = data.desired_start
     order.desired_end = data.desired_end
@@ -103,6 +123,20 @@ def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> No
         order.status = "ASSIGNED"
     elif courier is None and order.status == "ASSIGNED":
         order.status = "PENDING"
+
+    if order.id is None:
+        # Cadastro e atribuição aparecem como etapas separadas no histórico.
+        order.history.append(OrderStatusEvent(status="PENDING", note="Pedido cadastrado", changed_by=user.id))
+        if courier is None:
+            return
+        note = f"Atribuído a {courier.user.full_name}"
+    elif courier is not None and courier.id != previous_courier_id:
+        note = f"Atribuído a {courier.user.full_name}"
+    elif courier is None and previous_courier_id is not None:
+        note = "Entregador removido do pedido"
+    else:
+        note = "Dados do pedido atualizados"
+    record(order, user, note)
 
 
 @router.get("", response_model=list[OrderOut])
@@ -118,9 +152,19 @@ def list_orders(
     return [order_out(order) for order in orders]
 
 
-@router.get("/{order_id}", response_model=OrderOut)
-def get_order(order_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> OrderOut:
-    return order_out(get_visible_order(db, user, order_id))
+@router.get("/{order_id}", response_model=OrderDetailOut)
+def get_order(order_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> OrderDetailOut:
+    order = get_visible_order(db, user, order_id)
+    history = [
+        HistoryOut(
+            status=event.status,
+            note=event.note,
+            changed_by=event.author.full_name if event.author else None,
+            changed_at=event.changed_at,
+        )
+        for event in order.history
+    ]
+    return OrderDetailOut(**order_out(order).model_dump(), history=history)
 
 
 @router.post("", response_model=OrderOut, status_code=status.HTTP_201_CREATED)
@@ -129,6 +173,7 @@ def create_order(
     user: User = Depends(require_roles(ADMIN, ATTENDANT)),
     db: Session = Depends(get_db),
 ) -> OrderOut:
+    ensure_window_not_past(data.desired_end)
     order = Order(establishment_id=user.establishment_id, status="PENDING")
     apply_order_data(db, user, order, data)
     db.add(order)
@@ -167,9 +212,12 @@ def change_order_status(
             )
     elif data.status in STATUSES_WITH_COURIER and order.courier is None:
         raise HTTPException(status.HTTP_409_CONFLICT, "Atribua um entregador antes de usar este status.")
+    if data.status == order.status:
+        raise HTTPException(status.HTTP_409_CONFLICT, "O pedido já está nesta situação.")
     if data.status == "PENDING":
         order.courier = None
     order.status = data.status
+    record(order, user, data.note or STATUS_NOTES[data.status])
     db.commit()
     return order_out(order)
 

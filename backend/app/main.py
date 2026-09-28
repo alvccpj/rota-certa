@@ -9,10 +9,17 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.database import SessionLocal, apply_schema_if_missing, database_status, get_db, logger
+from app.database import (
+    SessionLocal,
+    apply_schema_if_missing,
+    create_missing_tables,
+    database_status,
+    get_db,
+    logger,
+)
 from app.optimizer.routing import Stop, compare_modes
 from app.optimizer.schemas import OptimizationRequest
-from app.routers import auth, orders, users
+from app.routers import auth, customers, geocoding, orders, users
 from app.seed import DEMO_PASSWORD, seed_demo_data
 
 
@@ -20,6 +27,7 @@ def prepare_database() -> None:
     try:
         if settings.auto_create_schema:
             apply_schema_if_missing()
+            create_missing_tables()
         if settings.seed_demo_data:
             with SessionLocal() as db:
                 if seed_demo_data(db):
@@ -49,7 +57,9 @@ app.add_middleware(
 )
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(customers.router)
 app.include_router(orders.router)
+app.include_router(geocoding.router)
 
 
 @app.get("/health", tags=["system"])

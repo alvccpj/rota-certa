@@ -23,6 +23,32 @@ export interface CourierOption {
   full_name: string;
   availability: Availability;
   load_capacity_kg: number;
+  active_load_kg: number;
+  active_orders: number;
+}
+
+export interface Customer {
+  id: number;
+  full_name: string;
+  phone: string | null;
+  order_count: number;
+  last_address: string | null;
+  last_latitude: number | null;
+  last_longitude: number | null;
+  created_at: string;
+}
+
+export interface HistoryEvent {
+  status: OrderStatus;
+  note: string | null;
+  changed_by: string | null;
+  changed_at: string;
+}
+
+export interface GeocodeResult {
+  label: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Order {
@@ -40,9 +66,12 @@ export interface Order {
   created_at: string;
 }
 
+export interface OrderDetail extends Order {
+  history: HistoryEvent[];
+}
+
 export interface OrderInput {
-  customer_name: string;
-  customer_phone: string | null;
+  customer_id: number;
   delivery_address: string;
   latitude: number;
   longitude: number;
@@ -59,6 +88,8 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    /** Mensagens de validação por campo, com os nomes usados pela API. */
+    public fields: Record<string, string> = {},
   ) {
     super(message);
   }
@@ -84,31 +115,19 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
     });
   } catch {
-    throw new ApiError(0, `A API não respondeu em ${API_URL}. Verifique se o backend está rodando.`);
+    throw new ApiError(
+      0,
+      "Não foi possível falar com o servidor. Verifique a conexão ou se a API está rodando e tente de novo.",
+    );
   }
   if (response.status === 204) return undefined as T;
   const data = await response.json().catch(() => null);
   if (!response.ok) {
     if (response.status === 401 && token) onUnauthorized();
-    throw new ApiError(response.status, errorMessage(data));
+    throw toApiError(response.status, data);
   }
   return data as T;
 }
-
-const FIELD_LABELS: Record<string, string> = {
-  email: "E-mail",
-  password: "Senha",
-  full_name: "Nome",
-  establishment_name: "Nome do negócio",
-  depot_address: "Endereço de saída",
-  customer_name: "Cliente",
-  customer_phone: "Telefone",
-  delivery_address: "Endereço de entrega",
-  latitude: "Latitude",
-  longitude: "Longitude",
-  weight_kg: "Peso",
-  load_capacity_kg: "Capacidade de carga",
-};
 
 interface ValidationIssue {
   type: string;
@@ -117,30 +136,55 @@ interface ValidationIssue {
   ctx?: Record<string, unknown>;
 }
 
-function errorMessage(data: unknown): string {
+function toApiError(status: number, data: unknown): ApiError {
   const detail = (data as { detail?: unknown } | null)?.detail;
-  if (typeof detail === "string") return detail;
-  if (Array.isArray(detail)) return (detail as ValidationIssue[]).map(describeIssue).join(" ");
-  return "Não foi possível concluir a operação.";
+  if (typeof detail === "string") return new ApiError(status, detail);
+  if (Array.isArray(detail)) {
+    const fields: Record<string, string> = {};
+    const general: string[] = [];
+    for (const issue of detail as ValidationIssue[]) {
+      const field = issue.loc.length > 1 ? String(issue.loc[issue.loc.length - 1]) : null;
+      const message = describeIssue(issue);
+      if (field && field !== "body") fields[field] ??= message;
+      else general.push(message);
+    }
+    const count = Object.keys(fields).length;
+    const summary =
+      general.join(" ") ||
+      (count === 1 ? "Corrija o campo destacado." : `Corrija os ${count} campos destacados.`);
+    return new ApiError(status, summary, fields);
+  }
+  if (status >= 500) return new ApiError(status, "O servidor encontrou um erro inesperado. Tente de novo em instantes.");
+  return new ApiError(status, "Não foi possível concluir a operação.");
 }
 
+/** Traduz os erros de validação da API para mensagens exibidas junto ao campo. */
 function describeIssue(issue: ValidationIssue): string {
-  const field = String(issue.loc[issue.loc.length - 1]);
-  const label = FIELD_LABELS[field];
-  if (issue.type === "value_error" && !label) return issue.msg.replace(/^Value error, /, "");
-  const name = label ?? "Campo";
+  const ctx = issue.ctx ?? {};
   switch (issue.type) {
     case "missing":
-      return `${name}: preenchimento obrigatório.`;
+      return "Preencha este campo.";
     case "string_too_short":
-      return `${name}: use pelo menos ${issue.ctx?.min_length} caracteres.`;
+      return `Use pelo menos ${ctx.min_length} caracteres.`;
     case "string_too_long":
-      return `${name}: use no máximo ${issue.ctx?.max_length} caracteres.`;
+      return `Use no máximo ${ctx.max_length} caracteres.`;
     case "greater_than":
-      return `${name}: informe um valor maior que ${issue.ctx?.gt}.`;
+      return `Informe um valor maior que ${ctx.gt}.`;
+    case "greater_than_equal":
+      return `O valor mínimo é ${ctx.ge}.`;
+    case "less_than_equal":
+      return `O valor máximo é ${ctx.le}.`;
+    case "int_parsing":
+    case "int_type":
+    case "float_parsing":
+    case "float_type":
+      return "Informe um número.";
+    case "literal_error":
+      return "Escolha uma das opções.";
     case "value_error":
-      return `${name}: valor inválido.`;
+      if (/email/i.test(issue.msg)) return "Informe um e-mail válido, como nome@empresa.com.br.";
+      return issue.msg.replace(/^Value error, /, "");
     default:
-      return `${name}: verifique o valor informado.`;
+      return "Confira o valor informado.";
   }
 }

@@ -1,0 +1,22 @@
+POST /customers com telefone sem DDD
+  -> HTTP 422 phone: Value error, Informe o telefone com DDD, por exemplo (81) 98800-1001.
+POST /customers com nome sem letras
+  -> HTTP 422 full_name: Value error, Informe um nome com pelo menos duas letras.
+POST /customers repetindo nome e telefone
+  -> HTTP 409 Já existe um cliente com este nome e telefone.
+POST /users com senha sem números
+  -> HTTP 422 password: Value error, A senha precisa ter letras e números.
+POST /orders com peso de 600 kg
+  -> HTTP 422 weight_kg: Input should be less than or equal to 500
+POST /orders com fim da janela antes do início
+  -> HTTP 422 body: Value error, O fim da janela de entrega deve ser depois do início.
+POST /orders com horário final no passado
+  -> HTTP 422 O horário final da entrega já passou. Informe um horário futuro.
+POST /orders fora do raio de entrega
+  -> HTTP 422 O local de entrega fica a 99,8 km do ponto de saída. O limite de entrega é 30 km.
+POST /orders para Diego Entregador com 45 kg
+  -> HTTP 409 Com este pedido, Diego Entregador ficaria com 45,8 kg em entregas, acima da capacidade de 40 kg. Escolha outro entregador ou divida o pedido.
+DELETE /customers de cliente com pedidos
+  -> HTTP 409 Maria Silva tem 1 pedido e não pode ser excluído.
+GET /geocode com texto curto
+  -> HTTP 422 q: String should have at least 5 characters

@@ -16,4 +16,6 @@ Depois do esquema, a API cadastra um estabelecimento de demonstração com usuá
 
 Para recomeçar do zero no Docker, remova o volume com `docker compose down -v`.
 
-O esquema cobre estabelecimentos, usuários, entregadores, clientes, pedidos, rotas, paradas e execuções de otimização. A tabela `optimization_runs` foi incluída para registrar a comparação sequencial e paralela solicitada na orientação da Sprint 01.
+O esquema cobre estabelecimentos, usuários, entregadores, clientes, pedidos, histórico de situação dos pedidos, rotas, paradas e execuções de otimização. A tabela `optimization_runs` foi incluída para registrar a comparação sequencial e paralela solicitada na orientação da Sprint 01.
+
+A tabela `order_status_history` foi adicionada na Sprint 04. Bancos criados antes dela recebem a tabela automaticamente quando a API inicia, sem perda de dados.

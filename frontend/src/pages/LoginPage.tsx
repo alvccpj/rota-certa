@@ -1,5 +1,10 @@
 import { type FormEvent, useState } from "react";
-import { api, type Session } from "../api";
+import { Link, useLocation, useNavigate } from "react-router";
+import { api, ApiError, type Session } from "../api";
+import AuthShell from "../components/AuthShell";
+import Field, { FormAlert } from "../components/Field";
+import { useSession } from "../session";
+import { check, collectErrors, type FieldErrors, focusFirstError } from "../validation";
 
 const DEMO_ACCOUNTS = [
   { label: "Administrador", email: "admin@rotacerta.com.br" },
@@ -8,179 +13,94 @@ const DEMO_ACCOUNTS = [
 ];
 const DEMO_PASSWORD = "rotacerta123";
 
-interface Props {
-  onSignedIn: (session: Session) => void;
-  notice: string | null;
-}
-
-export default function LoginPage({ onSignedIn, notice }: Props) {
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+export default function LoginPage() {
+  const { signIn } = useSession();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { from?: string; notice?: string } | null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [register, setRegister] = useState({
-    establishment_name: "",
-    depot_address: "",
-    full_name: "",
-    email: "",
-    password: "",
-  });
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    const found = collectErrors({
+      email: check.email(email),
+      password: check.required(password, "Informe a senha."),
+    });
+    setErrors(found);
+    setFormError(null);
+    if (Object.keys(found).length) {
+      focusFirstError();
+      return;
+    }
     setBusy(true);
-    setError(null);
     try {
-      const session =
-        mode === "login"
-          ? await api<Session>("/auth/login", { method: "POST", body: { email, password } })
-          : await api<Session>("/auth/register", { method: "POST", body: register });
-      onSignedIn(session);
+      const session = await api<Session>("/auth/login", { method: "POST", body: { email, password } });
+      signIn(session);
+      navigate(state?.from ?? "/", { replace: true });
     } catch (err) {
-      setError((err as Error).message);
+      const error = err as ApiError;
+      setErrors(error.fields ?? {});
+      setFormError(error.message);
     } finally {
       setBusy(false);
     }
   }
 
-  function switchMode(next: "login" | "register") {
-    setMode(next);
-    setError(null);
-  }
-
-  const field = (key: keyof typeof register) => ({
-    value: register[key],
-    onChange: (e: { target: { value: string } }) => setRegister({ ...register, [key]: e.target.value }),
-  });
-
   return (
-    <div className="login">
-      <section className="login-sign" aria-hidden="true">
-        <div className="sign-plate">
-          <p className="sign-title">RotaCerta</p>
-          <p className="sign-text">Pedidos, entregadores e rotas do dia em um só lugar.</p>
+    <AuthShell>
+      <form className="login-form" onSubmit={submit} noValidate>
+        <h1>Entrar</h1>
+        <p className="muted">Use o e-mail e a senha cadastrados pelo administrador.</p>
+        {state?.notice && !formError && <p className="alert info">{state.notice}</p>}
+        <FormAlert message={formError} />
+        <Field label="E-mail" name="email" error={errors.email}>
+          {(props) => (
+            <input {...props} type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+          )}
+        </Field>
+        <Field label="Senha" name="password" error={errors.password}>
+          {(props) => (
+            <input
+              {...props}
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          )}
+        </Field>
+        <button type="submit" className="button primary wide" disabled={busy}>
+          {busy ? "Entrando…" : "Entrar"}
+        </button>
+        <p className="switch">
+          Ainda não usa o RotaCerta? <Link to="/cadastro">Cadastrar meu negócio</Link>
+        </p>
+      </form>
+
+      <div className="demo">
+        <p>Contas de demonstração, senha {DEMO_PASSWORD}</p>
+        <div className="demo-buttons">
+          {DEMO_ACCOUNTS.map((account) => (
+            <button
+              key={account.email}
+              type="button"
+              className="button quiet"
+              onClick={() => {
+                setEmail(account.email);
+                setPassword(DEMO_PASSWORD);
+                setErrors({});
+                setFormError(null);
+              }}
+            >
+              {account.label}
+            </button>
+          ))}
         </div>
-        <svg className="sign-route" viewBox="0 0 420 220" preserveAspectRatio="xMidYMid meet">
-          <path
-            d="M20 190 C 90 190, 90 120, 160 120 S 240 40, 300 60 S 380 150, 400 40"
-            fill="none"
-            stroke="rgba(255,255,255,0.9)"
-            strokeWidth="4"
-            strokeDasharray="10 9"
-            strokeLinecap="round"
-          />
-          <circle cx="20" cy="190" r="10" fill="#F2B705" />
-          <circle cx="160" cy="120" r="8" fill="#fff" />
-          <circle cx="300" cy="60" r="8" fill="#fff" />
-          <circle cx="400" cy="40" r="8" fill="#fff" />
-        </svg>
-      </section>
-
-      <section className="login-panel">
-        <form className="login-form" onSubmit={submit} noValidate>
-          <h1>{mode === "login" ? "Entrar" : "Cadastrar meu negócio"}</h1>
-          <p className="muted">
-            {mode === "login"
-              ? "Use o e-mail e a senha cadastrados pelo administrador."
-              : "Você será o administrador e poderá cadastrar atendentes e entregadores."}
-          </p>
-
-          {notice && mode === "login" && <p className="alert info">{notice}</p>}
-          {error && (
-            <p className="alert error" role="alert">
-              {error}
-            </p>
-          )}
-
-          {mode === "login" ? (
-            <>
-              <label>
-                E-mail
-                <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </label>
-              <label>
-                Senha
-                <input
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </label>
-            </>
-          ) : (
-            <>
-              <label>
-                Nome do negócio
-                <input {...field("establishment_name")} placeholder="Ex.: Mercadinho São José" required />
-              </label>
-              <label>
-                Endereço de saída das entregas
-                <input {...field("depot_address")} placeholder="Rua, número, bairro e cidade" required />
-              </label>
-              <label>
-                Seu nome
-                <input {...field("full_name")} autoComplete="name" required />
-              </label>
-              <label>
-                E-mail
-                <input type="email" {...field("email")} autoComplete="email" required />
-              </label>
-              <label>
-                Senha
-                <input type="password" {...field("password")} autoComplete="new-password" required />
-                <small>Mínimo de 8 caracteres.</small>
-              </label>
-            </>
-          )}
-
-          <button type="submit" className="button primary wide" disabled={busy}>
-            {busy ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar conta"}
-          </button>
-
-          <p className="switch">
-            {mode === "login" ? (
-              <>
-                Ainda não usa o RotaCerta?{" "}
-                <button type="button" className="link" onClick={() => switchMode("register")}>
-                  Cadastrar meu negócio
-                </button>
-              </>
-            ) : (
-              <>
-                Já tem conta?{" "}
-                <button type="button" className="link" onClick={() => switchMode("login")}>
-                  Entrar
-                </button>
-              </>
-            )}
-          </p>
-        </form>
-
-        {mode === "login" && (
-          <div className="demo">
-            <p>Contas de demonstração, senha {DEMO_PASSWORD}</p>
-            <div className="demo-buttons">
-              {DEMO_ACCOUNTS.map((account) => (
-                <button
-                  key={account.email}
-                  type="button"
-                  className="button quiet"
-                  onClick={() => {
-                    setEmail(account.email);
-                    setPassword(DEMO_PASSWORD);
-                    setError(null);
-                  }}
-                >
-                  {account.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
-    </div>
+      </div>
+    </AuthShell>
   );
 }
