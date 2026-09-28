@@ -65,3 +65,9 @@ export function fromInputDateTime(value: string): string | null {
 export function formatKg(value: number): string {
   return `${value.toLocaleString("pt-BR", { maximumFractionDigits: 2 })} kg`;
 }
+
+export function formatDateTime(iso: string): string {
+  return dateTime.format(new Date(iso));
+}
+
+export const STAFF_ROLES: Role[] = ["ADMIN", "ATTENDANT"];
