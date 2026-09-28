@@ -954,6 +954,10 @@ td.num a {
   background: var(--surface);
 }
 
+.form-card.narrow {
+  max-width: 560px;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
