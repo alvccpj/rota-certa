@@ -1,0 +1,4 @@
+# Modo GPU do otimizador (opcional). Requer GPU NVIDIA com driver compatível com CUDA 13.
+# O extra [ctk] instala o compilador NVRTC e as bibliotecas do CUDA pelo pip, sem instalar o CUDA Toolkit.
+-r requirements.txt
+cupy-cuda13x[ctk]==14.2.0
