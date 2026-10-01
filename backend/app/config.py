@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     access_token_minutes: int = 480
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     max_delivery_radius_km: float = 30
+    # Usados para estimar a duração da rota e o horário de chegada em cada parada.
+    average_speed_kmh: float = 25
+    service_minutes_per_stop: float = 5
+    local_utc_offset_hours: int = -3
     geocoder_url: str = "https://nominatim.openstreetmap.org/search"
     geocoder_user_agent: str = "RotaCerta/0.4 (+https://github.com/alvccpj/rota-certa)"
     auto_create_schema: bool = True
