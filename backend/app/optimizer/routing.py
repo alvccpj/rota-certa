@@ -15,15 +15,22 @@ apenas a forma de execução, não diferenças de algoritmo.
 from __future__ import annotations
 
 import atexit
+import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from math import asin, cos, radians, sin, sqrt
-from os import cpu_count
-from threading import Lock
+from threading import RLock
 from time import perf_counter
 from typing import Literal, Sequence
 
-import numpy as np
+# O 2-opt não usa álgebra linear e cada processo já é uma unidade de paralelismo.
+# Sem este limite o OpenBLAS do NumPy abre uma thread por núcleo em cada processo
+# e, com vários processos, a memória se esgota (BrokenProcessPool). Os processos
+# do pool herdam estas variáveis ao iniciar.
+for _variable in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_variable, "1")
+
+import numpy as np  # noqa: E402
 
 ExecutionMode = Literal["SEQUENTIAL", "PARALLEL", "GPU"]
 ALGORITHM = "NEAREST_NEIGHBOR_2OPT"
@@ -194,39 +201,63 @@ def optimize_route(depot: Stop, stops: Sequence[Stop]) -> RouteResult:
     return _to_result(stops, order, distance)
 
 
-# Execução paralela na CPU. Os processos ficam abertos entre as chamadas, assim a
-# medição não inclui o custo de criar processos (alto no Windows).
+# Execução paralela na CPU. O pool fica aberto entre as chamadas, assim a medição
+# não inclui o custo de criar processos (alto no Windows). Existe um pool por vez e
+# as execuções paralelas acontecem uma de cada vez: duas ao mesmo tempo dividiriam
+# os núcleos entre si e distorceriam as medições.
 
-_pools: dict[int, ProcessPoolExecutor] = {}
-_pools_lock = Lock()
+_pool: ProcessPoolExecutor | None = None
+_pool_workers = 0
+_pool_lock = RLock()
 
 
 def available_cpus() -> int:
-    return cpu_count() or 1
+    return os.cpu_count() or 1
 
 
-def get_pool(workers: int) -> ProcessPoolExecutor:
-    with _pools_lock:
-        pool = _pools.get(workers)
-        if pool is None:
-            pool = ProcessPoolExecutor(max_workers=workers)
-            _pools[workers] = pool
-        return pool
+def _pool_for(workers: int) -> ProcessPoolExecutor:
+    """Devolve o pool com a quantidade pedida de processos, encerrando o anterior."""
+
+    global _pool, _pool_workers
+    if _pool is None or _pool_workers != workers:
+        if _pool is not None:
+            _pool.shutdown(wait=True)
+        _pool = ProcessPoolExecutor(max_workers=workers)
+        _pool_workers = workers
+    return _pool
+
+
+def run_parallel(jobs: Sequence[tuple[np.ndarray, np.ndarray]], workers: int) -> list[tuple[list[int], float]]:
+    # Uma fatia de rotas por processo: menos mensagens entre os processos do que
+    # enviar uma rota de cada vez (na medição, 4 processos caíram de 134 para 82 ms).
+    chunk = -(-len(jobs) // workers)
+    with _pool_lock:
+        return list(_pool_for(workers).map(_solve_job, jobs, chunksize=chunk))
+
+
+def active_pool_workers() -> int:
+    """Quantidade de processos do pool aberto (0 se nenhum)."""
+
+    return _pool_workers if _pool is not None else 0
 
 
 def warm_up_pool(workers: int) -> None:
     """Garante que todos os processos do pool já iniciaram e carregaram o NumPy."""
 
-    pool = get_pool(workers)
     latitudes, longitudes = np.zeros(3), np.array([0.0, 0.001, 0.002])
-    list(pool.map(_solve_job, [(latitudes, longitudes)] * workers * 2))
+    run_parallel([(latitudes, longitudes)] * workers * 2, workers)
 
 
 def shutdown_pools() -> None:
-    with _pools_lock:
-        for pool in _pools.values():
-            pool.shutdown(wait=False, cancel_futures=True)
-        _pools.clear()
+    global _pool, _pool_workers
+    if not _pool_lock.acquire(timeout=5):
+        return
+    try:
+        if _pool is not None:
+            _pool.shutdown(wait=False, cancel_futures=True)
+        _pool, _pool_workers = None, 0
+    finally:
+        _pool_lock.release()
 
 
 atexit.register(shutdown_pools)
@@ -254,7 +285,7 @@ def optimize_routes(
         jobs = [coordinates(depot, stops) for stops in routes]
         if mode == "PARALLEL" and len(jobs) > 1:
             worker_count = min(workers or available_cpus(), len(jobs))
-            solved = list(get_pool(worker_count).map(_solve_job, jobs))
+            solved = run_parallel(jobs, worker_count)
         else:
             worker_count = 1
             solved = [_solve_job(job) for job in jobs]

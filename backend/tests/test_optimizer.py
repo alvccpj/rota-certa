@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 import unittest
@@ -8,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.optimizer import gpu  # noqa: E402
 from app.optimizer.routing import (  # noqa: E402
     Stop,
+    active_pool_workers,
     compare_modes,
     nearest_neighbor,
     optimize_route,
@@ -84,6 +86,17 @@ class RoutingTestCase(unittest.TestCase):
         self.assertEqual(parallel.worker_count, 3)
         self.assertTrue(same_routes(sequential, parallel))
         self.assertAlmostEqual(sequential.total_distance_km, parallel.total_distance_km, places=9)
+
+    def test_only_one_process_pool_stays_open(self) -> None:
+        routes = random_routes(4, 10)
+        optimize_routes(self.depot, routes, "PARALLEL", workers=2)
+        optimize_routes(self.depot, routes, "PARALLEL", workers=3)
+        self.assertEqual(active_pool_workers(), 3)
+
+    def test_worker_processes_use_one_blas_thread(self) -> None:
+        # Cada processo do pool é uma unidade de paralelismo; threads extras do
+        # OpenBLAS em cada um esgotavam a memória com muitos processos.
+        self.assertEqual(os.environ["OPENBLAS_NUM_THREADS"], "1")
 
     def test_empty_and_single_stop_routes(self) -> None:
         result = optimize_routes(self.depot, [[], [self.stops[0]]], "SEQUENTIAL")
