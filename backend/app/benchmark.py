@@ -86,11 +86,12 @@ def run_benchmark(db: Session, user: User, data: BenchmarkIn) -> BenchmarkOut:
     configs += [("PARALLEL", workers) for workers in data.worker_counts]
     if data.include_gpu:
         configs.append(("GPU", None))
-    for _, workers in configs[1:]:
-        if workers is not None and len(routes) > 1:
+    measured = []
+    for mode, workers in configs:
+        # Só um pool fica aberto por vez, então cada um é aquecido logo antes de medir.
+        if mode == "PARALLEL" and len(routes) > 1:
             warm_up_pool(min(workers, len(routes)))
-
-    measured = [(mode, *measure(depot, routes, mode, workers, data.repetitions)) for mode, workers in configs]
+        measured.append((mode, *measure(depot, routes, mode, workers, data.repetitions)))
     baseline_result, baseline_ms = measured[0][1], measured[0][2]
     order_count = sum(len(stops) for stops in routes)
     run_group = str(uuid4())
