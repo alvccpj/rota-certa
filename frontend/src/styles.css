@@ -410,6 +410,14 @@ legend {
   display: flex;
   gap: 4px;
   flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs .tab {
+  flex: none;
+  white-space: nowrap;
 }
 
 .tab {
@@ -1238,6 +1246,493 @@ td.num a {
   padding: 48px 0;
 }
 
+/* Rotas */
+
+.segmented button {
+  padding: 0 12px;
+}
+
+.segmented button:disabled {
+  color: #a3aea8;
+  cursor: not-allowed;
+}
+
+.route-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.route-controls > .field:first-child {
+  min-width: min(440px, 100%);
+}
+
+.workers-field {
+  min-width: 240px;
+}
+
+.route-summary {
+  color: var(--muted);
+}
+
+.route-summary strong {
+  color: var(--ink);
+}
+
+.run-result {
+  display: grid;
+  gap: 4px;
+}
+
+.routes-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.route-map {
+  height: 560px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  top: 16px;
+  z-index: 0;
+}
+
+.route-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--route);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.route-card.focused {
+  box-shadow: 0 0 0 2px var(--route);
+}
+
+.route-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.route-swatch {
+  flex: none;
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--route);
+}
+
+.route-courier {
+  flex: 1;
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.route-status {
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.route-planned {
+  background: #dce7f5;
+  color: #1d4f91;
+}
+
+.route-in_progress {
+  background: #fff1bf;
+  color: #6b4f00;
+}
+
+.route-completed {
+  background: #dcefe3;
+  color: var(--sign);
+}
+
+.route-cancelled {
+  background: #fbe4e2;
+  color: var(--danger);
+}
+
+.stop-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stop-list li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-top: 1px solid #e8ece9;
+}
+
+.stop-list li .sub {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stop-list a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.stop-list a:hover {
+  text-decoration: underline;
+}
+
+.stop-number {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--asphalt);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stop-list li.done {
+  color: var(--muted);
+}
+
+.stop-list li.done .stop-number {
+  background: #c3cbc6;
+}
+
+.stop-list li.next .stop-number {
+  background: var(--lane);
+  color: var(--asphalt);
+}
+
+.stop-meta {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stop-pin {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--pin);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--asphalt);
+  font: 700 12px/1 "Barlow", system-ui, sans-serif;
+  box-shadow: 0 1px 4px rgb(31 36 39 / 35%);
+}
+
+.stop-pin.done {
+  background: var(--pin);
+  color: #fff;
+}
+
+.depot-pin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 3px solid #fff;
+  border-radius: 8px;
+  background: var(--sign);
+  color: #fff;
+  font: 700 14px/1 "Barlow", system-ui, sans-serif;
+  box-shadow: 0 1px 6px rgb(31 36 39 / 45%);
+}
+
+.depot-card {
+  max-width: none;
+  border-left: 4px solid var(--lane);
+}
+
+.my-route {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--sign);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.my-route-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.my-route .route-map {
+  height: 320px;
+  position: relative;
+  top: 0;
+}
+
+/* Desempenho */
+
+.machine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  color: var(--muted);
+}
+
+.machine strong {
+  color: var(--ink);
+}
+
+.bench-form {
+  max-width: none;
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: end;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  accent-color: var(--sign);
+}
+
+.results {
+  display: grid;
+  gap: 16px;
+}
+
+.results-head p {
+  margin-top: 4px;
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat-tile {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.stat-tile span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.stat-tile strong {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-tile.warn {
+  border-left: 4px solid var(--danger);
+}
+
+.speedup-chart {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.speedup-chart figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+}
+
+.legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.legend-bar {
+  width: 14px;
+  height: 10px;
+  border-radius: 0 3px 3px 0;
+  background: #2a78d6;
+}
+
+.legend-ideal {
+  width: 0;
+  height: 14px;
+  margin-left: 12px;
+  border-left: 2px dashed var(--asphalt);
+}
+
+.chart-rows {
+  display: grid;
+  gap: 6px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  outline: none;
+}
+
+.chart-row:focus-visible .chart-track {
+  box-shadow: var(--focus);
+}
+
+.chart-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-track {
+  position: relative;
+  height: 30px;
+  margin-right: 56px;
+}
+
+.chart-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #e8ece9;
+}
+
+.chart-bar {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  height: 20px;
+  border-radius: 0 4px 4px 0;
+  background: #2a78d6;
+}
+
+.chart-ideal {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  border-left: 2px dashed var(--asphalt);
+}
+
+.chart-value {
+  position: absolute;
+  z-index: 1;
+  top: 5px;
+  margin-left: 4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--surface);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chart-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  z-index: 2;
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--asphalt);
+  color: #fff;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.chart-row.axis .chart-track {
+  height: 20px;
+}
+
+.chart-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.history {
+  display: grid;
+  gap: 12px;
+}
+
+tr.selected td {
+  background: #f1f6f3;
+}
+
 @media (max-width: 860px) {
   .login {
     grid-template-columns: 1fr;
@@ -1297,6 +1792,30 @@ td.num a {
 
   .delivery-list {
     grid-template-columns: 1fr;
+  }
+
+  .routes-layout,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .route-map {
+    position: relative;
+    top: 0;
+    height: 340px;
+  }
+
+  .my-route-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .route-controls > * {
+    flex: 1 1 100%;
   }
 }
 

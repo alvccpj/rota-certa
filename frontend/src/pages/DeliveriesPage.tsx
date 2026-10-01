@@ -1,9 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
-import { api, type Availability, type Order, type OrderStatus, type User } from "../api";
+import { api, type Availability, type MyRoute, type Order, type OrderStatus, type User } from "../api";
 import { Priority, StatusBadge } from "../components/Badges";
+import RouteMap from "../components/RouteMap";
 import { useToast } from "../components/Toast";
-import { STATUS_LABELS, formatKg, formatWindow } from "../labels";
+import {
+  ROUTE_STATUS_LABELS,
+  STATUS_LABELS,
+  formatDuration,
+  formatKg,
+  formatKm,
+  formatTime,
+  formatWindow,
+} from "../labels";
 import { useSession, useUser } from "../session";
 import { NEXT_STEP } from "./OrderDetailPage";
 
@@ -18,6 +27,8 @@ export default function DeliveriesPage() {
   const { updateUser } = useSession();
   const notify = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [myRoute, setMyRoute] = useState<MyRoute | null>(null);
+  const [starting, setStarting] = useState(false);
   const [filter, setFilter] = useState<OrderStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +36,9 @@ export default function DeliveriesPage() {
 
   const load = useCallback(async () => {
     try {
-      setOrders(await api<Order[]>("/orders"));
+      const [nextOrders, nextRoute] = await Promise.all([api<Order[]>("/orders"), api<MyRoute>("/routes/me")]);
+      setOrders(nextOrders);
+      setMyRoute(nextRoute);
       setError(null);
     } catch (err) {
       setError((err as Error).message);
@@ -47,6 +60,19 @@ export default function DeliveriesPage() {
       load();
     } catch (err) {
       notify((err as Error).message, "error");
+    }
+  }
+
+  async function startRoute(routeId: number) {
+    setStarting(true);
+    try {
+      await api(`/routes/${routeId}/start`, { method: "PATCH" });
+      notify("Rota iniciada. Siga a ordem das paradas.");
+      load();
+    } catch (err) {
+      notify((err as Error).message, "error");
+    } finally {
+      setStarting(false);
     }
   }
 
@@ -89,6 +115,8 @@ export default function DeliveriesPage() {
           </div>
         </div>
       </div>
+
+      {myRoute?.route && <MyRouteCard data={myRoute} starting={starting} onStart={startRoute} />}
 
       <div className="filters" role="group" aria-label="Filtrar por situação">
         <button type="button" className={filter ? "chip" : "chip active"} onClick={() => setFilter(null)}>
@@ -173,5 +201,49 @@ export default function DeliveriesPage() {
         </ul>
       )}
     </section>
+  );
+}
+
+function MyRouteCard({ data, starting, onStart }: { data: MyRoute; starting: boolean; onStart: (id: number) => void }) {
+  const route = data.route!;
+  const next = route.stops.find((stop) => stop.order_status !== "DELIVERED" && stop.order_status !== "CANCELLED");
+  return (
+    <div className="my-route">
+      <div className="my-route-head">
+        <div>
+          <h2>Sua rota</h2>
+          <p className="muted">
+            {ROUTE_STATUS_LABELS[route.status]} · {route.stops.length} {route.stops.length === 1 ? "parada" : "paradas"} ·{" "}
+            {formatKm(route.total_distance_km)} ·{" "}
+            {formatDuration(route.estimated_duration_min)} estimados
+          </p>
+        </div>
+        {route.status === "PLANNED" && (
+          <button type="button" className="button primary" onClick={() => onStart(route.id)} disabled={starting}>
+            {starting ? "Iniciando…" : "Iniciar rota"}
+          </button>
+        )}
+      </div>
+      <RouteMap routes={[route]} depot={data.depot} label="Mapa da sua rota" />
+      <ol className="stop-list">
+        {route.stops.map((stop) => (
+          <li
+            key={stop.order_id}
+            className={stop.order_status === "DELIVERED" ? "done" : stop === next ? "next" : undefined}
+          >
+            <span className="stop-number">{stop.sequence}</span>
+            <div>
+              <Link to={`/pedidos/${stop.order_id}`}>{stop.customer_name}</Link>
+              <span className="sub">{stop.delivery_address}</span>
+            </div>
+            <div className="stop-meta">
+              <span>{stop === next ? "Próxima · " : ""}{formatTime(stop.estimated_arrival)}</span>
+              <StatusBadge status={stop.order_status} />
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="inline-note">Saída e retorno: {data.depot.address}</p>
+    </div>
   );
 }
