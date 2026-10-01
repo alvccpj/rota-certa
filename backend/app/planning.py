@@ -267,7 +267,7 @@ def generate_routes(db: Session, user: User, mode: str, workers: int | None) -> 
     skipped: list[SkippedCourierOut] = []
     for courier, orders in assigned_orders_by_courier(db, establishment.id).items():
         if courier.availability == "OFFLINE":
-            reason = "Está fora de serviço. Os pedidos dele não entraram em nenhuma rota."
+            reason = "Está fora de serviço, então os pedidos atribuídos não entraram em nenhuma rota."
         elif courier.id in in_progress:
             reason = "Já está com uma rota em andamento. Os novos pedidos entram na próxima rota."
         else:
