@@ -108,8 +108,8 @@ class ProfilesTestCase(ApiTestCase):
     def test_courier_sees_only_own_orders(self) -> None:
         all_orders = self.client.get("/orders", headers=self.admin).json()
         own_orders = self.client.get("/orders", headers=self.courier).json()
-        self.assertEqual(len(all_orders), 6)
-        self.assertEqual(len(own_orders), 2)
+        self.assertEqual(len(all_orders), 14)
+        self.assertEqual(len(own_orders), 6)
         self.assertTrue(all(o["assigned_courier"]["full_name"] == "Carla Entregadora" for o in own_orders))
 
     def test_courier_cannot_create_orders(self) -> None:

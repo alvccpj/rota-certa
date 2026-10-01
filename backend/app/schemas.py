@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, model_validator
@@ -221,3 +221,135 @@ class GeocodeResult(BaseModel):
     label: str
     latitude: float
     longitude: float
+
+
+# Ponto de saída das entregas
+
+class DepotIn(BaseModel):
+    depot_address: Address
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
+
+
+class DepotOut(BaseModel):
+    address: str
+    latitude: float | None
+    longitude: float | None
+
+
+# Rotas
+
+ExecutionMode = Literal["SEQUENTIAL", "PARALLEL", "GPU"]
+RouteStatus = Literal["PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"]
+StopStatus = Literal["PENDING", "ARRIVED", "COMPLETED", "FAILED"]
+MAX_WORKERS = 64
+
+
+class RouteGenerateIn(BaseModel):
+    mode: ExecutionMode = "SEQUENTIAL"
+    workers: int | None = Field(default=None, ge=1, le=MAX_WORKERS)
+
+
+class RouteStopOut(BaseModel):
+    sequence: int
+    status: StopStatus
+    order_id: int
+    order_status: OrderStatus
+    customer_name: str
+    customer_phone: str | None
+    delivery_address: str
+    latitude: float
+    longitude: float
+    priority: int
+    weight_kg: float
+    distance_from_previous_km: float | None
+    estimated_arrival: datetime | None
+
+
+class RouteOut(BaseModel):
+    id: int
+    courier: AssignedCourierOut
+    route_date: date
+    status: RouteStatus
+    algorithm: str
+    execution_mode: ExecutionMode
+    total_distance_km: float | None
+    estimated_duration_min: int | None
+    created_at: datetime
+    stops: list[RouteStopOut]
+
+
+class SkippedCourierOut(BaseModel):
+    courier: AssignedCourierOut
+    reason: str
+
+
+class OptimizationRunOut(BaseModel):
+    id: int
+    executed_at: datetime
+    purpose: Literal["ROUTE_GENERATION", "BENCHMARK"]
+    input_source: Literal["REAL", "SYNTHETIC"]
+    run_group: str | None
+    algorithm: str
+    execution_mode: ExecutionMode
+    worker_count: int
+    order_count: int
+    courier_count: int
+    execution_time_ms: float
+    total_distance_km: float
+    speedup: float | None
+    efficiency: float | None
+    same_routes: bool | None
+
+
+class RoutesOverviewOut(BaseModel):
+    depot: DepotOut
+    routes: list[RouteOut]
+    waiting_orders: int
+
+
+class RouteGenerationOut(RoutesOverviewOut):
+    skipped: list[SkippedCourierOut]
+    run: OptimizationRunOut
+
+
+class MyRouteOut(BaseModel):
+    depot: DepotOut
+    route: RouteOut | None
+
+
+# Comparação de desempenho
+
+class CapabilitiesOut(BaseModel):
+    cpu_count: int
+    gpu_available: bool
+    gpu_name: str | None
+    gpu_reason: str | None
+
+
+class BenchmarkIn(BaseModel):
+    source: Literal["REAL", "SYNTHETIC"] = "SYNTHETIC"
+    couriers: int = Field(default=16, ge=1, le=64)
+    stops_per_courier: int = Field(default=200, ge=2, le=500)
+    worker_counts: list[Annotated[int, Field(ge=1, le=MAX_WORKERS)]] = Field(
+        default_factory=lambda: [1, 2, 4, 8], min_length=1, max_length=8
+    )
+    include_gpu: bool = True
+    repetitions: int = Field(default=3, ge=1, le=5)
+    seed: int = Field(default=42, ge=0, le=1_000_000)
+
+    @model_validator(mode="after")
+    def limit_size(self) -> "BenchmarkIn":
+        if self.source == "SYNTHETIC" and self.couriers * self.stops_per_courier > 12_000:
+            raise ValueError("Use no máximo 12.000 paradas no total (entregadores × paradas por entregador).")
+        self.worker_counts = sorted(set(self.worker_counts))
+        return self
+
+
+class BenchmarkOut(BaseModel):
+    run_group: str
+    source: Literal["REAL", "SYNTHETIC"]
+    courier_count: int
+    order_count: int
+    repetitions: int
+    rows: list[OptimizationRunOut]

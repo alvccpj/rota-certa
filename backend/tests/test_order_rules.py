@@ -12,8 +12,8 @@ class OrderRulesTestCase(ApiTestCase):
 
     def test_couriers_list_shows_current_load(self) -> None:
         carla = next(c for c in self.client.get("/couriers", headers=self.admin).json() if c["full_name"] == "Carla Entregadora")
-        self.assertAlmostEqual(carla["active_load_kg"], 3.7)
-        self.assertEqual(carla["active_orders"], 2)
+        self.assertAlmostEqual(carla["active_load_kg"], 6.0)
+        self.assertEqual(carla["active_orders"], 6)
 
     def test_offline_courier_cannot_receive_orders(self) -> None:
         response = self.client.patch("/couriers/me/availability", headers=self.diego, json={"availability": "OFFLINE"})
@@ -29,10 +29,10 @@ class OrderRulesTestCase(ApiTestCase):
 
     def test_courier_capacity_is_respected(self) -> None:
         carla = self.courier_id()
-        too_heavy = self.client.post("/orders", headers=self.admin, json=self.order_payload(weight_kg=22, assigned_courier_id=carla))
+        too_heavy = self.client.post("/orders", headers=self.admin, json=self.order_payload(weight_kg=19.5, assigned_courier_id=carla))
         self.assertEqual(too_heavy.status_code, 409)
         self.assertIn("25 kg", too_heavy.json()["detail"])
-        fits = self.client.post("/orders", headers=self.admin, json=self.order_payload(weight_kg=21, assigned_courier_id=carla))
+        fits = self.client.post("/orders", headers=self.admin, json=self.order_payload(weight_kg=19, assigned_courier_id=carla))
         self.assertEqual(fits.status_code, 201, fits.text)
 
     def test_delivery_must_be_inside_radius(self) -> None:

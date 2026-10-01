@@ -61,3 +61,39 @@ def create_missing_tables() -> None:
     if not inspect(engine).has_table(OrderStatusEvent.__tablename__):
         Base.metadata.create_all(engine, tables=[OrderStatusEvent.__table__])
         logger.info("Tabela %s criada.", OrderStatusEvent.__tablename__)
+
+
+# Sprint 05: modo GPU e métricas da comparação em bancos criados antes dela.
+SPRINT_05_UPGRADE = """
+ALTER TABLE routes DROP CONSTRAINT IF EXISTS routes_execution_mode_check;
+ALTER TABLE routes ADD CONSTRAINT routes_execution_mode_check
+    CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL', 'GPU'));
+ALTER TABLE optimization_runs DROP CONSTRAINT IF EXISTS optimization_runs_execution_mode_check;
+ALTER TABLE optimization_runs ADD CONSTRAINT optimization_runs_execution_mode_check
+    CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL', 'GPU'));
+ALTER TABLE optimization_runs
+    ADD COLUMN IF NOT EXISTS purpose VARCHAR(20) NOT NULL DEFAULT 'BENCHMARK'
+        CHECK (purpose IN ('ROUTE_GENERATION', 'BENCHMARK')),
+    ADD COLUMN IF NOT EXISTS input_source VARCHAR(20) NOT NULL DEFAULT 'REAL'
+        CHECK (input_source IN ('REAL', 'SYNTHETIC')),
+    ADD COLUMN IF NOT EXISTS run_group VARCHAR(36),
+    ADD COLUMN IF NOT EXISTS speedup NUMERIC(10, 3),
+    ADD COLUMN IF NOT EXISTS efficiency NUMERIC(8, 4),
+    ADD COLUMN IF NOT EXISTS same_routes BOOLEAN;
+CREATE INDEX IF NOT EXISTS idx_optimization_runs_group ON optimization_runs(establishment_id, run_group);
+CREATE INDEX IF NOT EXISTS idx_routes_status ON routes(establishment_id, status);
+"""
+
+
+def upgrade_schema() -> bool:
+    """Aplica as alterações da Sprint 05 quando o banco ainda não as tem."""
+
+    if engine.dialect.name != "postgresql":
+        return False
+    columns = {column["name"] for column in inspect(engine).get_columns("optimization_runs")}
+    if "run_group" in columns:
+        return False
+    with engine.begin() as connection:
+        connection.exec_driver_sql(SPRINT_05_UPGRADE)
+    logger.info("Banco atualizado para a Sprint 05 (modo GPU e métricas de comparação).")
+    return True
