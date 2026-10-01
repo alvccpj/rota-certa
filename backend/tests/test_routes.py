@@ -216,6 +216,11 @@ class BenchmarkTestCase(ApiTestCase):
         history = self.client.get("/optimizer/runs", headers=self.admin).json()
         self.assertEqual({run["run_group"] for run in history[:3]}, {payload["run_group"]})
 
+    def test_worker_counts_above_route_count_are_not_repeated(self) -> None:
+        body = {**self.SMALL, "couriers": 2, "worker_counts": [1, 2, 4, 8]}
+        rows = self.client.post("/optimizer/benchmark", headers=self.admin, json=body).json()["rows"]
+        self.assertEqual([row["worker_count"] for row in rows if row["execution_mode"] == "PARALLEL"], [1, 2])
+
     def test_benchmark_on_real_orders(self) -> None:
         body = {**self.SMALL, "source": "REAL"}
         response = self.client.post("/optimizer/benchmark", headers=self.admin, json=body)

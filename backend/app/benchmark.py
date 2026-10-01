@@ -83,7 +83,10 @@ def run_benchmark(db: Session, user: User, data: BenchmarkIn) -> BenchmarkOut:
         gpu.warm_up()
 
     configs: list[tuple[str, int | None]] = [("SEQUENTIAL", 1)]
-    configs += [("PARALLEL", workers) for workers in data.worker_counts]
+    # Com menos rotas que processos, os processos a mais ficariam parados: a
+    # quantidade efetiva é limitada ao número de rotas, sem repetir configurações.
+    effective = sorted({min(workers, len(routes)) for workers in data.worker_counts})
+    configs += [("PARALLEL", workers) for workers in effective]
     if data.include_gpu:
         configs.append(("GPU", None))
     measured = []
