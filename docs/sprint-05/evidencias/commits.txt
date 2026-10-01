@@ -1,0 +1,8 @@
+$ git log --reverse master..HEAD
+1c19228 01/10 14:09 docs: update README and add COMO-RODAR guide for local setup instructions
+7edc096 01/10 16:51 feat: reescreve o otimizador com matriz de distâncias e adiciona o modo GPU com CUDA
+e6b47b1 01/10 16:51 feat: gera, persiste e acompanha as rotas dos entregadores
+cdc73d0 01/10 16:58 feat: adiciona as telas de rotas, rota do entregador e desempenho do otimizador
+cbbd64e 01/10 17:02 fix: remove o gênero fixo da mensagem de entregador fora de serviço
+c767140 01/10 17:06 fix: evita a quebra do pool de processos na comparação de desempenho
+0d8e5c4 01/10 17:11 fix: não repete configurações com mais processos do que rotas na comparação

@@ -21,7 +21,7 @@ No Linux ou no macOS, use a versão do Git Bash e troque `.venv/Scripts/activate
 | Node.js | 20 ou superior | Para o frontend |
 | PostgreSQL | 16 ou superior | Instale junto com o pgAdmin 4 e anote a senha do usuário `postgres` |
 | Docker Desktop | Qualquer versão recente | Só se for usar a Opção 1 |
-| GPU NVIDIA com driver atualizado | Opcional | Usada pelo modo de otimização com CUDA, em implementação na Sprint 05. O sistema funciona sem GPU |
+| GPU NVIDIA com driver atualizado | Opcional | Usada pelo modo GPU (CUDA) do otimizador. O sistema funciona sem GPU |
 
 Para conferir se a sua máquina tem GPU NVIDIA:
 
@@ -114,6 +114,17 @@ Se o seu PostgreSQL usar outra porta, outro usuário ou outra senha, crie o arqu
 cp .env.example .env               # dentro de backend: cria o backend/.env a partir do modelo; depois edite o DATABASE_URL
 ```
 
+#### Modo GPU (opcional, só com GPU NVIDIA)
+
+Com o ambiente virtual ativado, dentro de `backend` (igual no PowerShell e no Git Bash):
+
+```bash
+pip install -r requirements-gpu.txt                                  # instala o CuPy e as bibliotecas do CUDA pelo pip (não precisa instalar o CUDA Toolkit)
+python -c "from app.optimizer import gpu; print(gpu.status())"       # confere se a GPU foi encontrada e se o kernel CUDA compilou
+```
+
+A segunda linha deve mostrar `available=True` e o nome da GPU. Depois disso, reinicie a API: o modo **GPU (CUDA)** fica disponível nas telas Rotas e Desempenho. Sem GPU, o comando mostra o motivo e o sistema continua com os modos de CPU.
+
 ### Passo 3. Subir o frontend (terminal 2)
 
 Abra outro terminal na raiz do repositório. Os comandos são iguais no PowerShell e no Git Bash:
@@ -131,6 +142,8 @@ Com a API e o frontend rodando:
 | Serviço | Endereço |
 | --- | --- |
 | Sistema | http://localhost:5173 |
+| Rotas do dia no mapa (administrador e atendente) | http://localhost:5173/rotas |
+| Comparação de desempenho do otimizador (administrador) | http://localhost:5173/desempenho |
 | Documentação interativa da API | http://localhost:8000/docs |
 | Situação da API e do banco | http://localhost:8000/health (deve mostrar `"database": "connected"`) |
 

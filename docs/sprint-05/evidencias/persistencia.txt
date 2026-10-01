@@ -1,0 +1,8 @@
+[01/10/2026 17:06:46] Fase 1: fluxo completo executado com o sistema no ar.
+[01/10/2026 17:11:35] Fase 2: API reiniciada; rotas e execuções consultadas de novo.
+GET /health -> {'status': 'ok', 'database': 'connected', 'dialect': 'postgresql', 'server_version': '18.1'}
+-- Registros no banco depois do reinício
+rotas | paradas | execucoes
+------+---------+----------
+2     | 10      | 42       
+(1 linha)

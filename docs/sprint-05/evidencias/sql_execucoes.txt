@@ -1,0 +1,77 @@
+-- Execuções registradas na tabela optimization_runs
+id | finalidade       | entrada   | modo       | workers | rotas | paradas | tempo_ms | speedup | eficiencia | mesmas_rotas
+---+------------------+-----------+------------+---------+-------+---------+----------+---------+------------+-------------
+1  | ROUTE_GENERATION | REAL      | SEQUENTIAL | 1       | 2     | 10      | 0.453    |         |            |             
+2  | ROUTE_GENERATION | REAL      | GPU        | 512     | 2     | 10      | 2.625    |         |            |             
+3  | ROUTE_GENERATION | REAL      | PARALLEL   | 1       | 1     | 1       | 0.103    |         |            |             
+4  | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 16    | 3200    | 184.758  | 1.000   | 1.0000     | True        
+5  | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 16    | 3200    | 265.795  | 0.695   | 0.6951     | True        
+6  | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 16    | 3200    | 208.104  | 0.888   | 0.4439     | True        
+7  | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 16    | 3200    | 136.317  | 1.355   | 0.3388     | True        
+8  | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 16    | 3200    | 90.284   | 2.046   | 0.2558     | True        
+9  | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 16    | 3200    | 75.172   | 2.458   | 0.1536     | True        
+10 | BENCHMARK        | SYNTHETIC | GPU        | 4096    | 16    | 3200    | 20.798   | 8.884   |            | True        
+11 | BENCHMARK        | REAL      | SEQUENTIAL | 1       | 2     | 3       | 0.087    | 1.000   | 1.0000     | True        
+12 | BENCHMARK        | REAL      | PARALLEL   | 1       | 2     | 3       | 0.524    | 0.166   | 0.1659     | True        
+13 | BENCHMARK        | REAL      | PARALLEL   | 2       | 2     | 3       | 0.586    | 0.148   | 0.0742     | True        
+14 | BENCHMARK        | REAL      | GPU        | 512     | 2     | 3       | 0.668    | 0.130   |            | True        
+15 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 8     | 400     | 4.948    | 1.000   | 1.0000     | True        
+16 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 8     | 400     | 6.208    | 0.797   | 0.7971     | True        
+17 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 8     | 400     | 3.724    | 1.329   | 0.6643     | True        
+18 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 8     | 400     | 2.129    | 2.324   | 0.5811     | True        
+19 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 8     | 400     | 2.066    | 2.395   | 0.2994     | True        
+20 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 8     | 400     | 2.030    | 2.438   | 0.3047     | True        
+21 | BENCHMARK        | SYNTHETIC | GPU        | 2048    | 8     | 400     | 1.266    | 3.909   |            | True        
+22 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 16    | 1600    | 35.660   | 1.000   | 1.0000     | True        
+23 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 16    | 1600    | 36.573   | 0.975   | 0.9750     | True        
+24 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 16    | 1600    | 20.155   | 1.769   | 0.8846     | True        
+25 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 16    | 1600    | 11.642   | 3.063   | 0.7658     | True        
+26 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 16    | 1600    | 8.793    | 4.056   | 0.5069     | True        
+27 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 16    | 1600    | 7.926    | 4.499   | 0.2812     | True        
+28 | BENCHMARK        | SYNTHETIC | GPU        | 4096    | 16    | 1600    | 2.822    | 12.634  |            | True        
+29 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 16    | 3200    | 184.893  | 1.000   | 1.0000     | True        
+30 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 16    | 3200    | 288.417  | 0.641   | 0.6411     | True        
+31 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 16    | 3200    | 208.505  | 0.887   | 0.4434     | True        
+32 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 16    | 3200    | 136.215  | 1.357   | 0.3393     | True        
+33 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 16    | 3200    | 84.067   | 2.199   | 0.2749     | True        
+34 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 16    | 3200    | 76.568   | 2.415   | 0.1509     | True        
+35 | BENCHMARK        | SYNTHETIC | GPU        | 4096    | 16    | 3200    | 17.212   | 10.742  |            | True        
+36 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 32    | 9600    | 1049.949 | 1.000   | 1.0000     | True        
+37 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 32    | 9600    | 1982.567 | 0.530   | 0.5296     | True        
+38 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 32    | 9600    | 897.313  | 1.170   | 0.5851     | True        
+39 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 32    | 9600    | 741.115  | 1.417   | 0.3542     | True        
+40 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 32    | 9600    | 662.509  | 1.585   | 0.1981     | True        
+41 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 32    | 9600    | 775.115  | 1.355   | 0.0847     | True        
+42 | BENCHMARK        | SYNTHETIC | GPU        | 8192    | 32    | 9600    | 90.265   | 11.632  |            | True        
+43 | BENCHMARK        | REAL      | SEQUENTIAL | 1       | 2     | 3       | 0.114    | 1.000   | 1.0000     | True        
+44 | BENCHMARK        | REAL      | PARALLEL   | 1       | 2     | 3       | 0.564    | 0.201   | 0.2013     | True        
+45 | BENCHMARK        | REAL      | PARALLEL   | 2       | 2     | 3       | 0.654    | 0.174   | 0.0868     | True        
+46 | BENCHMARK        | REAL      | GPU        | 512     | 2     | 3       | 1.244    | 0.091   |            | True        
+47 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 8     | 400     | 4.846    | 1.000   | 1.0000     | True        
+48 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 8     | 400     | 6.069    | 0.799   | 0.7986     | True        
+49 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 8     | 400     | 3.485    | 1.391   | 0.6953     | True        
+50 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 8     | 400     | 2.247    | 2.157   | 0.5393     | True        
+51 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 8     | 400     | 2.553    | 1.899   | 0.2373     | True        
+52 | BENCHMARK        | SYNTHETIC | GPU        | 2048    | 8     | 400     | 2.663    | 1.820   |            | True        
+53 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 16    | 1600    | 35.667   | 1.000   | 1.0000     | True        
+54 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 16    | 1600    | 37.712   | 0.946   | 0.9458     | True        
+55 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 16    | 1600    | 19.871   | 1.795   | 0.8975     | True        
+56 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 16    | 1600    | 11.984   | 2.976   | 0.7440     | True        
+57 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 16    | 1600    | 9.156    | 3.895   | 0.4869     | True        
+58 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 16    | 1600    | 8.526    | 4.183   | 0.2615     | True        
+59 | BENCHMARK        | SYNTHETIC | GPU        | 4096    | 16    | 1600    | 4.251    | 8.389   |            | True        
+60 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 16    | 3200    | 201.429  | 1.000   | 1.0000     | True        
+61 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 16    | 3200    | 299.110  | 0.673   | 0.6734     | True        
+62 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 16    | 3200    | 219.760  | 0.917   | 0.4583     | True        
+63 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 16    | 3200    | 154.082  | 1.307   | 0.3268     | True        
+64 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 16    | 3200    | 93.502   | 2.154   | 0.2693     | True        
+65 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 16    | 3200    | 84.188   | 2.393   | 0.1495     | True        
+66 | BENCHMARK        | SYNTHETIC | GPU        | 4096    | 16    | 3200    | 18.700   | 10.771  |            | True        
+67 | BENCHMARK        | SYNTHETIC | SEQUENTIAL | 1       | 32    | 9600    | 1395.366 | 1.000   | 1.0000     | True        
+68 | BENCHMARK        | SYNTHETIC | PARALLEL   | 1       | 32    | 9600    | 1476.257 | 0.945   | 0.9452     | True        
+69 | BENCHMARK        | SYNTHETIC | PARALLEL   | 2       | 32    | 9600    | 870.038  | 1.604   | 0.8019     | True        
+70 | BENCHMARK        | SYNTHETIC | PARALLEL   | 4       | 32    | 9600    | 741.310  | 1.882   | 0.4706     | True        
+71 | BENCHMARK        | SYNTHETIC | PARALLEL   | 8       | 32    | 9600    | 621.059  | 2.247   | 0.2808     | True        
+72 | BENCHMARK        | SYNTHETIC | PARALLEL   | 16      | 32    | 9600    | 680.428  | 2.051   | 0.1282     | True        
+73 | BENCHMARK        | SYNTHETIC | GPU        | 8192    | 32    | 9600    | 57.059   | 24.455  |            | True        
+(73 linhas)

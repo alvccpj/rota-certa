@@ -1,0 +1,4 @@
+GET /optimizer/capabilities
+{'cpu_count': 16, 'gpu_available': True, 'gpu_name': 'NVIDIA GeForce RTX 3060', 'gpu_reason': None}
+
+CPU: 16 núcleos lógicos | GPU: NVIDIA GeForce RTX 3060

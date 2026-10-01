@@ -1,0 +1,23 @@
+-- Rotas gravadas na tabela routes
+rota | entregador        | status  | modo | km     | minutos | paradas
+-----+-------------------+---------+------+--------+---------+--------
+3    | Carla Entregadora | PLANNED | GPU  | 21.307 | 77      | 5      
+4    | Diego Entregador  | PLANNED | GPU  | 10.938 | 52      | 5      
+(2 linhas)
+
+-- Paradas da rota 3 na tabela route_stops
+rota | ordem | pedido | cliente       | km_trecho | chegada | parada  | pedido_status
+-----+-------+--------+---------------+-----------+---------+---------+--------------
+3    | 1     | 8      | Rafael Torres | 2.291     | 17:12   | PENDING | ASSIGNED     
+3    | 2     | 7      | Lúcia Ramos   | 0.846     | 17:19   | PENDING | ASSIGNED     
+3    | 3     | 9      | Beatriz Nunes | 1.222     | 17:27   | PENDING | ASSIGNED     
+3    | 4     | 10     | Gustavo Alves | 1.569     | 17:36   | PENDING | ASSIGNED     
+3    | 5     | 1      | Maria Silva   | 8.344     | 18:01   | PENDING | ASSIGNED     
+(5 linhas)
+
+-- Execuções registradas na tabela optimization_runs
+id | finalidade       | entrada | modo       | workers | rotas | paradas | tempo_ms | speedup | eficiencia | mesmas_rotas
+---+------------------+---------+------------+---------+-------+---------+----------+---------+------------+-------------
+1  | ROUTE_GENERATION | REAL    | SEQUENTIAL | 1       | 2     | 10      | 0.453    |         |            |             
+2  | ROUTE_GENERATION | REAL    | GPU        | 512     | 2     | 10      | 2.625    |         |            |             
+(2 linhas)
