@@ -10,7 +10,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import OrderFormPage from "./pages/OrderFormPage";
 import OrdersPage from "./pages/OrdersPage";
+import PerformancePage from "./pages/PerformancePage";
 import RegisterPage from "./pages/RegisterPage";
+import RoutesPage from "./pages/RoutesPage";
 import UserFormPage from "./pages/UserFormPage";
 import UsersPage from "./pages/UsersPage";
 
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="pedidos/novo" element={<RequireRole roles={STAFF_ROLES}><OrderFormPage /></RequireRole>} />
         <Route path="pedidos/:id" element={<OrderDetailPage />} />
         <Route path="pedidos/:id/editar" element={<RequireRole roles={STAFF_ROLES}><OrderFormPage /></RequireRole>} />
+        <Route path="rotas" element={<RequireRole roles={STAFF_ROLES}><RoutesPage /></RequireRole>} />
+        <Route path="desempenho" element={<RequireRole roles={["ADMIN"]}><PerformancePage /></RequireRole>} />
         <Route path="entregas" element={<RequireRole roles={["COURIER"]}><DeliveriesPage /></RequireRole>} />
         <Route path="clientes" element={<RequireRole roles={STAFF_ROLES}><CustomersPage /></RequireRole>} />
         <Route path="clientes/novo" element={<RequireRole roles={STAFF_ROLES}><CustomerFormPage /></RequireRole>} />

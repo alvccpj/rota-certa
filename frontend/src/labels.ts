@@ -1,4 +1,4 @@
-import type { Availability, OrderStatus, Role } from "./api";
+import type { Availability, ExecutionMode, OrderStatus, Role, RouteStatus } from "./api";
 
 export const ROLE_LABELS: Record<Role, string> = {
   ADMIN: "Administrador",
@@ -71,3 +71,50 @@ export function formatDateTime(iso: string): string {
 }
 
 export const STAFF_ROLES: Role[] = ["ADMIN", "ATTENDANT"];
+
+export const ROUTE_STATUS_LABELS: Record<RouteStatus, string> = {
+  PLANNED: "Planejada",
+  IN_PROGRESS: "Em andamento",
+  COMPLETED: "Concluída",
+  CANCELLED: "Cancelada",
+};
+
+export const MODE_LABELS: Record<ExecutionMode, string> = {
+  SEQUENTIAL: "Sequencial",
+  PARALLEL: "Paralelo em CPU",
+  GPU: "GPU (CUDA)",
+};
+
+/** Cores das rotas no mapa, atribuídas na ordem dos entregadores (paleta categórica validada). */
+export const ROUTE_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"];
+
+export function routeColor(index: number): string {
+  return ROUTE_COLORS[index % ROUTE_COLORS.length];
+}
+
+export function formatKm(value: number | null): string {
+  if (value == null) return "—";
+  return `${value.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km`;
+}
+
+export function formatDuration(minutes: number | null): string {
+  if (minutes == null) return "—";
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest ? `${hours} h ${rest} min` : `${hours} h`;
+}
+
+export function formatTime(iso: string | null): string {
+  return iso ? timeOnly.format(new Date(iso)) : "—";
+}
+
+export function formatMs(value: number): string {
+  const digits = value < 10 ? 2 : value < 100 ? 1 : 0;
+  return `${value.toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits })} ms`;
+}
+
+export function formatRatio(value: number | null, digits = 2): string {
+  if (value == null) return "—";
+  return value.toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}

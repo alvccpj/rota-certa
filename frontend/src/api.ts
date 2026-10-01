@@ -82,6 +82,105 @@ export interface OrderInput {
   assigned_courier_id: number | null;
 }
 
+export type ExecutionMode = "SEQUENTIAL" | "PARALLEL" | "GPU";
+export type RouteStatus = "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type StopStatus = "PENDING" | "ARRIVED" | "COMPLETED" | "FAILED";
+
+export interface Depot {
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export interface RouteStop {
+  sequence: number;
+  status: StopStatus;
+  order_id: number;
+  order_status: OrderStatus;
+  customer_name: string;
+  customer_phone: string | null;
+  delivery_address: string;
+  latitude: number;
+  longitude: number;
+  priority: number;
+  weight_kg: number;
+  distance_from_previous_km: number | null;
+  estimated_arrival: string | null;
+}
+
+export interface DeliveryRoute {
+  id: number;
+  courier: { id: number; full_name: string };
+  route_date: string;
+  status: RouteStatus;
+  algorithm: string;
+  execution_mode: ExecutionMode;
+  total_distance_km: number | null;
+  estimated_duration_min: number | null;
+  created_at: string;
+  stops: RouteStop[];
+}
+
+export interface OptimizationRun {
+  id: number;
+  executed_at: string;
+  purpose: "ROUTE_GENERATION" | "BENCHMARK";
+  input_source: "REAL" | "SYNTHETIC";
+  run_group: string | null;
+  algorithm: string;
+  execution_mode: ExecutionMode;
+  worker_count: number;
+  order_count: number;
+  courier_count: number;
+  execution_time_ms: number;
+  total_distance_km: number;
+  speedup: number | null;
+  efficiency: number | null;
+  same_routes: boolean | null;
+}
+
+export interface RoutesOverview {
+  depot: Depot;
+  routes: DeliveryRoute[];
+  waiting_orders: number;
+}
+
+export interface RouteGeneration extends RoutesOverview {
+  skipped: { courier: { id: number; full_name: string }; reason: string }[];
+  run: OptimizationRun;
+}
+
+export interface MyRoute {
+  depot: Depot;
+  route: DeliveryRoute | null;
+}
+
+export interface Capabilities {
+  cpu_count: number;
+  gpu_available: boolean;
+  gpu_name: string | null;
+  gpu_reason: string | null;
+}
+
+export interface BenchmarkInput {
+  source: "REAL" | "SYNTHETIC";
+  couriers: number;
+  stops_per_courier: number;
+  worker_counts: number[];
+  include_gpu: boolean;
+  repetitions: number;
+  seed: number;
+}
+
+export interface BenchmarkResult {
+  run_group: string;
+  source: "REAL" | "SYNTHETIC";
+  courier_count: number;
+  order_count: number;
+  repetitions: number;
+  rows: OptimizationRun[];
+}
+
 export const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
 export class ApiError extends Error {
