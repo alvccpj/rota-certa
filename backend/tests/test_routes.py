@@ -76,6 +76,7 @@ class RoutesTestCase(ApiTestCase):
         self.assertEqual(list(self.routes_by_courier(payload)), ["Carla Entregadora"])
         self.assertEqual(payload["skipped"][0]["courier"]["full_name"], "Diego Entregador")
         self.assertIn("fora de serviço", payload["skipped"][0]["reason"])
+        self.assertNotIn(" dele ", payload["skipped"][0]["reason"])
 
     def test_generation_requires_depot_location(self) -> None:
         with self.session_factory() as db:
