@@ -1,0 +1,47 @@
+POST /routes/generate pelo entregador
+  -> 403 Seu perfil não tem permissão para esta ação.
+
+PATCH /routes/{id}/start em rota já concluída
+  -> 409 Esta rota já foi encerrada e não pode ser iniciada.
+
+PATCH /routes/{id}/start da rota de outro entregador
+  -> 404 Rota não encontrada.
+
+PATCH /routes/{id}/start pelo próprio entregador
+  -> 200 rota 4 IN_PROGRESS, pedidos: ['IN_ROUTE']
+
+POST /orders atribuído (Rafaela Moura)
+  -> 201 pedido #15 ASSIGNED
+
+POST /orders atribuído (Sérgio Lins)
+  -> 201 pedido #16 ASSIGNED
+
+POST /routes/generate com rota em andamento
+  -> 200 rotas: ['Carla Entregadora (COMPLETED, 5 paradas)', 'Diego Entregador (IN_PROGRESS, 5 paradas)', 'Carla Entregadora (PLANNED, 1 parada)']; aguardando: 1; fora: ['Diego Entregador: Já está com uma rota em andamento. Os novos pedidos entram na próxima rota.']
+
+DELETE /orders de pedido em rota iniciada
+  -> 409 O pedido já faz parte de uma rota iniciada ou concluída e não pode ser excluído. Cancele-o.
+
+PUT /orders trocando o entregador de pedido em rota planejada
+  -> 200 pedido #16 agora com Diego Entregador
+
+GET /routes depois da troca
+  -> 200 rotas: ['Carla Entregadora (COMPLETED, 5 paradas)', 'Diego Entregador (IN_PROGRESS, 5 paradas)']; aguardando: 2
+
+POST /orders atribuído (Tânia Prado)
+  -> 201 pedido #17 ASSIGNED
+
+PATCH /couriers/me/availability OFFLINE (Carla)
+  -> 200 OFFLINE
+
+POST /routes/generate com entregadora fora de serviço
+  -> 409 Nenhuma rota foi gerada. Carla Entregadora: Está fora de serviço, então os pedidos atribuídos não entraram em nenhuma rota. Diego Entregador: Já está com uma rota em andamento. Os novos pedidos entram na próxima rota.
+
+POST /optimizer/benchmark pela atendente
+  -> 403 Seu perfil não tem permissão para esta ação.
+
+POST /optimizer/benchmark com 64 x 500 paradas
+  -> 422 [{'type': 'value_error', 'loc': ['body'], 'msg': 'Value error, Use no máximo 12.000 paradas no total (entregadores × paradas por entregador).', 'input': {'couriers': 64, 'stops_per_courier': 500}, 'ctx': {'error': {}}}]
+
+PUT /establishment/depot pela atendente
+  -> 403 Seu perfil não tem permissão para esta ação.

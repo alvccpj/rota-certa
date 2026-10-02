@@ -1,0 +1,47 @@
+[01/10/2026 17:11:45] Máquina: 16 núcleos lógicos, GPU NVIDIA GeForce RTX 3060
+
+Entrada: pedidos atribuídos | 2 rotas | 3 paradas | mediana de 5 execuções
+Configuração        Tempo (ms)  Speedup  Eficiência  Distância (km)  Mesmas rotas
+Sequencial                0.11    1.00x        100%           9.924           sim
+CPU 1 processo(s)         0.56    0.20x         20%           9.924           sim
+CPU 2 processo(s)         0.65    0.17x          9%           9.924           sim
+GPU (CUDA)                1.24    0.09x           -           9.924           sim
+
+Entrada: instância sintética | 8 rotas | 400 paradas | mediana de 3 execuções
+Configuração        Tempo (ms)  Speedup  Eficiência  Distância (km)  Mesmas rotas
+Sequencial                4.85    1.00x        100%         646.193           sim
+CPU 1 processo(s)         6.07    0.80x         80%         646.193           sim
+CPU 2 processo(s)         3.48    1.39x         70%         646.193           sim
+CPU 4 processo(s)         2.25    2.16x         54%         646.193           sim
+CPU 8 processo(s)         2.55    1.90x         24%         646.193           sim
+GPU (CUDA)                2.66    1.82x           -         646.193           sim
+
+Entrada: instância sintética | 16 rotas | 1600 paradas | mediana de 3 execuções
+Configuração        Tempo (ms)  Speedup  Eficiência  Distância (km)  Mesmas rotas
+Sequencial               35.67    1.00x        100%        1826.327           sim
+CPU 1 processo(s)        37.71    0.95x         95%        1826.327           sim
+CPU 2 processo(s)        19.87    1.79x         90%        1826.327           sim
+CPU 4 processo(s)        11.98    2.98x         74%        1826.327           sim
+CPU 8 processo(s)         9.16    3.90x         49%        1826.327           sim
+CPU 16 processo(s)        8.53    4.18x         26%        1826.327           sim
+GPU (CUDA)                4.25    8.39x           -        1826.327           sim
+
+Entrada: instância sintética | 16 rotas | 3200 paradas | mediana de 3 execuções
+Configuração        Tempo (ms)  Speedup  Eficiência  Distância (km)  Mesmas rotas
+Sequencial              201.43    1.00x        100%        2533.956           sim
+CPU 1 processo(s)       299.11    0.67x         67%        2533.956           sim
+CPU 2 processo(s)       219.76    0.92x         46%        2533.956           sim
+CPU 4 processo(s)       154.08    1.31x         33%        2533.956           sim
+CPU 8 processo(s)        93.50    2.15x         27%        2533.956           sim
+CPU 16 processo(s)       84.19    2.39x         15%        2533.956           sim
+GPU (CUDA)               18.70   10.77x           -        2533.956           sim
+
+Entrada: instância sintética | 32 rotas | 9600 paradas | mediana de 3 execuções
+Configuração        Tempo (ms)  Speedup  Eficiência  Distância (km)  Mesmas rotas
+Sequencial             1395.37    1.00x        100%        6141.539           sim
+CPU 1 processo(s)      1476.26    0.94x         95%        6141.539           sim
+CPU 2 processo(s)       870.04    1.60x         80%        6141.539           sim
+CPU 4 processo(s)       741.31    1.88x         47%        6141.539           sim
+CPU 8 processo(s)       621.06    2.25x         28%        6141.539           sim
+CPU 16 processo(s)      680.43    2.05x         13%        6141.539           sim
+GPU (CUDA)               57.06   24.45x           -        6141.539           sim

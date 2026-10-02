@@ -12,8 +12,10 @@ export default function Layout() {
 
   const links = [
     staff && { to: "/pedidos", label: "Pedidos" },
+    staff && { to: "/rotas", label: "Rotas" },
     !staff && { to: "/entregas", label: "Minhas entregas" },
     staff && { to: "/clientes", label: "Clientes" },
+    user.role === "ADMIN" && { to: "/desempenho", label: "Desempenho" },
     user.role === "ADMIN" && { to: "/usuarios", label: "Usuários" },
   ].filter((link): link is { to: string; label: string } => Boolean(link));
 

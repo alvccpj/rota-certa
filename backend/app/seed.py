@@ -27,6 +27,15 @@ DEMO_ORDERS = (
     ("Carlos Souza", "(81) 98800-1004", "Rua do Espinheiro, 450 - Espinheiro", "-8.045200", "-34.892000", "0.80", 3, "ASSIGNED", 1),
     ("Fernanda Lima", "(81) 98800-1005", "Rua Real da Torre, 900 - Madalena", "-8.055800", "-34.909200", "3.00", 1, "PENDING", None),
     ("Paulo Mendes", "(81) 98800-1006", "Rua da Hora, 150 - Espinheiro", "-8.041900", "-34.888900", "1.50", 2, "DELIVERED", 1),
+    # A partir da Sprint 05: pedidos atribuídos para a roteirização ter várias paradas por entregador.
+    ("Lúcia Ramos", "(81) 98800-1007", "Rua Benfica, 500 - Madalena", "-8.054500", "-34.903000", "0.50", 2, "ASSIGNED", 0),
+    ("Rafael Torres", "(81) 98800-1008", "Av. Rui Barbosa, 700 - Graças", "-8.048000", "-34.899000", "0.80", 2, "ASSIGNED", 0),
+    ("Beatriz Nunes", "(81) 98800-1009", "Rua Conde de Irajá, 200 - Torre", "-8.047800", "-34.911800", "0.60", 3, "ASSIGNED", 0),
+    ("Gustavo Alves", "(81) 98800-1010", "Av. Caxangá, 1500 - Cordeiro", "-8.049000", "-34.926000", "0.40", 1, "ASSIGNED", 0),
+    ("Helena Barros", "(81) 98800-1011", "Rua do Futuro, 300 - Aflitos", "-8.039000", "-34.901000", "2.00", 2, "ASSIGNED", 1),
+    ("Igor Freitas", "(81) 98800-1012", "Estrada do Arraial, 1200 - Casa Amarela", "-8.028000", "-34.915000", "3.50", 2, "ASSIGNED", 1),
+    ("Juliana Rocha", "(81) 98800-1013", "Rua Dr. José Maria, 400 - Encruzilhada", "-8.035000", "-34.889000", "1.80", 1, "ASSIGNED", 1),
+    ("Marcos Vieira", "(81) 98800-1014", "Av. Norte, 2500 - Tamarineira", "-8.030000", "-34.900000", "2.20", 3, "ASSIGNED", 1),
 )
 
 

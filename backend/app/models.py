@@ -1,12 +1,13 @@
 """Mapeamento ORM das tabelas definidas em database/schema.sql."""
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 
 from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -125,3 +126,65 @@ class OrderStatusEvent(Base):
 
     order: Mapped[Order] = relationship(back_populates="history")
     author: Mapped[User | None] = relationship(lazy="joined")
+
+
+class Route(Base):
+    """Rota de um entregador: a sequência de paradas calculada pelo otimizador."""
+
+    __tablename__ = "routes"
+
+    id: Mapped[int] = mapped_column(BigId, primary_key=True)
+    establishment_id: Mapped[int] = mapped_column(ForeignKey("establishments.id"))
+    courier_id: Mapped[int] = mapped_column(ForeignKey("couriers.id"))
+    route_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(20), default="PLANNED")
+    algorithm: Mapped[str] = mapped_column(String(40))
+    execution_mode: Mapped[str] = mapped_column(String(20))
+    total_distance_km: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
+    estimated_duration_min: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    courier: Mapped[Courier] = relationship(lazy="joined")
+    stops: Mapped[list["RouteStop"]] = relationship(
+        back_populates="route",
+        cascade="all, delete-orphan",
+        order_by="RouteStop.stop_sequence",
+    )
+
+
+class RouteStop(Base):
+    __tablename__ = "route_stops"
+
+    id: Mapped[int] = mapped_column(BigId, primary_key=True)
+    route_id: Mapped[int] = mapped_column(ForeignKey("routes.id", ondelete="CASCADE"))
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), unique=True)
+    stop_sequence: Mapped[int] = mapped_column(Integer)
+    estimated_arrival: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    distance_from_previous_km: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
+    status: Mapped[str] = mapped_column(String(20), default="PENDING")
+
+    route: Mapped[Route] = relationship(back_populates="stops")
+    order: Mapped[Order] = relationship(lazy="joined")
+
+
+class OptimizationRun(Base):
+    """Uma execução do otimizador, com o tempo medido em um dos modos."""
+
+    __tablename__ = "optimization_runs"
+
+    id: Mapped[int] = mapped_column(BigId, primary_key=True)
+    establishment_id: Mapped[int] = mapped_column(ForeignKey("establishments.id"))
+    executed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    algorithm: Mapped[str] = mapped_column(String(40))
+    execution_mode: Mapped[str] = mapped_column(String(20))
+    worker_count: Mapped[int] = mapped_column(Integer, default=1)
+    order_count: Mapped[int] = mapped_column(Integer)
+    courier_count: Mapped[int] = mapped_column(Integer)
+    execution_time_ms: Mapped[Decimal] = mapped_column(Numeric(12, 3))
+    total_distance_km: Mapped[Decimal] = mapped_column(Numeric(12, 3))
+    purpose: Mapped[str] = mapped_column(String(20), default="BENCHMARK")
+    input_source: Mapped[str] = mapped_column(String(20), default="REAL")
+    run_group: Mapped[str | None] = mapped_column(String(36))
+    speedup: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
+    efficiency: Mapped[Decimal | None] = mapped_column(Numeric(8, 4))
+    same_routes: Mapped[bool | None] = mapped_column(Boolean)

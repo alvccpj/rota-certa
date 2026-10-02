@@ -1,0 +1,25 @@
+-- Situação das rotas depois das entregas
+rota | entregador        | status    | modo | km     | minutos | paradas
+-----+-------------------+-----------+------+--------+---------+--------
+3    | Carla Entregadora | COMPLETED | GPU  | 21.307 | 77      | 5      
+4    | Diego Entregador  | PLANNED   | GPU  | 10.938 | 52      | 5      
+(2 linhas)
+
+-- Paradas da rota 3
+rota | ordem | pedido | cliente       | km_trecho | chegada | parada    | pedido_status
+-----+-------+--------+---------------+-----------+---------+-----------+--------------
+3    | 1     | 8      | Rafael Torres | 2.291     | 17:12   | COMPLETED | DELIVERED    
+3    | 2     | 7      | Lúcia Ramos   | 0.846     | 17:19   | COMPLETED | DELIVERED    
+3    | 3     | 9      | Beatriz Nunes | 1.222     | 17:27   | COMPLETED | DELIVERED    
+3    | 4     | 10     | Gustavo Alves | 1.569     | 17:36   | COMPLETED | DELIVERED    
+3    | 5     | 1      | Maria Silva   | 8.344     | 18:01   | COMPLETED | DELIVERED    
+(5 linhas)
+
+-- Histórico do pedido #8
+status    | observacao                            | autor             | horario       
+----------+---------------------------------------+-------------------+---------------
+PENDING   | Pedido cadastrado                     | Bruno Atendente   | 01/10 16:30:32
+ASSIGNED  | Atribuído a Carla Entregadora         | Bruno Atendente   | 01/10 16:35:32
+IN_ROUTE  | Saiu para entrega na rota 3, parada 1 | Carla Entregadora | 01/10 17:07:02
+DELIVERED | Entrega confirmada                    | Carla Entregadora | 01/10 17:07:02
+(4 linhas)

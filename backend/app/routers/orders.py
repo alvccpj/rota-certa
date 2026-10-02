@@ -7,6 +7,7 @@ from sqlalchemy import Select, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app import planning
 from app.database import get_db
 from app.models import Courier, Customer, Order, OrderStatusEvent, User
 from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_within_radius
@@ -191,7 +192,9 @@ def update_order(
     order = get_visible_order(db, user, order_id)
     if order.status in LOCKED_STATUSES:
         raise HTTPException(status.HTTP_409_CONFLICT, "Pedidos entregues ou cancelados não podem ser editados.")
+    location = (order.latitude, order.longitude)
     apply_order_data(db, user, order, data)
+    planning.sync_order_route(db, order, location_changed=location != (order.latitude, order.longitude))
     db.commit()
     return order_out(order)
 
@@ -218,6 +221,7 @@ def change_order_status(
         order.courier = None
     order.status = data.status
     record(order, user, data.note or STATUS_NOTES[data.status])
+    planning.sync_order_route(db, order)
     db.commit()
     return order_out(order)
 
@@ -229,6 +233,7 @@ def delete_order(
     db: Session = Depends(get_db),
 ) -> Response:
     order = get_visible_order(db, user, order_id)
+    planning.release_order_for_deletion(db, order)
     db.delete(order)
     try:
         db.commit()

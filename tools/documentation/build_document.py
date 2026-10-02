@@ -1,8 +1,8 @@
-"""Gera o documento técnico cumulativo das Sprints 01 a 04.
+"""Gera o documento técnico cumulativo das Sprints 01 a 05.
 
 O mesmo conteúdo é renderizado em HTML, PDF (Chrome headless via Playwright) e
-DOCX (python-docx). As evidências da Sprint 03 são produzidas antes por
-capture_sprint03_evidence.py com o sistema em execução.
+DOCX (python-docx). As evidências de cada Sprint são produzidas antes pelos
+scripts capture_sprintNN_evidence.py com o sistema em execução.
 
     python tools/documentation/build_document.py
 """
@@ -35,9 +35,11 @@ SPRINT03 = ROOT / "docs" / "sprint-03" / "assets"
 EVIDENCE = ROOT / "docs" / "sprint-03" / "evidencias"
 SPRINT04 = ROOT / "docs" / "sprint-04" / "assets"
 EVIDENCE04 = ROOT / "docs" / "sprint-04" / "evidencias"
-NAME = "Grupo_04_RotaCerta_Sprints_01_a_04"
-TITLE = "Documento Técnico Cumulativo das Sprints 01 a 04"
-FOOTER = "RotaCerta  |  Grupo 04  |  Sprints 01 a 04  |  Página "
+SPRINT05 = ROOT / "docs" / "sprint-05" / "assets"
+EVIDENCE05 = ROOT / "docs" / "sprint-05" / "evidencias"
+NAME = "Grupo_04_RotaCerta_Sprints_01_a_05"
+TITLE = "Documento Técnico Cumulativo das Sprints 01 a 05"
+FOOTER = "RotaCerta  |  Grupo 04  |  Sprints 01 a 05  |  Página "
 REPOSITORY = "https://github.com/alvccpj/rota-certa"
 TEAM = (
     ("Álvaro Jordão", "01748200"),
@@ -125,11 +127,19 @@ def evidence04(name: str) -> str:
     return (EVIDENCE04 / name).read_text(encoding="utf-8").rstrip()
 
 
+def s5(name: str) -> Path:
+    return SPRINT05 / name
+
+
+def evidence05(name: str) -> str:
+    return (EVIDENCE05 / name).read_text(encoding="utf-8").rstrip()
+
+
 # Conteúdo
 
 PRESENTATION = [
-    "Este documento reúne as entregas das Sprints 01 a 04 do projeto RotaCerta. A Parte I registra o problema, os objetivos, os requisitos e o planejamento inicial. A Parte II apresenta a arquitetura, os modelos de software e de dados, os protótipos e a estrutura inicial do banco. A Parte III demonstra a estrutura inicial funcionando: banco conectado, login, cadastro de usuários, controle de perfis e o CRUD de pedidos. A Parte IV apresenta o primeiro módulo completo, Pedidos e entregas, com persistência, validações, mensagens de erro e navegação entre as telas.",
-    "As Partes I a III mantêm o conteúdo entregue anteriormente. Os ajustes de planejamento, arquitetura e modelagem feitos na Sprint 04 estão registrados e justificados na seção 32. Todas as telas e respostas mostradas nas Partes III e IV foram capturadas do sistema em execução.",
+    "Este documento reúne as entregas das Sprints 01 a 05 do projeto RotaCerta. A Parte I registra o problema, os objetivos, os requisitos e o planejamento inicial. A Parte II apresenta a arquitetura, os modelos de software e de dados, os protótipos e a estrutura inicial do banco. A Parte III demonstra a estrutura inicial funcionando: banco conectado, login, cadastro de usuários, controle de perfis e o CRUD de pedidos. A Parte IV apresenta o primeiro módulo completo, Pedidos e entregas, com persistência, validações, mensagens de erro e navegação entre as telas. A Parte V apresenta o segundo módulo, Roteirização e desempenho, que integra o núcleo de otimização aos pedidos reais, mostra as rotas no mapa e compara as execuções sequencial, paralela em CPU e na GPU com CUDA.",
+    "As Partes I a IV mantêm o conteúdo entregue anteriormente. Os ajustes de planejamento, arquitetura e modelagem da Sprint 04 estão na seção 32 e os da Sprint 05 na seção 43. Todas as telas e respostas mostradas nas Partes III a V foram capturadas do sistema em execução.",
 ]
 
 TOC = [
@@ -171,6 +181,18 @@ TOC = [
     "32  Ajustes no planejamento, na arquitetura e na modelagem",
     "33  Testes automatizados",
     "34  Dificuldades encontradas e próximos passos",
+    "Parte V  Sprint 05 Segundo módulo funcionando",
+    "35  Módulo implementado: Roteirização e desempenho",
+    "36  Evidências das funcionalidades",
+    "37  Integração com o banco de dados",
+    "38  Regras de negócio",
+    "39  Núcleo de otimização e paralelização com CUDA",
+    "40  Comparação sequencial, paralela e GPU",
+    "41  Testes das funcionalidades",
+    "42  Bugs encontrados e correções",
+    "43  Ajustes no planejamento, na arquitetura e na modelagem",
+    "44  Repositório GitHub",
+    "45  Dificuldades encontradas e próximos passos",
 ]
 
 
@@ -812,12 +834,273 @@ def sprint04(doc: Document) -> None:
     )
 
 
+TEST_COUNT = 76
+
+EXPERIMENT_ANALYSIS = (
+    "Três comportamentos aparecem nos experimentos. Primeiro, com os pedidos reais da demonstração (três paradas), "
+    "todos os modos paralelos ficam mais lentos que o sequencial: o cálculo leva cerca de 0,1 ms, menos que o custo fixo "
+    "de enviar os dados a outro processo (cerca de 0,5 ms) ou de copiá-los para a GPU e lançar o kernel (cerca de 1 ms). "
+    "Para a operação diária de um pequeno negócio o modo sequencial já basta; o paralelismo compensa quando o problema "
+    "cresce, como em várias filiais, muitos entregadores ou simulações. Segundo, na CPU a melhor eficiência ficou entre "
+    "2 e 4 processos (90% e 74% na instância de 16 rotas com 100 paradas) e o speedup parou de crescer acima de 8 "
+    "processos, porque o processador tem 8 núcleos físicos e os 16 núcleos lógicos dividem os mesmos recursos. Nas duas "
+    "instâncias maiores o ganho da CPU foi menor e até o pool com 1 processo ficou mais lento que o sequencial; num script "
+    "isolado, fora da API, os dois tempos são iguais (cerca de 200 ms), por isso a hipótese é a disputa de CPU com outros "
+    "programas abertos durante a medição, registrada como pendência na seção 42. Terceiro, o ganho da GPU cresce com o "
+    "tamanho do problema, de 1,8 vezes com 8 rotas de 50 paradas para 24,5 vezes com 32 rotas de 300 paradas: mais rotas "
+    "ocupam mais dos 28 multiprocessadores da RTX 3060 e mais paradas significam mais trocas do 2-opt avaliadas ao mesmo "
+    "tempo. Em todas as medições os três modos chegaram exatamente às mesmas rotas e à mesma distância total."
+)
+
+
+def sprint05(doc: Document) -> None:
+    doc.add(
+        PageBreak(),
+        H("Parte V  Sprint 05 Segundo módulo funcionando", 1),
+        P("A Sprint 05 entrega o segundo módulo do RotaCerta: Roteirização e desempenho. Seguindo a orientação de avançar de forma objetiva para o núcleo de otimização, o módulo liga o otimizador aos pedidos reais gravados no banco, mostra no mapa a rota de cada entregador, permite que o entregador inicie e conclua a rota pelo celular e compara a execução sequencial, a paralela em CPU e a paralela em GPU com CUDA, registrando tempo, speedup e eficiência."),
+        H("35  Módulo implementado: Roteirização e desempenho"),
+        P("O módulo atende aos casos de uso UC03 (gerar rotas otimizadas), UC04 (visualizar a rota do dia) e UC05 (atualizar o andamento da entrega) e aos requisitos RF04 (rota otimizada por entregador), RF06 (rota como lista ordenada e mapa), RF07 e RF08 (situação e histórico), além do RNF01 (desempenho com processamento paralelo). Ele usa a estrutura e o primeiro módulo das sprints anteriores: login, perfis, clientes, pedidos e atribuição."),
+        Table(
+            ["Funcionalidade", "Perfis", "Tela ou rota da API"],
+            [
+                ["Geração das rotas do dia a partir dos pedidos atribuídos, no modo sequencial, paralelo em CPU ou GPU (CUDA)", "Administrador e atendente", "/rotas  |  POST /routes/generate"],
+                ["Mapa com o ponto de saída, o trajeto de cada entregador e as paradas numeradas; lista ordenada com horário estimado", "Administrador e atendente", "/rotas  |  GET /routes"],
+                ["Cadastro do ponto de saída no mapa, com busca de endereço", "Administrador", "/rotas  |  PUT /establishment/depot"],
+                ["Rota do entregador no celular, com mapa, próxima parada e botão Iniciar rota", "Entregador", "/entregas  |  GET /routes/me e PATCH /routes/{id}/start"],
+                ["Conclusão automática da parada e da rota conforme as entregas são confirmadas", "Entregador", "/entregas  |  PATCH /orders/{id}/status"],
+                ["Comparação de desempenho com tempo, speedup, eficiência e gráfico, em instância sintética ou nos pedidos reais", "Administrador", "/desempenho  |  POST /optimizer/benchmark"],
+                ["Histórico das comparações e das gerações de rotas gravado no banco", "Administrador", "/desempenho  |  GET /optimizer/runs"],
+            ],
+            [8.4, 3.6, 5.2],
+        ),
+        H("Fluxo completo de utilização", 3),
+        Numbered([
+            "O atendente cadastra e atribui os pedidos aos entregadores, como no primeiro módulo.",
+            "Na tela Rotas, ele escolhe o modo de execução e clica em Gerar rotas. A API agrupa os pedidos atribuídos por entregador, executa o otimizador e grava as rotas, as paradas e a execução no banco.",
+            "O mapa mostra o trajeto de cada entregador, saindo e voltando ao ponto de saída, e a lista traz a ordem das paradas, a distância, a duração e o horário estimado de cada chegada.",
+            "No celular, a entregadora abre Minhas entregas, vê a rota no mapa e toca em Iniciar rota. Todos os pedidos da rota passam para Em rota, com registro no histórico.",
+            "A cada entrega confirmada a parada é concluída e a próxima fica destacada. Quando todas terminam, a rota passa para Concluída.",
+            "O administrador abre Desempenho, executa a comparação entre os modos e acompanha o histórico das medições.",
+        ]),
+        H("36  Evidências das funcionalidades"),
+        P("As capturas foram feitas com o sistema em execução sobre um banco recém-criado com os dados de demonstração: a Farmácia Boa Saúde, dois entregadores e catorze pedidos, dez deles atribuídos e aguardando rota."),
+        Figure([s5("s05_01_rotas_antes.png")], "Tela Rotas antes da geração: dez pedidos atribuídos aguardando rota"),
+        Figure([s5("s05_02_rotas_sequencial.png")], "Rotas geradas no modo sequencial, com o trajeto de cada entregador no mapa e a lista de paradas"),
+        Figure([s5("s05_03_rotas_gpu.png")], "As mesmas rotas geradas no modo GPU (CUDA): mesma ordem e mesma distância"),
+        Figure([s5("s05_04_rota_destacada.png")], "Rota da Carla destacada ao clicar no cartão; as demais ficam esmaecidas"),
+        Figure([s5("s05_05_ponto_saida.png")], "Cadastro do ponto de saída, de onde as rotas partem e para onde voltam"),
+        Figure(
+            [s5("s05_06_rota_entregador.png"), s5("s05_07_rota_em_andamento.png")],
+            "Entregadora no celular: rota planejada e, depois de iniciada, com duas entregas feitas e a próxima parada destacada",
+            36,
+        ),
+        Figure([s5("s05_08_rota_concluida.png")], "Visão do administrador com a rota da Carla concluída e a do Diego ainda planejada"),
+        H("37  Integração com o banco de dados"),
+        P("O módulo usa três tabelas que já constavam do modelo da Sprint 02 e ainda não tinham uso: routes guarda a rota de cada entregador (data, situação, modo de execução, distância e duração), route_stops guarda cada parada (ordem, pedido, distância desde a parada anterior, horário estimado e situação) e optimization_runs registra cada execução do otimizador com o tempo medido. As alterações no modelo estão na seção 43."),
+        Code(evidence05("sql_rotas_geradas.txt"), "Rotas, paradas e execuções gravadas logo depois da geração pela interface"),
+        Code(evidence05("sql_rota_concluida.txt"), "Situação da rota, das paradas e o histórico de um pedido depois das entregas"),
+        P("Para demonstrar que os dados são recuperados pela aplicação, a API foi reiniciada depois do fluxo completo e a tela Rotas foi aberta de novo: as rotas, as paradas e o histórico de medições continuaram iguais, lidos do PostgreSQL."),
+        Code(evidence05("persistencia.txt"), "Registro do reinício da API e contagem dos registros no banco"),
+        Figure([s5("s05_12_rotas_apos_reinicio.png")], "Tela Rotas depois de reiniciar a API, com as mesmas rotas"),
+        H("38  Regras de negócio"),
+        P("As regras abaixo foram implementadas no backend (módulo backend/app/planning.py) e valem para qualquer cliente da API, não só para a interface."),
+        Table(
+            ["Regra", "Descrição"],
+            [
+                ["RN01", "Só entram na rota pedidos na situação Atribuído. Pedidos em rota, entregues ou cancelados ficam de fora."],
+                ["RN02", "Entregador fora de serviço não recebe rota; a resposta informa o motivo."],
+                ["RN03", "Entregador com rota em andamento não recebe outra; os pedidos novos aguardam a próxima geração."],
+                ["RN04", "Gerar de novo substitui as rotas ainda planejadas. Uma rota em andamento nunca é recalculada."],
+                ["RN05", "Toda rota sai do ponto de saída e volta a ele. Sem o ponto marcado no mapa, a geração é recusada e o administrador é orientado a marcá-lo."],
+                ["RN06", "A ordem das paradas minimiza a distância total (vizinho mais próximo seguido de 2-opt)."],
+                ["RN07", "Duração e horário de chegada são estimados com velocidade média de 25 km/h e 5 minutos de atendimento por parada, valores configuráveis."],
+                ["RN08", "Iniciar a rota passa todos os pedidos atribuídos dela para Em rota e registra no histórico. Só o próprio entregador, o administrador ou o atendente iniciam; entregador fora de serviço não inicia."],
+                ["RN09", "Entrega confirmada conclui a parada; pedido cancelado marca a parada como não realizada. Quando todas terminam, a rota fica Concluída."],
+                ["RN10", "Trocar o entregador, mudar o endereço ou cancelar um pedido de rota planejada descarta essa rota, que precisa ser gerada de novo."],
+                ["RN11", "Pedido de rota iniciada ou concluída não pode ser excluído, só cancelado. Pedido de rota planejada pode ser excluído e a rota é descartada."],
+                ["RN12", "O modo GPU só fica disponível com GPU NVIDIA e CuPy instalados; sem eles, a interface desabilita a opção e a API explica o motivo."],
+                ["RN13", "A comparação de desempenho é exclusiva do administrador, aceita até 12.000 paradas e usa a mediana de 1 a 5 repetições."],
+                ["RN14", "Só o administrador altera o ponto de saída."],
+            ],
+            [1.6, 15.6],
+        ),
+        P("O quadro a seguir mostra as respostas da API a cada regra quando chamada diretamente, em sequência, sobre os mesmos dados."),
+        Code(evidence05("regras.txt"), "Regras de negócio verificadas pela API"),
+        Figure([s5("s05_09_regra_recusada.png")], "A mesma recusa vista na interface: nenhum entregador pode receber rota e o motivo de cada um é informado"),
+        H("Regras alteradas em relação ao planejamento", 3),
+        Table(
+            ["Alteração", "Justificativa"],
+            [
+                ["A roteirização, prevista para as Sprints 06 a 10, foi antecipada para a Sprint 05", "Orientação da professora para avançar ao núcleo de otimização, já que a parte operacional estava madura"],
+                ["Prioridade e janela de horário não alteram a ordem das paradas nesta versão", "Os três modos precisam otimizar exatamente o mesmo objetivo para a comparação de desempenho ser justa. A prioridade continua visível em cada parada; as restrições entram na próxima sprint"],
+                ["A atribuição dos pedidos continua manual", "A atribuição automática, listada nos próximos passos da Sprint 04, foi adiada para concentrar a sprint no cálculo das rotas e nas medições"],
+                ["O ponto de saída passou a ser marcado no mapa pelo administrador", "Estabelecimentos cadastrados pela tela de cadastro só tinham o endereço, sem coordenadas, e não conseguiriam gerar rotas"],
+                ["A rota é desenhada com linhas retas entre as paradas", "O cálculo usa a distância geodésica (haversine). O traçado pelas ruas depende de um serviço externo e ficou como evolução"],
+            ],
+            [7.0, 10.2],
+        ),
+        H("39  Núcleo de otimização e paralelização com CUDA"),
+        P("O problema de cada entregador é encontrar a ordem de visita das paradas que reduz a distância total, saindo e voltando ao ponto de saída. A solução usa duas heurísticas clássicas do problema do caixeiro-viajante: o vizinho mais próximo monta uma rota inicial indo sempre para a parada mais próxima ainda não visitada, e o 2-opt melhora essa rota invertendo trechos enquanto houver ganho."),
+        P("Nesta sprint o núcleo foi reescrito para ficar igual nos três modos. Ele calcula uma vez a matriz de distâncias haversine entre todos os pontos e usa o 2-opt por melhor melhoria: a cada rodada avalia todas as inversões possíveis pela diferença de distância e aplica a melhor. Os três modos usam a mesma matriz, o mesmo critério de desempate (menor índice) e o mesmo limite de melhoria, por isso chegam exatamente às mesmas rotas. A comparação mede só a forma de execução, não diferenças de algoritmo."),
+        Table(
+            ["Modo", "Como executa", "Paralelismo"],
+            [
+                ["Sequencial", "Um processo calcula as rotas uma depois da outra com NumPy. É a linha de base", "Nenhum"],
+                ["Paralelo em CPU", "As rotas são distribuídas em fatias entre processos de um pool que fica aberto entre as chamadas", "Um processo por núcleo, escolhido pelo usuário (1, 2, 4, 8 ou 16)"],
+                ["Paralelo em GPU (CUDA)", "Um kernel CUDA próprio resolve todas as rotas num único lançamento", "Um bloco de 256 threads por rota; milhares de threads no total"],
+            ],
+            [3.4, 9.4, 4.4],
+        ),
+        H("Como o kernel CUDA funciona", 3),
+        P("O kernel foi escrito em CUDA C e é compilado em tempo de execução pelo NVRTC por meio do CuPy (RawKernel). Cada bloco de threads resolve a rota de um entregador, em três etapas dentro do mesmo lançamento:"),
+        Numbered([
+            "Matriz de distâncias: as 256 threads do bloco dividem entre si os pares de pontos da rota e calculam a distância haversine de cada par.",
+            "Vizinho mais próximo: a cada passo, cada thread procura a parada mais próxima entre as que lhe cabem, e uma redução em memória compartilhada escolhe a melhor do bloco.",
+            "2-opt: a cada rodada, as threads avaliam em paralelo todas as inversões possíveis, a redução escolhe a de maior ganho e as threads invertem o trecho juntas. O laço termina quando nenhuma inversão encurta a rota.",
+        ]),
+        P("Para que a GPU chegue aos mesmos resultados da CPU, o kernel usa precisão dupla, o mesmo desempate por menor índice e a opção --fmad=false, que impede o compilador de fundir multiplicações e somas numa única operação com arredondamento diferente do NumPy."),
+        H("40  Comparação sequencial, paralela e GPU"),
+        P("A comparação segue a mesma metodologia em todas as medições: todos os modos recebem a mesma entrada; antes de medir, os processos da CPU são iniciados e o kernel CUDA é compilado, para que o tempo inclua só o cálculo e a troca de dados; cada modo é executado várias vezes e vale a mediana. O speedup é o tempo sequencial dividido pelo tempo do modo, e a eficiência é o speedup dividido pelo número de processos. Na GPU a eficiência não se aplica, porque o paralelismo é de milhares de threads e não de processos."),
+        Code(evidence05("maquina.txt"), "Máquina usada nas medições"),
+        Figure([s5("s05_10_desempenho.png")], "Tela Desempenho com uma comparação de 16 rotas de 200 paradas"),
+        Figure([s5("s05_11_grafico_tooltip.png")], "Gráfico de speedup da CPU por número de processos, com a marca do speedup ideal e o detalhe de uma barra"),
+        P("Para observar como o ganho depende do tamanho do problema, a comparação foi repetida com os pedidos reais e com instâncias sintéticas crescentes, sempre com a mesma semente."),
+        Code(evidence05("experimentos.txt"), "Experimentos com tamanhos crescentes (mediana de 3 execuções; pedidos reais com 5)"),
+        P(EXPERIMENT_ANALYSIS),
+        Code(evidence05("sql_execucoes.txt"), "Todas as execuções registradas na tabela optimization_runs"),
+        H("41  Testes das funcionalidades"),
+        P(f"A suíte automatizada passou de 48 para {TEST_COUNT} testes. Os novos testes cobrem a geração das rotas e todas as regras da seção 38, a consistência entre pedidos e rotas, as permissões por perfil, a comparação de desempenho e o núcleo de otimização, incluindo a equivalência das rotas entre os modos sequencial, paralelo e GPU. O teste da GPU é executado só em máquinas com GPU NVIDIA; nas demais aparece como ignorado. Os testes da API usam um banco SQLite em memória e não dependem do PostgreSQL."),
+        Table(
+            ["Grupo", "O que verifica"],
+            [
+                ["Geração de rotas", "Uma rota por entregador com todos os pedidos atribuídos, ordem das paradas, distância, duração, gravação e listagem"],
+                ["Regras de geração", "Entregador fora de serviço, rota em andamento, ponto de saída ausente, nenhum pedido aguardando, modo GPU indisponível"],
+                ["Acompanhamento", "Entregador vê e inicia só a própria rota, pedidos passam para Em rota, rota concluída ao entregar todas as paradas"],
+                ["Consistência", "Troca de entregador descarta a rota planejada; exclusão de pedido em rota iniciada é recusada"],
+                ["Perfis", "Entregador não gera rotas, atendente não executa comparações nem altera o ponto de saída"],
+                ["Comparação", "Modos e workers medidos, speedup e eficiência coerentes, mesmas rotas, limite de tamanho, pedidos reais"],
+                ["Otimizador", "2-opt nunca piora a rota, distância informada confere com a rota, rotas vazias e de uma parada, CPU e GPU iguais, um único pool aberto"],
+            ],
+            [3.6, 13.6],
+        ),
+        Code(evidence05("testes.txt"), "Execução da suíte de testes"),
+        P("Além da suíte automatizada, o roteiro de captura das evidências (tools/documentation/capture_sprint05_evidence.py) funciona como teste de ponta a ponta: ele executa pela interface e pela API o fluxo completo da seção 35, as regras da seção 38 e as comparações da seção 40, e falha se alguma tela ou resposta não for a esperada. Foi nessa execução que apareceram os dois bugs mais importantes da sprint."),
+        H("42  Bugs encontrados e correções"),
+        Table(
+            ["Bug", "Como foi encontrado", "Correção", "Situação"],
+            [
+                ["A comparação com 16 processos derrubava o pool de processos (BrokenProcessPool) e a API respondia erro 500", "Roteiro de ponta a ponta", "Cada processo carregava o NumPy com 16 threads do OpenBLAS e os pools de 1, 2, 4, 8 e 16 processos ficavam abertos juntos, esgotando a memória. O OpenBLAS passou a usar uma thread por processo e só um pool fica aberto. Novos testes cobrem os dois pontos", "Corrigido"],
+                ["Com menos rotas que processos, a comparação repetia a mesma configuração (duas linhas \"CPU 8 processos\" com 8 rotas)", "Roteiro de ponta a ponta (experimentos)", "A quantidade efetiva de processos é limitada ao número de rotas, sem repetir, com teste automatizado", "Corrigido"],
+                ["A mensagem de entregador fora de serviço dizia \"os pedidos dele\" também para entregadoras", "Registro das regras (seção 38)", "Texto neutro e teste que verifica a mensagem", "Corrigido"],
+                ["No celular, o mapa da rota abria sem mostrar as paradas", "Teste manual pela interface", "O enquadramento era calculado antes de o mapa ter o tamanho final; agora é refeito quando o tamanho é conhecido", "Corrigido"],
+                ["Com as abas novas, o menu superior ultrapassava a largura da tela no celular", "Teste manual com 390 px de largura", "O menu passou a rolar na horizontal; a página voltou a ter exatamente a largura da tela", "Corrigido"],
+                ["O rótulo do speedup ficava em cima da linha do ideal no gráfico", "Revisão visual", "O rótulo ganhou fundo próprio", "Corrigido"],
+                ["Rota de uma parada aparecia como \"1 paradas\"", "Teste manual", "Plural ajustado", "Corrigido"],
+                ["Um pedido reaberto depois de uma parada não realizada não poderia voltar para uma rota (order_id é único em route_stops)", "Revisão do código", "A nova parada substitui o registro antigo da rota encerrada", "Corrigido"],
+                ["A troca de entregador não era detectada antes de gravar, porque o SQLAlchemy só atualiza o campo assigned_courier_id ao enviar ao banco", "Revisão do código", "A verificação passou a usar o relacionamento com o entregador", "Corrigido"],
+                ["Um teste de regeração de rotas falhava só no SQLite, que reaproveita números de registros apagados", "Suíte automatizada", "O teste passou a verificar o conteúdo das rotas, não os números", "Corrigido"],
+                ["As operações prontas do CuPy não compilavam na pasta do projeto, que tem acento (FÁBRICA)", "Instalação do CuPy", "O kernel foi escrito sem depender dos headers do CuPy, o que dispensa o caminho com acento", "Contornado"],
+            ],
+            [5.2, 3.0, 6.6, 2.4],
+            8,
+        ),
+        H("Pendências e ações previstas", 3),
+        Table(
+            ["Pendência", "Ação prevista"],
+            [
+                ["As medições variam quando outros programas usam a CPU ou a GPU ao mesmo tempo", "Repetir os experimentos finais com a máquina dedicada, mais repetições e o registro da carga do sistema (Sprint 07)"],
+                ["Dentro da API, nas instâncias maiores, o pool com 1 processo ficou mais lento que o sequencial, embora num script isolado os tempos sejam iguais", "Medir de novo com a máquina dedicada e, se a diferença continuar, medir separadamente o tempo de cálculo dentro de cada processo"],
+                ["A primeira geração no modo GPU depois de iniciar a API inclui a compilação do kernel, cerca de um segundo", "Compilar o kernel quando a API inicia, em segundo plano"],
+                ["O contêiner Docker da API não acessa a GPU", "Documentar a configuração com NVIDIA Container Toolkit ou manter o modo GPU só na execução sem Docker"],
+            ],
+            [7.6, 9.6],
+        ),
+        H("43  Ajustes no planejamento, na arquitetura e na modelagem"),
+        H("Modelagem", 3),
+        Bullets([
+            "As tabelas routes, route_stops e optimization_runs, já previstas desde a Sprint 02, passaram a ser usadas e ganharam mapeamento no SQLAlchemy.",
+            "A coluna execution_mode de routes e de optimization_runs passou a aceitar GPU, além de SEQUENTIAL e PARALLEL.",
+            "optimization_runs ganhou as colunas purpose (geração de rotas ou comparação), input_source (pedidos reais ou instância sintética), run_group (agrupa as execuções de uma comparação), speedup, efficiency e same_routes.",
+            "Bancos criados nas sprints anteriores recebem essas alterações automaticamente quando a API inicia, sem perda de dados. A atualização foi verificada num banco da Sprint 04.",
+        ]),
+        H("Arquitetura e API", 3),
+        Bullets([
+            "Novos módulos no backend: planning.py (regras das rotas), benchmark.py (metodologia da comparação), optimizer/gpu.py (kernel CUDA) e os routers routes.py e optimizer.py.",
+            "Novas rotas da API: POST /routes/generate, GET /routes, GET /routes/me, PATCH /routes/{id}/start, GET e PUT /establishment/depot, GET /optimizer/capabilities, POST /optimizer/benchmark e GET /optimizer/runs.",
+            "As rotas de pedidos chamam planning.py a cada mudança, para manter as rotas coerentes com os pedidos.",
+            "Dependências: NumPy no backend e, opcionalmente, CuPy (backend/requirements-gpu.txt), que instala pelo pip o compilador e as bibliotecas do CUDA.",
+            "Frontend: novas telas Rotas e Desempenho, o componente RouteMap e a rota do entregador dentro de Minhas entregas.",
+            "A escolha entre C++ com OpenMP e CUDA, deixada em aberto no backlog da Sprint 01, foi resolvida a favor de CUDA: a equipe tem GPU NVIDIA disponível, o modelo de milhares de threads se encaixa na avaliação das trocas do 2-opt e o CuPy permite manter a API em Python.",
+        ]),
+        H("Planejamento", 3),
+        P("Com a roteirização antecipada, o cronograma das próximas sprints foi reorganizado em torno da qualidade das rotas, dos experimentos e dos relatórios."),
+        Table(
+            ["Sprint", "Período", "Entrega principal", "Situação"],
+            [
+                ["1", "03/09 a 05/09", "Planejamento, requisitos e backlog", "Concluída"],
+                ["2", "06/09 a 19/09", "Arquitetura, modelos, protótipos, banco e estrutura", "Concluída"],
+                ["3", "20/09 a 26/09", "Banco conectado, login, perfis, usuários e CRUD de pedidos", "Concluída"],
+                ["4", "27/09 a 28/09", "Módulo Pedidos e entregas completo", "Concluída"],
+                ["5", "29/09 a 03/10", "Módulo Roteirização e desempenho com CPU paralela e GPU", "Concluída"],
+                ["6", "04/10 a 10/10", "Atribuição automática dos pedidos e prioridade na ordem das paradas", "Planejada"],
+                ["7", "11/10 a 17/10", "Experimentos controlados e relatório de desempenho (RF09)", "Planejada"],
+                ["8", "18/10 a 24/10", "Painel administrativo do dia (RF10)", "Planejada"],
+                ["9", "25/10 a 31/10", "Janelas de horário nas rotas e traçado pelas ruas", "Planejada"],
+                ["10", "01/11 a 07/11", "Testes, usabilidade e segurança", "Planejada"],
+                ["11", "08/11 a 21/11", "Documentação e ajustes", "Planejada"],
+                ["Final", "22/11 a 05/12", "Correções, vídeos e preparação para a banca", "Planejada"],
+            ],
+            [1.6, 3.0, 9.6, 3.0],
+        ),
+        H("44  Repositório GitHub"),
+        P(f"Repositório oficial. {REPOSITORY}", "Repositório oficial."),
+        P("A Sprint 05 foi desenvolvida na branch sprint/05-modulo-otimizacao-rotas, criada a partir da master com a Sprint 04 integrada pelo Pull Request número 4. O passo a passo para executar o projeto foi separado no arquivo COMO-RODAR.md, com os comandos para PowerShell e Git Bash comentados um a um, e o README passou a descrever os módulos e a paralelização com CUDA."),
+        Code(evidence05("commits.txt"), "Commits da Sprint 05 em ordem cronológica"),
+        H("45  Dificuldades encontradas e próximos passos"),
+        H("Dificuldades", 3),
+        Table(
+            ["Dificuldade", "Como foi tratada"],
+            [
+                ["O CuPy não compilava as próprias operações porque o caminho do projeto tem acento", "O kernel foi escrito em CUDA C sem depender dos headers do CuPy; as cópias de memória e o kernel funcionam em qualquer pasta"],
+                ["Fazer a GPU chegar exatamente às mesmas rotas da CPU", "Precisão dupla, desempate por menor índice, mesma ordem nas somas e compilação sem fusão de multiplicação e soma"],
+                ["Medir desempenho no Windows, onde criar processos é caro", "O pool de processos fica aberto e é aquecido antes de medir; as rotas são enviadas em fatias"],
+                ["Variação das medições com outros programas abertos e com 8 núcleos físicos para 16 lógicos", "Mediana de várias execuções; a análise considera o limite físico de núcleos; os experimentos finais serão repetidos com a máquina dedicada"],
+                ["Capturar as evidências num banco recém-criado sem apagar os dados locais de desenvolvimento", "As evidências foram capturadas num schema separado do PostgreSQL, com uma segunda instância da API e do frontend"],
+            ],
+            [6.2, 11.0],
+        ),
+        H("Próximos passos", 3),
+        Bullets([
+            "Atribuição automática dos pedidos pendentes respeitando disponibilidade, capacidade e raio, com a rota calculada logo em seguida.",
+            "Considerar a prioridade e as janelas de horário na ordem das paradas, mantendo a equivalência entre os modos.",
+            "Repetir os experimentos com a máquina dedicada e produzir o relatório de desempenho (RF09).",
+            "Compilar o kernel CUDA quando a API inicia e documentar o uso da GPU com Docker.",
+            "Distribuir as tarefas entre os integrantes, com pull requests revisados por outro colega.",
+        ]),
+        H("Situação da Sprint 05", 2),
+        Table(
+            ["Entrega obrigatória", "Situação", "Evidência"],
+            [
+                ["Segundo módulo completo", "Concluído", "Seções 35 e 36: fluxo completo de roteirização, do pedido atribuído à rota concluída"],
+                ["Integração com o banco de dados", "Concluído", "Seção 37: routes, route_stops e optimization_runs, com dados recuperados depois de reiniciar a API"],
+                ["Atualização das regras de negócio", "Concluído", "Seção 38: 14 regras e as alterações justificadas"],
+                ["Testes das funcionalidades", "Concluído", f"Seção 41: {TEST_COUNT} testes automatizados e o roteiro de ponta a ponta"],
+                ["Correção dos bugs encontrados", "Concluído", "Seção 42: bugs, correções e pendências com ação prevista"],
+                ["Repositório GitHub atualizado", "Concluído", "Seção 44: branch, commits, README e COMO-RODAR.md"],
+                ["Dificuldades e próximos passos", "Concluído", "Seção 45"],
+            ],
+            [4.4, 2.6, 10.2],
+        ),
+    )
+
+
 def build_content() -> Document:
     doc = Document()
     sprint01(doc)
     sprint02(doc)
     sprint03(doc)
     sprint04(doc)
+    sprint05(doc)
     return doc
 
 
@@ -978,7 +1261,7 @@ def render_docx(doc: Document, path: Path) -> None:
     footer = document.sections[0].footer.paragraphs[0]
     footer.runs[0].text = FOOTER
     document.core_properties.title = f"RotaCerta {TITLE}"
-    document.core_properties.keywords = "RotaCerta, Sprint 01, Sprint 02, Sprint 03"
+    document.core_properties.keywords = "RotaCerta, Sprint 01, Sprint 02, Sprint 03, Sprint 04, Sprint 05"
 
     def centered(text, size, bold=False, before=0, after=6):
         p = document.add_paragraph()

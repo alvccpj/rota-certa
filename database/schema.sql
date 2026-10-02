@@ -76,7 +76,7 @@ CREATE TABLE routes (
         CHECK (status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),
     algorithm VARCHAR(40) NOT NULL,
     execution_mode VARCHAR(20) NOT NULL
-        CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL')),
+        CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL', 'GPU')),
     total_distance_km NUMERIC(10, 3),
     estimated_duration_min INTEGER,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -100,12 +100,20 @@ CREATE TABLE optimization_runs (
     executed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     algorithm VARCHAR(40) NOT NULL,
     execution_mode VARCHAR(20) NOT NULL
-        CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL')),
+        CHECK (execution_mode IN ('SEQUENTIAL', 'PARALLEL', 'GPU')),
     worker_count INTEGER NOT NULL DEFAULT 1 CHECK (worker_count > 0),
     order_count INTEGER NOT NULL CHECK (order_count >= 0),
     courier_count INTEGER NOT NULL CHECK (courier_count >= 0),
     execution_time_ms NUMERIC(12, 3) NOT NULL CHECK (execution_time_ms >= 0),
-    total_distance_km NUMERIC(12, 3) NOT NULL CHECK (total_distance_km >= 0)
+    total_distance_km NUMERIC(12, 3) NOT NULL CHECK (total_distance_km >= 0),
+    purpose VARCHAR(20) NOT NULL DEFAULT 'BENCHMARK'
+        CHECK (purpose IN ('ROUTE_GENERATION', 'BENCHMARK')),
+    input_source VARCHAR(20) NOT NULL DEFAULT 'REAL'
+        CHECK (input_source IN ('REAL', 'SYNTHETIC')),
+    run_group VARCHAR(36),
+    speedup NUMERIC(10, 3),
+    efficiency NUMERIC(8, 4),
+    same_routes BOOLEAN
 );
 
 CREATE INDEX idx_users_establishment ON users(establishment_id);
@@ -114,5 +122,7 @@ CREATE INDEX idx_orders_courier ON orders(assigned_courier_id);
 CREATE INDEX idx_order_status_history_order ON order_status_history(order_id, changed_at);
 CREATE INDEX idx_routes_courier_date ON routes(courier_id, route_date);
 CREATE INDEX idx_optimization_runs_mode ON optimization_runs(establishment_id, execution_mode);
+CREATE INDEX idx_optimization_runs_group ON optimization_runs(establishment_id, run_group);
+CREATE INDEX idx_routes_status ON routes(establishment_id, status);
 
 COMMIT;
