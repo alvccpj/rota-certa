@@ -7,6 +7,7 @@ from api_base import ApiTestCase
 
 from app.models import Establishment
 from app.optimizer.gpu import GpuStatus
+from app.optimizer.routing import Stop, nearest_neighbor, route_distance_km
 
 
 class RoutesTestCase(ApiTestCase):
@@ -55,6 +56,25 @@ class RoutesTestCase(ApiTestCase):
         runs = self.client.get("/optimizer/runs", headers=self.admin).json()
         self.assertEqual(runs[0]["id"], generated["run"]["id"])
 
+    def test_quality_compares_the_same_orders_including_return_to_depot(self) -> None:
+        response = self.generate()
+        self.assertEqual(response.status_code, 200, response.text)
+        payload = response.json()
+        depot = Stop("depot", payload["depot"]["latitude"], payload["depot"]["longitude"])
+        original = nearest = optimized = 0.0
+        for route in payload["routes"]:
+            ordered = [Stop(str(s["order_id"]), s["latitude"], s["longitude"]) for s in route["stops"]]
+            initial = sorted(ordered, key=lambda stop: int(stop.id))
+            original += route_distance_km(depot, initial)
+            nearest += route_distance_km(depot, nearest_neighbor(depot, initial))
+            optimized += route_distance_km(depot, ordered)
+        quality = payload["quality"]
+        self.assertAlmostEqual(quality["original_distance_km"], original)
+        self.assertAlmostEqual(quality["nearest_neighbor_distance_km"], nearest)
+        self.assertAlmostEqual(quality["optimized_distance_km"], optimized)
+        self.assertLessEqual(optimized, nearest + 1e-9)
+        self.assertAlmostEqual(optimized, payload["run"]["total_distance_km"], places=3)
+
     def test_route_distance_matches_the_sum_of_its_legs(self) -> None:
         self.assigned_order(latitude=-8.07, longitude=-34.91)
         self.assigned_order(latitude=-8.03, longitude=-34.92)
@@ -90,7 +110,9 @@ class RoutesTestCase(ApiTestCase):
 
     def test_generation_without_assigned_orders_is_rejected(self) -> None:
         for order in self.client.get("/orders", headers=self.admin, params={"status": "ASSIGNED"}).json():
-            self.client.patch(f"/orders/{order['id']}/status", headers=self.admin, json={"status": "CANCELLED"})
+            cancelled = self.client.patch(f"/orders/{order['id']}/status", headers=self.admin,
+                                          json={"status": "CANCELLED", "note": "Cancelamento para teste"})
+            self.assertEqual(cancelled.status_code, 200, cancelled.text)
         response = self.generate()
         self.assertEqual(response.status_code, 409)
         self.assertIn("Não há pedidos atribuídos", response.json()["detail"])

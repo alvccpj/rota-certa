@@ -1,13 +1,13 @@
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Courier, Order, User
+from app.models import Courier, User
 from app.routers.auth import ensure_email_available
-from app.rules import active_loads
+from app.rules import active_loads, ensure_courier_can_leave
 from app.schemas import AvailabilityIn, CourierOption, CourierOut, UserCreate, UserOut, UserUpdate
 from app.security import ADMIN, ATTENDANT, COURIER, hash_password, require_roles
 
@@ -75,6 +75,10 @@ def update_user(
             "Você não pode remover o próprio acesso de administrador.",
         )
     ensure_email_available(db, data.email, ignore_user_id=user.id)
+    if user.courier is not None:
+        removing_access = data.role != COURIER or not data.active
+        if removing_access or data.availability == "OFFLINE":
+            ensure_courier_can_leave(db, user.courier, removing_access=removing_access)
 
     user.full_name = data.full_name
     user.email = data.email.lower()
@@ -118,6 +122,8 @@ def deactivate_user(
     user = get_user_in_establishment(db, admin, user_id)
     if user.id == admin.id:
         raise HTTPException(status.HTTP_409_CONFLICT, "Você não pode desativar o próprio usuário.")
+    if user.courier is not None:
+        ensure_courier_can_leave(db, user.courier, removing_access=True)
     user.active = False
     if user.courier is not None:
         user.courier.availability = "OFFLINE"
@@ -167,14 +173,7 @@ def update_my_availability(
     if courier is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Cadastro de entregador não encontrado.")
     if data.availability == "OFFLINE":
-        in_route = db.scalar(
-            select(func.count(Order.id)).where(Order.assigned_courier_id == courier.id, Order.status == "IN_ROUTE")
-        )
-        if in_route:
-            raise HTTPException(
-                status.HTTP_409_CONFLICT,
-                "Finalize as entregas em rota antes de ficar fora de serviço.",
-            )
+        ensure_courier_can_leave(db, courier)
     courier.availability = data.availability
     db.commit()
     return courier

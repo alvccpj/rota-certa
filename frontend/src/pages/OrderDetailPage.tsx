@@ -60,7 +60,7 @@ export default function OrderDetailPage() {
 
   async function submitCancel(event: FormEvent) {
     event.preventDefault();
-    if (reason.trim().length < 5) {
+    if (reason.trim().replace(/\s+/g, " ").length < 5) {
       setReasonError("Explique o motivo em pelo menos 5 caracteres. Ele fica registrado no histórico.");
       return;
     }
@@ -118,7 +118,7 @@ export default function OrderDetailPage() {
           <StatusBadge status={order.status} />
         </div>
         <div className="actions">
-          {isCourier && step && (
+          {step && order.allowed_statuses.includes(step.status) && (
             <button
               type="button"
               className="button primary"
@@ -133,12 +133,12 @@ export default function OrderDetailPage() {
               <Link className="button primary" to={`/pedidos/${order.id}/editar`}>
                 Editar pedido
               </Link>
-              <button type="button" className="button quiet" onClick={() => setCancelling((v) => !v)} disabled={busy}>
+              {order.allowed_statuses.includes("CANCELLED") && <button type="button" className="button quiet" onClick={() => setCancelling((v) => !v)} disabled={busy}>
                 Cancelar pedido
-              </button>
+              </button>}
             </>
           )}
-          {!isCourier && locked && (
+          {!isCourier && locked && order.allowed_statuses.includes("PENDING") && (
             <button
               type="button"
               className="button quiet"
@@ -173,6 +173,7 @@ export default function OrderDetailPage() {
                   setReasonError(null);
                 }}
                 placeholder="Ex.: cliente desistiu da compra"
+                maxLength={255}
                 autoFocus
               />
             )}

@@ -14,6 +14,38 @@ from app.optimizer.routing import Stop, haversine_km
 ACTIVE_STATUSES = ("ASSIGNED", "IN_ROUTE")
 
 
+def ensure_courier_can_leave(db: Session, courier: Courier, *, removing_access: bool = False) -> None:
+    """Evita deixar entregas sem um responsável que possa acessá-las."""
+    statuses = ACTIVE_STATUSES if removing_access else ("IN_ROUTE",)
+    ids = list(db.scalars(select(Order.id).where(
+        Order.assigned_courier_id == courier.id, Order.status.in_(statuses)
+    ).order_by(Order.id)))
+    if ids:
+        orders = ", ".join(f"#{order_id}" for order_id in ids)
+        raise HTTPException(status.HTTP_409_CONFLICT,
+                            f"Resolva as entregas ativas antes de retirar o acesso ou colocar fora de serviço. Pedidos: {orders}.")
+
+
+STAFF_TRANSITIONS = {
+    "PENDING": {"ASSIGNED", "CANCELLED"},
+    "ASSIGNED": {"PENDING", "IN_ROUTE", "CANCELLED"},
+    "IN_ROUTE": {"DELIVERED", "CANCELLED"},
+    "DELIVERED": {"PENDING"},
+    "CANCELLED": {"PENDING"},
+}
+
+
+def allowed_statuses(current: str, *, courier: bool) -> list[str]:
+    allowed = {"ASSIGNED": {"IN_ROUTE"}, "IN_ROUTE": {"DELIVERED"}} if courier else STAFF_TRANSITIONS
+    return sorted(allowed.get(current, set()))
+
+
+def ensure_status_transition(current: str, target: str, *, courier: bool) -> None:
+    if target not in allowed_statuses(current, courier=courier):
+        raise HTTPException(status.HTTP_409_CONFLICT,
+                            "Esta mudança de situação não é permitida. Atualize o pedido e siga a próxima etapa; pedidos encerrados precisam ser reabertos.")
+
+
 def kg(value: Decimal | float) -> str:
     """Formata pesos no padrão brasileiro: 25, 3,7 ou 2,55."""
 
@@ -79,3 +111,14 @@ def ensure_window_not_past(desired_end: datetime | None) -> None:
             status.HTTP_422_UNPROCESSABLE_ENTITY,
             "O horário final da entrega já passou. Informe um horário futuro.",
         )
+
+
+def ensure_window_update_not_past(order: Order, desired_start: datetime | None, desired_end: datetime | None) -> None:
+    """Valida uma nova janela; permite preservar a antiga ao corrigir pedidos atrasados."""
+
+    def utc(value: datetime | None) -> datetime | None:
+        # SQLite retorna datas sem fuso; a aplicação as interpreta como UTC.
+        return value.replace(tzinfo=timezone.utc) if value is not None and value.tzinfo is None else value
+
+    if (utc(desired_start), utc(desired_end)) != (utc(order.desired_start), utc(order.desired_end)):
+        ensure_window_not_past(desired_end)

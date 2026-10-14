@@ -99,6 +99,20 @@ export default function RoutesPage() {
         </div>
       </div>
 
+      <div className="form-card" aria-labelledby="route-guide">
+        <h2 id="route-guide">Como organizar as entregas</h2>
+        <ol>
+          <li>Defina o ponto de saída no mapa.</li>
+          <li><Link to="/pedidos">Atribua os pedidos</Link> aos entregadores.</li>
+          <li>Gere as rotas para calcular a ordem das paradas.</li>
+          <li>O entregador inicia sua rota e confirma cada entrega na conta dele.</li>
+        </ol>
+        <p className="muted">
+          Prioridade e horário são informações para a equipe. Nesta versão, o cálculo considera a distância;
+          ele não garante os horários desejados nem coloca automaticamente os pedidos urgentes primeiro.
+        </p>
+      </div>
+
       {error && (
         <div className="alert error" role="alert">
           {error}{" "}
@@ -165,7 +179,7 @@ export default function RoutesPage() {
             </select>
           </div>
         )}
-        <button type="button" className="button primary" onClick={generate} disabled={busy || depotMissing}>
+        <button type="button" className="button primary" onClick={generate} disabled={busy || !overview || depotMissing}>
           {busy ? "Gerando rotas…" : "Gerar rotas"}
         </button>
         {user.role === "ADMIN" && !depotMissing && !editingDepot && (
@@ -193,6 +207,27 @@ export default function RoutesPage() {
             <strong>{MODE_LABELS[lastRun.run.execution_mode]}</strong>
             {lastRun.run.execution_mode === "PARALLEL" && ` com ${lastRun.run.worker_count} processo(s)`}:{" "}
             {lastRun.run.order_count} pedido(s), {formatKm(lastRun.run.total_distance_km)} no total.
+          </p>
+          <h2>Distância antes e depois — última geração</h2>
+          <div className="stat-tiles route-quality">
+            <div className="stat-tile">
+              <span>Ordem original (número do pedido)</span>
+              <strong>{formatKm(lastRun.quality.original_distance_km)}</strong>
+            </div>
+            <div className="stat-tile">
+              <span>Vizinho mais próximo</span>
+              <strong>{formatKm(lastRun.quality.nearest_neighbor_distance_km)}</strong>
+            </div>
+            <div className="stat-tile">
+              <span>Após o refinamento 2-opt</span>
+              <strong>{formatKm(lastRun.quality.optimized_distance_km)}</strong>
+            </div>
+          </div>
+          <p>{distanceChange(lastRun.quality.original_distance_km, lastRun.quality.optimized_distance_km)}</p>
+          <p className="muted">
+            Compara apenas os pedidos desta geração, incluindo a volta ao ponto de saída.
+            Esta comparação fica visível até sair da página; seu cálculo não entra no tempo do otimizador.
+            A heurística não garante a menor distância possível.
           </p>
           {lastRun.skipped.map((item) => (
             <p key={item.courier.id}>
@@ -229,6 +264,13 @@ export default function RoutesPage() {
       )}
     </section>
   );
+}
+
+function distanceChange(original: number, optimized: number): string {
+  const difference = original - optimized;
+  if (Math.abs(difference) < 0.001) return "Sem mudança significativa em relação à ordem original.";
+  const percent = original > 0 ? Math.abs(difference / original * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) : null;
+  return `${difference > 0 ? "Redução" : "Aumento"} de ${formatKm(Math.abs(difference))}${percent ? ` (${percent}%)` : ""} em relação à ordem original.`;
 }
 
 function RouteCard({

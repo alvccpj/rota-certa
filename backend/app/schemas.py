@@ -177,6 +177,12 @@ class StatusIn(BaseModel):
     status: OrderStatus
     note: Annotated[str, Field(max_length=255), AfterValidator(clean_text)] | None = None
 
+    @model_validator(mode="after")
+    def cancellation_requires_reason(self) -> "StatusIn":
+        if self.status == "CANCELLED" and len(self.note or "") < 5:
+            raise ValueError("Explique o motivo do cancelamento em pelo menos 5 caracteres.")
+        return self
+
 
 class CustomerRef(ORMModel):
     id: int
@@ -213,6 +219,7 @@ class HistoryOut(BaseModel):
 
 class OrderDetailOut(OrderOut):
     history: list[HistoryOut]
+    allowed_statuses: list[OrderStatus]
 
 
 # Busca de endereço
@@ -308,9 +315,16 @@ class RoutesOverviewOut(BaseModel):
     waiting_orders: int
 
 
+class RouteQualityOut(BaseModel):
+    original_distance_km: float
+    nearest_neighbor_distance_km: float
+    optimized_distance_km: float
+
+
 class RouteGenerationOut(RoutesOverviewOut):
     skipped: list[SkippedCourierOut]
     run: OptimizationRunOut
+    quality: RouteQualityOut
 
 
 class MyRouteOut(BaseModel):
