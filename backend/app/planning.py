@@ -13,13 +13,22 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.models import Courier, Establishment, OptimizationRun, Order, OrderStatusEvent, Route, RouteStop, User, utc_now
 from app.optimizer import gpu
-from app.optimizer.routing import ALGORITHM, OptimizationResult, Stop, haversine_km, optimize_routes
+from app.optimizer.routing import (
+    ALGORITHM,
+    OptimizationResult,
+    Stop,
+    haversine_km,
+    nearest_neighbor,
+    optimize_routes,
+    route_distance_km,
+)
 from app.schemas import (
     AssignedCourierOut,
     DepotOut,
     MyRouteOut,
     OptimizationRunOut,
     RouteGenerationOut,
+    RouteQualityOut,
     RouteOut,
     RoutesOverviewOut,
     RouteStopOut,
@@ -285,7 +294,14 @@ def generate_routes(db: Session, user: User, mode: str, workers: int | None) -> 
         )
 
     couriers = list(groups)
-    result = run_optimizer(depot, [[stop_of(order) for order in groups[c]] for c in couriers], mode, workers)
+    inputs = [[stop_of(order) for order in groups[c]] for c in couriers]
+    result = run_optimizer(depot, inputs, mode, workers)
+    # Comparação didática fora da medição do otimizador. A ordem original é por ID.
+    quality = RouteQualityOut(
+        original_distance_km=sum(route_distance_km(depot, stops) for stops in inputs),
+        nearest_neighbor_distance_km=sum(route_distance_km(depot, nearest_neighbor(depot, stops)) for stops in inputs),
+        optimized_distance_km=result.total_distance_km,
+    )
 
     for planned in db.scalars(
         select(Route).where(Route.establishment_id == establishment.id, Route.status == "PLANNED")
@@ -330,7 +346,7 @@ def generate_routes(db: Session, user: User, mode: str, workers: int | None) -> 
     )
     db.add(run)
     db.commit()
-    return RouteGenerationOut(**overview(db, establishment).model_dump(), skipped=skipped, run=run_out(run))
+    return RouteGenerationOut(**overview(db, establishment).model_dump(), skipped=skipped, run=run_out(run), quality=quality)
 
 
 def courier_route(db: Session, user: User) -> MyRouteOut:

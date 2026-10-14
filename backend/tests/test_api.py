@@ -100,6 +100,37 @@ class UsersTestCase(ApiTestCase):
 
 
 class ProfilesTestCase(ApiTestCase):
+    def test_active_deliveries_block_access_removal_through_both_endpoints(self) -> None:
+        users = self.client.get("/users", headers=self.admin).json()
+        for courier in (user for user in users if user["role"] == "COURIER"):
+            with self.subTest(user=courier["id"]):
+                url = f"/users/{courier['id']}"
+                response = self.client.delete(url, headers=self.admin)
+                self.assertEqual(response.status_code, 409, response.text)
+                self.assertIn("Pedidos:", response.json()["detail"])
+                base = {"full_name": courier["full_name"], "email": courier["email"], "role": "COURIER", "active": True}
+                for change in ({"active": False}, {"role": "ATTENDANT"}):
+                    response = self.client.put(url, headers=self.admin, json={**base, **change})
+                    self.assertEqual(response.status_code, 409, response.text)
+                saved = self.client.get(url, headers=self.admin).json()
+                self.assertTrue(saved["active"])
+                self.assertEqual(saved["role"], "COURIER")
+
+    def test_admin_cannot_put_courier_with_delivery_in_route_offline(self) -> None:
+        carla = next(u for u in self.client.get("/users", headers=self.admin).json() if u["email"] == "entregador@rotacerta.com.br")
+        response = self.client.put(f"/users/{carla['id']}", headers=self.admin, json={
+            "full_name": carla["full_name"], "email": carla["email"], "role": "COURIER", "active": True, "availability": "OFFLINE",
+        })
+        self.assertEqual(response.status_code, 409, response.text)
+
+    def test_courier_without_active_orders_can_be_deactivated(self) -> None:
+        courier = self.client.post("/users", headers=self.admin, json={
+            "full_name": "Entregador Livre", "email": "livre@example.com", "password": NEW_PASSWORD,
+            "role": "COURIER", "load_capacity_kg": 20,
+        }).json()
+        response = self.client.delete(f"/users/{courier['id']}", headers=self.admin)
+        self.assertEqual(response.status_code, 204, response.text)
+
     def test_only_admin_manages_users(self) -> None:
         self.assertEqual(self.client.get("/users", headers=self.attendant).status_code, 403)
         self.assertEqual(self.client.get("/users", headers=self.courier).status_code, 403)
