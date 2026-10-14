@@ -16,12 +16,12 @@ Este documento registra o escopo, a implementação e as evidências da Sprint 0
 | Ajustes de navegação | **Concluídos.** A visão geral tornou-se a entrada dos perfis internos e o menu móvel passou a ser recolhível. | Fluxos entre painel, pedidos, rotas e desempenho validados. |
 | Repositório atualizado | **Concluído na branch da Sprint 06.** O código, os testes, as evidências e a documentação estão organizados para revisão. | Abrir PR, revisar e integrar a Sprint 06 à branch principal. |
 | Documento cumulativo | **Concluído.** O documento contém as Sprints 01 a 06. | PDF final disponível em `output/pdf`. |
-| Participação da equipe | **Risco identificado.** O histórico atual registra commits de Álvaro e Vinícius, mas não de Arthur e William. | Dividir tarefas reais e garantir que cada integrante registre sua própria contribuição, sem fabricar autoria. |
+| Participação da equipe | **Parcialmente comprovada.** O histórico registra contribuições próprias de William e Vinícius. | Os demais integrantes devem registrar suas contribuições reais em commits próprios, sem fabricar autoria. |
 
 ## 2. Validações técnicas realizadas
 
 - O build de produção do frontend foi concluído com sucesso.
-- A suíte do backend apresentou **81 testes aprovados e 1 ignorado**. O teste ignorado depende de uma GPU CUDA, indisponível na máquina de validação.
+- A suíte combinada do backend apresentou **90 testes aprovados e 1 ignorado**. O teste ignorado depende de uma GPU CUDA, indisponível na máquina de validação.
 - A execução paralela por CPU foi validada fora das restrições do ambiente isolado.
 - O banco, autenticação, cadastro, perfis, CRUDs, rotas e métricas já possuem testes automatizados.
 - O Vite foi atualizado para 7.3.7 e a dependência transitiva vulnerável foi corrigida. O `npm audit` terminou com **zero vulnerabilidades**.
@@ -128,6 +128,7 @@ Esta divisão é uma sugestão e deve refletir contribuições reais de cada int
 | Arthur | Testes de integração, permissões, atualização segura das dependências e validação do backend. |
 | Vinícius | Tela do painel, filtros, exportação, navegação e melhorias responsivas. |
 | William | Validação dos fluxos completos, organização das evidências e atualização do documento cumulativo. |
+| Guilherme | Desenvolvimento e validação do sistema. |
 
 Cada integrante deve trabalhar em branch própria ou em uma branch de tarefa e realizar seus próprios commits identificados. Documentação, testes e evidências são contribuições válidas quando produzidas de fato pelo autor.
 

@@ -1,4 +1,10 @@
 $ git log --reverse --format="%h %ad %s" --date=format:"%d/%m %H:%M" origin/master..HEAD
 
-40ceaaf 14/10 11:08 docs: preparar planejamento da sprint 06
-b73d2c3 14/10 12:04 feat: implementar painel operacional da sprint 06
+40ceaaf 14/10 11:08 Vinicius Ribau | docs: preparar planejamento da sprint 06
+56b127e 14/10 11:57 William Coelho de Morais | fix: valida pedidos e protege entregadores com entregas ativas
+1a06f70 14/10 11:57 William Coelho de Morais | feat: melhora acompanhamento de entregas e comparacao de rotas
+c080a68 14/10 11:57 William Coelho de Morais | docs: registra alteracoes e participacao de William na equipe
+b73d2c3 14/10 12:04 Vinicius Ribau | feat: implementar painel operacional da sprint 06
+e8b0c06 14/10 12:16 Vinicius Ribau | docs: concluir evidências e documento da sprint 06
+16cefdb 14/10 12:49 Vinicius Ribau | docs: adicionar Guilherme à equipe
+17bc4fb 14/10 12:52 Vinicius Ribau | merge: integrar melhorias de William à Sprint 06

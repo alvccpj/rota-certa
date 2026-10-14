@@ -48,6 +48,7 @@ TEAM = (
     ("Arthur Sales", "01593811"),
     ("Vinícius Trigueiro", "01794959"),
     ("William Coelho de Morais", "01263977"),
+    ("Guilherme de Luna Barros", "01615925"),
 )
 
 
@@ -228,6 +229,7 @@ def sprint01(doc: Document) -> None:
                 ["Arthur Sales", "01593811", "Backend e núcleo de otimização e paralelização"],
                 ["Vinícius Trigueiro", "01794959", "Frontend, banco de dados e documentação"],
                 ["William Coelho de Morais", "01263977", "Desenvolvimento e testes"],
+                ["Guilherme de Luna Barros", "01615925", "Desenvolvimento e validação do sistema"],
             ],
             [4.2, 2.8, 10.2],
             9,
@@ -1114,7 +1116,7 @@ def sprint05(doc: Document) -> None:
     )
 
 
-SPRINT06_TEST_COUNT = 81
+SPRINT06_TEST_COUNT = 90
 
 
 def sprint06(doc: Document) -> None:
@@ -1163,6 +1165,8 @@ def sprint06(doc: Document) -> None:
         H("48  Evidências das funcionalidades"),
         P("As evidências foram capturadas com o estabelecimento de demonstração, catorze pedidos, dois entregadores e duas rotas geradas no modo sequencial. Depois da geração, o painel passou a mostrar duas rotas, 32,2 km planejados e a execução registrada no histórico do otimizador."),
         Figure([s6("s06_03_relatorio_exportado.png")], "Relatório CSV exportado com os catorze pedidos do período e confirmação exibida pela interface"),
+        Figure([ROOT / "output" / "usuarios-protegidos.png"], "Gestão de usuários com acesso aos pedidos ativos e proteção contra a desativação indevida de entregadores"),
+        Figure([ROOT / "output" / "rotas-melhorias.png"], "Comparação entre a ordem original, vizinho mais próximo e refinamento 2-opt na geração das rotas"),
         H("Relatório exportável", 3),
         P("O botão Exportar relatório CSV consulta GET /dashboard/report usando o período selecionado e gera um arquivo compatível com planilhas. Cada linha contém o pedido, cliente, entregador, endereço, situação, prioridade, peso, data de cadastro e os dados da rota quando existem. O arquivo usa ponto e vírgula e codificação UTF-8 com marcador para preservar acentos no Excel."),
         H("Controle de acesso", 3),
@@ -1176,19 +1180,21 @@ def sprint06(doc: Document) -> None:
                 ["Navegação desktop", "Visão geral passou a ser a primeira opção; espaçamento adaptativo evita opções cortadas em larguras intermediárias"],
                 ["Navegação móvel", "menu recolhível com botão acessível, estado expandido e página ativa destacada"],
                 ["Atalhos", "Novo pedido, Planejar rotas e Ver desempenho ficam disponíveis no cabeçalho do painel"],
+                ["Acompanhamento", "listas de pedidos e entregas são atualizadas a cada 15 segundos quando a aba está visível, preservando os filtros"],
+                ["Regras visíveis", "ações de situação usam as permissões devolvidas pela API; pedidos ativos aparecem vinculados ao entregador"],
                 ["Acessibilidade", "rótulos nos filtros, foco visível, navegação semântica, títulos de tabela e mensagens com região de status"],
             ],
             [5.0, 12.2],
         ),
         Figure([s6("s06_04_navegacao_mobile.png")], "Menu móvel expandido com acesso organizado aos três módulos e às áreas administrativas", 34),
         H("50  Testes e qualidade técnica"),
-        P(f"A suíte passou de 76 para {SPRINT06_TEST_COUNT} testes aprovados. Os cinco novos testes verificam totais integrados, atualização depois da geração das rotas, filtros, limites do período e permissões. Um teste adicional da implementação CUDA permanece ignorado automaticamente em máquinas sem GPU NVIDIA."),
+        P(f"A suíte combinada passou de 76 para {SPRINT06_TEST_COUNT} testes aprovados. Além dos cinco testes do painel, os testes adicionados por William verificam transições de situação, motivo de cancelamento, preservação de janelas antigas, proteção de entregadores com pedidos ativos e comparação de qualidade das rotas. Um teste adicional da implementação CUDA permanece ignorado automaticamente em máquinas sem GPU NVIDIA."),
         Code(evidence06("testes.txt"), "Resultado da suíte automatizada do backend"),
         P("O frontend foi compilado para produção depois da implementação. A versão do Vite e a dependência transitiva source-map-js foram atualizadas, eliminando os avisos de segurança sem mudança de versão principal."),
         Code(evidence06("qualidade_frontend.txt"), "Build de produção e auditoria das dependências do frontend"),
         H("51  Ajustes no planejamento e na arquitetura"),
         H("Planejamento", 3),
-        P("O Painel administrativo do dia, originalmente previsto como RF10 para uma etapa posterior, foi antecipado para atender ao terceiro módulo da Sprint 06 e consolidar os dois módulos já funcionais. A atribuição automática e as restrições de janela de horário permanecem planejadas para as próximas etapas."),
+        P("O Painel administrativo do dia, originalmente previsto como RF10 para uma etapa posterior, foi antecipado para atender ao terceiro módulo da Sprint 06 e consolidar os dois módulos já funcionais. A validação de janelas de horário foi reforçada na edição dos pedidos; a atribuição automática e o uso da prioridade e das janelas como restrições do otimizador permanecem planejados para as próximas etapas."),
         Table(
             ["Sprint", "Período", "Entrega principal", "Situação"],
             [
@@ -1213,11 +1219,13 @@ def sprint06(doc: Document) -> None:
             "Novo router backend/app/routers/dashboard.py com GET /dashboard/summary e GET /dashboard/report.",
             "Novos contratos Pydantic para indicadores, período, pedidos recentes e linhas do relatório.",
             "Nova página frontend/src/pages/DashboardPage.tsx e contratos TypeScript equivalentes.",
+            "Regras de transição e proteção de entregadores centralizadas no backend/app/rules.py e expostas à interface pelo contrato de detalhe do pedido.",
+            "Componente AutoRefresh para atualizar listas visíveis sem descartar filtros, além da comparação de qualidade retornada pela geração de rotas.",
             "Nenhuma tabela ou migração foi necessária: o módulo usa relações e dados existentes no modelo da Sprint 02 e implementados nas Sprints 04 e 05.",
         ]),
         H("52  Repositório GitHub"),
         P(f"Repositório oficial. {REPOSITORY}", "Repositório oficial."),
-        P("A Sprint 06 foi desenvolvida na branch sprint/06-aprimoramento-sistema, criada a partir da master com a Sprint 05 integrada. O módulo, os testes, as evidências e o documento cumulativo foram organizados em commits separados para facilitar a revisão por Pull Request."),
+        P("A Sprint 06 foi desenvolvida na branch sprint/06-aprimoramento-sistema, criada a partir da master com a Sprint 05 integrada. As três contribuições de William, publicadas em dev/william, foram revisadas, validadas em conjunto e integradas por merge identificado. O módulo, os testes, as evidências e o documento cumulativo permaneceram organizados em commits separados para facilitar a revisão por Pull Request."),
         Code(evidence06("commits.txt"), "Commits da Sprint 06 em ordem cronológica"),
         H("53  Dificuldades encontradas e próximos passos"),
         H("Dificuldades", 3),
@@ -1229,6 +1237,7 @@ def sprint06(doc: Document) -> None:
                 ["Adicionar uma opção ao menu sem cortar a navegação", "Espaçamento adaptativo no desktop e menu recolhível no celular"],
                 ["Dependências do frontend com alertas de segurança", "Atualização compatível do Vite e de source-map-js, seguida de novo build e auditoria"],
                 ["Comprovar a integração sem depender apenas das telas", "Testes automatizados e evidência das respostas da API antes e depois da geração das rotas"],
+                ["Reunir contribuições produzidas em branches paralelas", "A árvore combinada foi verificada sem conflitos, executou 90 testes e recebeu novo build antes da integração"],
             ],
             [6.2, 11.0],
         ),
