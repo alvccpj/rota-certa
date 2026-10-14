@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
-import { api, type Role, type User } from "../api";
+import { api, type Order, type Role, type User } from "../api";
 import { useConfirm } from "../components/ConfirmDialog";
 import { useToast } from "../components/Toast";
 import { AVAILABILITY_LABELS, ROLE_LABELS, ROLE_PERMISSIONS, formatKg } from "../labels";
@@ -15,10 +15,13 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeOrders, setActiveOrders] = useState<Order[]>([]);
 
   const load = useCallback(async () => {
     try {
-      setUsers(await api<User[]>("/users"));
+      const [nextUsers, orders] = await Promise.all([api<User[]>("/users"), api<Order[]>("/orders")]);
+      setUsers(nextUsers);
+      setActiveOrders(orders.filter((order) => order.status === "ASSIGNED" || order.status === "IN_ROUTE"));
       setError(null);
     } catch (err) {
       setError((err as Error).message);
@@ -58,6 +61,7 @@ export default function UsersPage() {
       load();
     } catch (err) {
       notify((err as Error).message, "error");
+      setError((err as Error).message);
     }
   }
 
@@ -81,6 +85,11 @@ export default function UsersPage() {
           </li>
         ))}
       </ul>
+      <p className="inline-note">
+        Para desativar um entregador ou mudar seu perfil, finalize, cancele ou reatribua seus pedidos ativos.
+        Entregas em rota precisam ser resolvidas antes de colocá-lo fora de serviço.
+      </p>
+      <button type="button" className="link" onClick={load}>Atualizar usuários e entregas</button>
 
       {error && (
         <p className="alert error" role="alert">
@@ -121,6 +130,11 @@ export default function UsersPage() {
                       <>
                         {AVAILABILITY_LABELS[user.courier.availability]}
                         <span className="sub">Carga até {formatKg(user.courier.load_capacity_kg)}</span>
+                        <span className="sub">
+                          {activeOrders.filter((order) => order.assigned_courier?.id === user.courier?.id).map((order) => (
+                            <Link key={order.id} to={`/pedidos/${order.id}`} style={{ marginRight: 8 }}>Pedido #{order.id}</Link>
+                          ))}
+                        </span>
                       </>
                     ) : (
                       <span className="muted">Não se aplica</span>
@@ -136,6 +150,8 @@ export default function UsersPage() {
                         type="button"
                         className={user.active ? "button danger small" : "button quiet small"}
                         onClick={() => toggleActive(user)}
+                        disabled={user.active && activeOrders.some((order) => order.assigned_courier?.id === user.courier?.id)}
+                        title="Resolva os pedidos ativos antes de desativar o entregador."
                       >
                         {user.active ? "Desativar" : "Reativar"}
                       </button>

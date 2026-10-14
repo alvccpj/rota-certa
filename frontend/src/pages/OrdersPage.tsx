@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import AutoRefresh from "../components/AutoRefresh";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { api, type Order, type OrderStatus } from "../api";
 import { Priority, StatusBadge } from "../components/Badges";
@@ -22,16 +23,21 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const refreshing = useRef(false);
 
   const load = useCallback(async () => {
-    setLoading(true);
+    if (refreshing.current) return;
+    refreshing.current = true;
     try {
       setOrders(await api<Order[]>("/orders"));
+      setUpdatedAt(new Date());
       setError(null);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
+      refreshing.current = false;
     }
   }, []);
 
@@ -64,6 +70,7 @@ export default function OrdersPage() {
         </Link>
       </div>
 
+      <AutoRefresh onRefresh={load} updatedAt={updatedAt} />
       <div className="toolbar">
         <label className="search">
           <span className="sr-only">Buscar pedidos</span>

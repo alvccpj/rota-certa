@@ -341,7 +341,8 @@ function Results({ group }: { group: RunGroup }) {
   const cpu = bestCpu(group.rows);
   const gpu = group.rows.find((row) => row.execution_mode === "GPU");
   const parallel = group.rows.filter((row) => row.execution_mode === "PARALLEL");
-  const allSame = group.rows.every((row) => row.same_routes !== false);
+  const hasDifference = group.rows.some((row) => row.same_routes === false);
+  const allSame = group.rows.every((row) => row.same_routes === true);
 
   return (
     <div className="results">
@@ -373,9 +374,9 @@ function Results({ group }: { group: RunGroup }) {
           {gpu && <small>{formatMs(gpu.execution_time_ms)} · {gpu.worker_count.toLocaleString("pt-BR")} threads</small>}
         </div>
         <div className={allSame ? "stat-tile" : "stat-tile warn"}>
-          <span>Qualidade das rotas</span>
-          <strong>{allSame ? "Idênticas" : "Diferentes"}</strong>
-          <small>{formatKm(base.total_distance_km)} no total em todos os modos</small>
+          <span>Sequência das paradas</span>
+          <strong>{hasDifference ? "Diferentes" : allSame ? "Idênticas" : "Não verificada"}</strong>
+          <small>{formatKm(base.total_distance_km)} no modo sequencial</small>
         </div>
       </div>
 
@@ -403,13 +404,15 @@ function Results({ group }: { group: RunGroup }) {
                 <td className="num">{row.speedup != null ? `${formatRatio(row.speedup)}×` : "—"}</td>
                 <td className="num">{row.efficiency != null ? `${formatRatio(row.efficiency * 100, 0)}%` : "—"}</td>
                 <td className="nowrap">{formatKm(row.total_distance_km)}</td>
-                <td>{row.same_routes ? "Sim" : "Não"}</td>
+                <td>{row.same_routes == null ? "Não verificado" : row.same_routes ? "Sim" : "Não"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <p className="inline-note">
+        Um speedup acima de 1 indica ganho de velocidade; abaixo de 1, o modo foi mais lento que o sequencial.
+        Entradas pequenas podem não compensar o custo de distribuir o trabalho.{" "}
         Speedup = tempo sequencial ÷ tempo do modo. Eficiência = speedup ÷ número de processos (100% seria o ganho
         ideal). Na GPU a eficiência não se aplica: o paralelismo é de milhares de threads, não de processos.
       </p>

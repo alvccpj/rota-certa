@@ -1293,6 +1293,8 @@ td.num a {
 }
 
 .route-map {
+  display: flex;
+  flex-direction: column;
   height: 560px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -1300,6 +1302,22 @@ td.num a {
   position: sticky;
   top: 16px;
   z-index: 0;
+}
+
+.route-map .map-canvas {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+.route-map .inline-note {
+  margin: 0;
+  padding: 12px;
+  background: var(--surface, #fff);
+}
+
+.stat-tiles.route-quality {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
 }
 
 .route-list {

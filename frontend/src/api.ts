@@ -68,6 +68,7 @@ export interface Order {
 
 export interface OrderDetail extends Order {
   history: HistoryEvent[];
+  allowed_statuses: OrderStatus[];
 }
 
 export interface OrderInput {
@@ -146,6 +147,11 @@ export interface RoutesOverview {
 }
 
 export interface RouteGeneration extends RoutesOverview {
+  quality: {
+    original_distance_km: number;
+    nearest_neighbor_distance_km: number;
+    optimized_distance_km: number;
+  };
   skipped: { courier: { id: number; full_name: string }; reason: string }[];
   run: OptimizationRun;
 }

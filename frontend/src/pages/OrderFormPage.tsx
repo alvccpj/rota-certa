@@ -215,8 +215,10 @@ export default function OrderFormPage() {
     }
 
     let endError: string | null = null;
+    const windowChanged = !order || form.desired_start !== toInputDateTime(order.desired_start)
+      || form.desired_end !== toInputDateTime(order.desired_end);
     if (start && end && end <= start) endError = "O fim precisa ser depois do início.";
-    else if (!editing && end && end < new Date()) endError = "Esse horário já passou. Informe um horário futuro.";
+    else if (windowChanged && end && end < new Date()) endError = "Esse horário já passou. Informe um horário futuro.";
 
     return collectErrors({
       customer_id: form.customer_id ? null : "Escolha o cliente do pedido.",
@@ -245,8 +247,10 @@ export default function OrderFormPage() {
       longitude: parseDecimal(form.longitude)!,
       weight_kg: parseDecimal(form.weight_kg)!,
       priority: form.priority,
-      desired_start: fromInputDateTime(form.desired_start),
-      desired_end: fromInputDateTime(form.desired_end),
+      desired_start: order && form.desired_start === toInputDateTime(order.desired_start)
+        ? order.desired_start : fromInputDateTime(form.desired_start),
+      desired_end: order && form.desired_end === toInputDateTime(order.desired_end)
+        ? order.desired_end : fromInputDateTime(form.desired_end),
       assigned_courier_id: form.assigned_courier_id ? Number(form.assigned_courier_id) : null,
     };
     setBusy(true);
@@ -424,6 +428,9 @@ export default function OrderFormPage() {
 
         <fieldset disabled={busy}>
           <legend>Carga e horário</legend>
+          <p className="muted">
+            Prioridade e horários orientam a equipe. A otimização atual usa a distância e não garante a janela de entrega.
+          </p>
           <div className="grid-2">
             <Field label="Peso (kg)" name="weight_kg" error={errors.weight_kg} hint={`Até ${MAX_WEIGHT_KG} kg por pedido.`}>
               {(props) => (
