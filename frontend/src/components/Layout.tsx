@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { ROLE_LABELS } from "../labels";
 import { useSession, useUser } from "../session";
@@ -9,8 +10,12 @@ export default function Layout() {
   const { signOut } = useSession();
   const location = useLocation();
   const staff = user.role !== "COURIER";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => setMenuOpen(false), [location.pathname]);
 
   const links = [
+    staff && { to: "/painel", label: "Visão geral" },
     staff && { to: "/pedidos", label: "Pedidos" },
     staff && { to: "/rotas", label: "Rotas" },
     !staff && { to: "/entregas", label: "Minhas entregas" },
@@ -30,7 +35,16 @@ export default function Layout() {
               <span>{user.establishment.name}</span>
             </div>
           </NavLink>
-          <nav className="tabs" aria-label="Seções">
+          <button
+            type="button"
+            className="menu-toggle"
+            aria-expanded={menuOpen}
+            aria-controls="main-navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span aria-hidden="true">☰</span> Menu
+          </button>
+          <nav id="main-navigation" className={menuOpen ? "tabs open" : "tabs"} aria-label="Seções">
             {links.map((link) => (
               <NavLink key={link.to} to={link.to} className={({ isActive }) => (isActive ? "tab active" : "tab")}>
                 {link.label}

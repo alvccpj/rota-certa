@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import { STAFF_ROLES } from "./labels";
 import CustomerFormPage from "./pages/CustomerFormPage";
 import CustomersPage from "./pages/CustomersPage";
+import DashboardPage from "./pages/DashboardPage";
 import DeliveriesPage from "./pages/DeliveriesPage";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -23,6 +24,7 @@ export default function App() {
       <Route path="/cadastro" element={<PublicOnly><RegisterPage /></PublicOnly>} />
       <Route element={<RequireAuth><Layout /></RequireAuth>}>
         <Route index element={<HomeRedirect />} />
+        <Route path="painel" element={<RequireRole roles={STAFF_ROLES}><DashboardPage /></RequireRole>} />
         <Route path="pedidos" element={<RequireRole roles={STAFF_ROLES}><OrdersPage /></RequireRole>} />
         <Route path="pedidos/novo" element={<RequireRole roles={STAFF_ROLES}><OrderFormPage /></RequireRole>} />
         <Route path="pedidos/:id" element={<OrderDetailPage />} />
