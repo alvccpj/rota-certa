@@ -1,0 +1,22 @@
+Evidência da integração entre os módulos
+
+GET /dashboard/summary -> HTTP 200
+- Período consultado: 08/10/2026 a 14/10/2026
+- Pedidos: 14 no total (2 pendentes, 10 atribuídos e 1 entregue)
+- Entregadores: 2 cadastrados
+- Rotas: 2 rotas persistidas, com 32,245 km no total
+- Histórico de desempenho: 1 execução antes do novo processamento
+
+POST /routes/generate -> HTTP 200
+- Resultado: 2 rotas geradas e gravadas no banco de dados
+
+GET /dashboard/summary após a geração -> HTTP 200
+- Histórico de desempenho atualizado para 2 execuções
+- Pedidos, entregadores e rotas permaneceram consistentes
+
+GET /dashboard/report -> HTTP 200
+- 14 registros integrados retornados para o relatório operacional
+- Exportação do arquivo CSV concluída pelo navegador
+
+O arquivo integracao.txt conserva as respostas completas da API utilizadas
+para produzir esta síntese.

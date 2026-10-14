@@ -58,7 +58,7 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_05.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_05.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)
 - Como rodar localmente: [`COMO-RODAR.md`](COMO-RODAR.md)

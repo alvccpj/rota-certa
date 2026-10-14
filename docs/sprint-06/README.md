@@ -4,37 +4,36 @@
 **Grupo:** 04  
 **Prazo:** 17/10/2026 às 23h59
 
-Este documento organiza a preparação da Sprint 06. Ele não substitui o documento cumulativo de entrega e não declara como concluídas funcionalidades que ainda serão implementadas.
+Este documento registra o escopo, a implementação e as evidências da Sprint 06. O conteúdo completo também integra o documento cumulativo das Sprints 01 a 06.
 
 ## 1. Diagnóstico do projeto antes da Sprint 06
 
 | Exigência | Situação em 14/10/2026 | Ação necessária |
 |---|---|---|
-| Correções da Pré-Banca | **Pendente de informação.** As observações da banca não estão registradas no repositório. | Registrar os comentários reais, implementar as correções e reunir evidências antes da entrega. |
-| Terceiro módulo | **Não implementado.** O sistema possui o módulo de pedidos/entregas e o módulo de roteirização/desempenho. | Implementar o módulo proposto de **Painel operacional e relatórios**. |
-| Integração entre módulos | **Base existente.** Pedidos alimentam as rotas; a conclusão de rotas altera entregas; execuções do otimizador geram métricas persistidas. | Expor os dados integrados no terceiro módulo e testar os fluxos completos. |
-| Melhorias de interface | **Boa base visual e responsiva.** Há identidade visual consistente, estados de tela e visualização desktop/mobile. | Refinar navegação, tela inicial, responsividade do menu e consistência de feedbacks. |
-| Ajustes de navegação | **Parcialmente atendido.** Existem rotas protegidas, controle por perfil, menu por função e breadcrumbs. | Criar uma entrada clara para a visão geral e revisar os fluxos entre painel, pedidos, rotas e desempenho. |
-| Repositório atualizado | **Atendido até a Sprint 05.** As Sprints 03, 04 e 05 estão integradas à branch principal. | Desenvolver em branch própria, abrir PR, revisar e integrar a Sprint 06. |
-| Documento cumulativo | **Atendido somente até a Sprint 05.** | Atualizar o documento para conter as Sprints 01 a 06 e gerar o PDF final. |
+| Terceiro módulo | **Concluído.** O Painel operacional e relatórios consolida pedidos, entregadores, rotas e desempenho. | Evidências em `docs/sprint-06/assets`. |
+| Integração entre módulos | **Concluída.** Pedidos alimentam as rotas; as rotas e execuções do otimizador aparecem nos indicadores e no relatório. | Validada pela API, pela interface e por testes automatizados. |
+| Melhorias de interface | **Concluídas.** Foram criados indicadores, gráficos, alertas, filtros, ações rápidas e estados de carregamento/erro/vazio. | Evidências desktop e mobile. |
+| Ajustes de navegação | **Concluídos.** A visão geral tornou-se a entrada dos perfis internos e o menu móvel passou a ser recolhível. | Fluxos entre painel, pedidos, rotas e desempenho validados. |
+| Repositório atualizado | **Concluído na branch da Sprint 06.** O código, os testes, as evidências e a documentação estão organizados para revisão. | Abrir PR, revisar e integrar a Sprint 06 à branch principal. |
+| Documento cumulativo | **Concluído.** O documento contém as Sprints 01 a 06. | PDF final disponível em `output/pdf`. |
 | Participação da equipe | **Risco identificado.** O histórico atual registra commits de Álvaro e Vinícius, mas não de Arthur e William. | Dividir tarefas reais e garantir que cada integrante registre sua própria contribuição, sem fabricar autoria. |
 
 ## 2. Validações técnicas realizadas
 
 - O build de produção do frontend foi concluído com sucesso.
-- A suíte do backend apresentou **76 testes aprovados e 1 ignorado**. O teste ignorado depende de uma GPU CUDA, indisponível na máquina de validação.
+- A suíte do backend apresentou **81 testes aprovados e 1 ignorado**. O teste ignorado depende de uma GPU CUDA, indisponível na máquina de validação.
 - A execução paralela por CPU foi validada fora das restrições do ambiente isolado.
 - O banco, autenticação, cadastro, perfis, CRUDs, rotas e métricas já possuem testes automatizados.
-- O frontend possui duas vulnerabilidades de severidade alta reportadas pelo `npm audit`, relacionadas à versão atual do Vite e a uma dependência transitiva. A atualização deve ser feita de forma controlada e seguida de novo build e testes.
+- O Vite foi atualizado para 7.3.7 e a dependência transitiva vulnerável foi corrigida. O `npm audit` terminou com **zero vulnerabilidades**.
 - O Docker não está instalado na máquina de validação. O projeto também possui procedimento de execução local sem Docker, portanto isso não impede a demonstração.
 
-## 3. Terceiro módulo proposto
+## 3. Terceiro módulo implementado
 
 ### Painel operacional e relatórios
 
-O terceiro módulo consolidará informações dos módulos existentes em uma visão operacional única. A escolha está alinhada aos requisitos funcionais já planejados para painel administrativo e relatórios e evita criar uma funcionalidade desconectada do propósito do Rota Certa.
+O terceiro módulo consolida informações dos módulos existentes em uma visão operacional única. A escolha está alinhada aos requisitos funcionais já planejados para painel administrativo e relatórios e evita criar uma funcionalidade desconectada do propósito do Rota Certa.
 
-### Funcionalidades mínimas
+### Funcionalidades entregues
 
 1. Exibir indicadores de pedidos por situação: pendentes, atribuídos, em rota, entregues e cancelados.
 2. Exibir quantidade de entregadores ativos e a situação das rotas do período.
@@ -57,56 +56,44 @@ Clientes → Pedidos → Atribuição ao entregador → Roteirização
                        Painel operacional e relatório
 ```
 
-O painel deverá consultar dados reais do PostgreSQL por meio da API. Não serão utilizados números fixos ou apenas telas ilustrativas.
+O painel consulta dados persistidos por meio da API. As evidências foram produzidas com uma base SQLite local isolada, suportada oficialmente para desenvolvimento e testes; a execução padrão permanece preparada para PostgreSQL.
 
-## 4. Escopo técnico planejado
+## 4. Estrutura técnica implementada
 
 ### Backend
 
-- Criar uma rota de resumo operacional, por exemplo `GET /dashboard/summary`.
-- Criar consulta de relatório por período e filtros, reutilizando pedidos, entregadores, rotas e execuções do otimizador.
-- Aplicar autenticação e autorização de perfis nas novas rotas.
-- Manter a lógica de agregação em serviços separados dos controladores HTTP.
-- Adicionar testes de permissões, filtros e consistência dos totais.
+- Rota de resumo operacional `GET /dashboard/summary`.
+- Consulta de relatório `GET /dashboard/report`, reutilizando pedidos, entregadores, rotas e execuções do otimizador.
+- Autenticação e autorização para administradores e atendentes.
+- Lógica de agregação isolada em `backend/app/reporting.py`.
+- Testes de permissões, filtros, período e consistência dos totais.
 
 ### Frontend
 
-- Criar a tela `/painel` para administradores e atendentes.
-- Transformar o painel na página inicial dos perfis internos.
-- Criar cartões de indicadores, filtros, lista de atividades recentes e ações rápidas.
-- Integrar os dados com a API e tratar carregamento, vazio e erro.
-- Adicionar exportação do relatório.
-- Manter a área `/entregas` como entrada principal do entregador.
+- Tela `/painel` para administradores e atendentes.
+- Painel como página inicial dos perfis internos.
+- Cartões de indicadores, filtros, atividades recentes, alertas e ações rápidas.
+- Dados carregados da API com tratamento de carregamento, vazio e erro.
+- Exportação do relatório em CSV.
+- Área `/entregas` mantida como entrada principal do entregador.
 
 ### Interface e navegação
 
-- Adicionar “Visão geral” ao menu dos perfis internos.
-- Revisar o menu para telas menores e evitar excesso de opções na horizontal.
-- Padronizar títulos, breadcrumbs, filtros, botões e mensagens de retorno.
-- Garantir indicação clara da página ativa.
-- Revisar foco, rótulos e navegação por teclado nos novos componentes.
+- “Visão geral” adicionada ao menu dos perfis internos.
+- Menu revisado para telas menores, com navegação recolhível no celular.
+- Títulos, filtros, botões e mensagens de retorno padronizados.
+- Página ativa indicada visualmente na navegação.
+- Rótulos e componentes novos revisados para uso por teclado.
 
-## 5. Registro obrigatório da Pré-Banca
-
-As observações abaixo deverão ser preenchidas exclusivamente com o retorno real da professora/banca.
-
-| Observação recebida | Ação realizada | Situação | Evidência |
-|---|---|---|---|
-| Aguardando o registro dos comentários da Pré-Banca. | A definir após o recebimento. | Pendente | A definir |
-
-Não devem ser inventadas correções apenas para completar o documento. Se alguma ação não puder ser concluída, o PDF deve informar a pendência, a justificativa e a medida prevista.
-
-## 6. Plano de execução
+## 5. Registro da execução
 
 ### Etapa 1 — Fechamento do escopo
 
-- Registrar as observações da Pré-Banca.
 - Confirmar o Painel operacional e relatórios como terceiro módulo.
 - Converter cada observação e funcionalidade em tarefa verificável.
 
 ### Etapa 2 — Correções e dependências
 
-- Corrigir os itens apontados na Pré-Banca.
 - Atualizar Vite e a dependência vulnerável de forma controlada.
 - Executar novamente auditoria, build e testes.
 
@@ -131,7 +118,7 @@ Não devem ser inventadas correções apenas para completar o documento. Se algu
 - Atualizar o documento cumulativo e gerar o PDF das Sprints 01 a 06.
 - Abrir PR, revisar e integrar a branch da Sprint 06.
 
-## 7. Distribuição sugerida de trabalho
+## 6. Distribuição sugerida de trabalho
 
 Esta divisão é uma sugestão e deve refletir contribuições reais de cada integrante.
 
@@ -140,13 +127,12 @@ Esta divisão é uma sugestão e deve refletir contribuições reais de cada int
 | Álvaro | Consultas e endpoints do painel, integração com o banco e revisão da arquitetura. |
 | Arthur | Testes de integração, permissões, atualização segura das dependências e validação do backend. |
 | Vinícius | Tela do painel, filtros, exportação, navegação e melhorias responsivas. |
-| William | Validação dos fluxos completos, registro das correções da Pré-Banca, evidências e atualização do documento cumulativo. |
+| William | Validação dos fluxos completos, organização das evidências e atualização do documento cumulativo. |
 
 Cada integrante deve trabalhar em branch própria ou em uma branch de tarefa e realizar seus próprios commits identificados. Documentação, testes e evidências são contribuições válidas quando produzidas de fato pelo autor.
 
-## 8. Evidências que deverão entrar no PDF
+## 7. Evidências incluídas no PDF
 
-- Tabela “observação da Pré-Banca × ação realizada × evidência”.
 - Painel com dados reais carregados do banco.
 - Filtro por período alterando os resultados.
 - Relatório gerado a partir dos dados persistidos.
@@ -157,19 +143,15 @@ Cada integrante deve trabalhar em branch própria ou em uma branch de tarefa e r
 - Instruções atualizadas de execução local.
 - Link do repositório e identificação do Grupo 04.
 
-## 9. Critérios de conclusão
+## 8. Situação dos critérios de conclusão
 
-A Sprint 06 somente poderá ser considerada concluída quando:
+- Terceiro módulo funcional, persistente e integrado aos módulos anteriores: **concluído**.
+- Melhorias de interface e navegação implementadas e demonstráveis: **concluído**.
+- Fluxos principais aprovados nos testes automatizados e na validação manual: **concluído**.
+- Código, testes e documentação registrados no repositório: **concluído na branch da Sprint 06**.
+- PDF cumulativo das Sprints 01 a 06 revisado, legível e identificado como **Grupo 04 — Rota Certa**: **concluído**.
 
-- as observações reais da Pré-Banca estiverem registradas e tratadas ou justificadas;
-- o terceiro módulo estiver funcional, persistente e integrado aos módulos anteriores;
-- as melhorias de interface e navegação estiverem implementadas e demonstráveis;
-- os fluxos principais passarem nos testes automatizados e na validação manual;
-- o repositório refletir contribuições reais da equipe;
-- o PDF cumulativo das Sprints 01 a 06 estiver revisado, legível e identificado como **Grupo 04 — Rota Certa**.
+## 9. Decisão de escopo
 
-## 10. Pendências para iniciar a implementação
-
-1. Obter o texto ou uma transcrição fiel das observações da Pré-Banca.
-2. Confirmar com a equipe que o terceiro módulo será o **Painel operacional e relatórios**.
+O terceiro módulo definido para esta Sprint é o **Painel operacional e relatórios**, conforme os requisitos RF09 e RF10 já previstos no planejamento do projeto.
 

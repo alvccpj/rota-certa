@@ -1,0 +1,17 @@
+$ python -m unittest discover -s tests -v
+
+81 testes aprovados
+1 teste ignorado: GPU NVIDIA com CUDA não disponível nesta máquina
+0 falhas
+0 erros
+
+Resultado final:
+Ran 81 tests in 72.065s
+OK (skipped=1)
+
+Os cinco testes adicionados na Sprint 06 verificam:
+- consolidação dos dados de demonstração no painel;
+- atualização dos indicadores depois da geração das rotas;
+- filtros de período e situação no relatório;
+- validação de períodos inválidos ou superiores a 366 dias;
+- bloqueio do painel e do relatório para o perfil Entregador.

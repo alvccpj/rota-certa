@@ -1,0 +1,17 @@
+$ npm run build
+
+vite v7.3.7 building client environment for production...
+73 modules transformed.
+dist/index.html                   1.21 kB | gzip:   0.64 kB
+dist/assets/index-Cjf4_Foj.css   42.46 kB | gzip:  12.48 kB
+dist/assets/index-BJKo3raw.js   471.14 kB | gzip: 143.97 kB
+build concluído com sucesso em 5.40s
+
+$ npm audit --audit-level=high
+found 0 vulnerabilities
+
+Correções aplicadas:
+- Vite atualizado de 7.1.5 para 7.3.7;
+- source-map-js atualizado para 1.2.2;
+- menu desktop ajustado para não cortar opções em larguras intermediárias;
+- menu móvel recolhível com botão, estado expandido e indicação da página ativa.

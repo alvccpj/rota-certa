@@ -1,0 +1,4 @@
+$ git log --reverse --format="%h %ad %s" --date=format:"%d/%m %H:%M" origin/master..HEAD
+
+40ceaaf 14/10 11:08 docs: preparar planejamento da sprint 06
+b73d2c3 14/10 12:04 feat: implementar painel operacional da sprint 06
