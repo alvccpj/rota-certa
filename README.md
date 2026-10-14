@@ -12,6 +12,7 @@ Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avança
 | Arthur Sales | 01593811 |
 | Vinícius Trigueiro | 01794959 |
 | William Coelho de Morais | 01263977 |
+| Guilherme de Luna Barros | 01615925 |
 
 ## Tecnologias
 
