@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import AutoRefresh from "../components/AutoRefresh";
 import { Link } from "react-router";
 import { api, type Availability, type MyRoute, type Order, type OrderStatus, type User } from "../api";
 import { Priority, StatusBadge } from "../components/Badges";
@@ -32,18 +33,24 @@ export default function DeliveriesPage() {
   const [filter, setFilter] = useState<OrderStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const refreshing = useRef(false);
   const availability = user.courier?.availability ?? "OFFLINE";
 
   const load = useCallback(async () => {
+    if (refreshing.current) return;
+    refreshing.current = true;
     try {
       const [nextOrders, nextRoute] = await Promise.all([api<Order[]>("/orders"), api<MyRoute>("/routes/me")]);
       setOrders(nextOrders);
       setMyRoute(nextRoute);
+      setUpdatedAt(new Date());
       setError(null);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
+      refreshing.current = false;
     }
   }, []);
 
@@ -116,6 +123,7 @@ export default function DeliveriesPage() {
         </div>
       </div>
 
+      <AutoRefresh onRefresh={load} updatedAt={updatedAt} />
       {myRoute?.route && <MyRouteCard data={myRoute} starting={starting} onStart={startRoute} />}
 
       <div className="filters" role="group" aria-label="Filtrar por situação">

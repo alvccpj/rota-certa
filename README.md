@@ -12,6 +12,7 @@ Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avança
 | Arthur Sales | 01593811 |
 | Vinícius Trigueiro | 01794959 |
 | William Coelho de Morais | 01263977 |
+| Guilherme de Luna Barros | 01615925 |
 
 ## Tecnologias
 
@@ -42,8 +43,40 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | --- | --- | --- |
 | Pedidos e entregas | 04 | Clientes, pedidos com local no mapa, atribuição por disponibilidade, capacidade e raio, histórico de situação e entregas pelo celular |
 | Roteirização e desempenho | 05 | Rotas otimizadas a partir dos pedidos atribuídos, mapa com o trajeto de cada entregador, início e conclusão da rota pelo entregador e comparação sequencial, paralela e GPU |
+| Painel operacional e relatórios | 06 | Indicadores integrados de pedidos, entregadores, rotas e desempenho, filtros por período, alertas operacionais, ações rápidas e relatório CSV |
+
+## Como interpretar as rotas
+
+O mapa mostra a sequência de paradas; as distâncias são geográficas (Haversine),
+sem considerar ruas ou trânsito. Os horários estimados usam velocidade média e
+tempo de atendimento configurados. Prioridade e janela de entrega orientam a
+equipe, mas ainda não são restrições do algoritmo.
+
+Depois de gerar rotas, a tela compara a distância na ordem original dos pedidos
+(por ID), após o vizinho mais próximo e após o 2-opt, incluindo o retorno ao
+ponto de saída. Essa comparação considera apenas os pedidos da geração atual,
+fica visível até sair da página e é calculada fora da medição de desempenho.
+A heurística não garante o ótimo global nem melhoria sobre toda ordem original.
+
+O cancelamento exige motivo com pelo menos cinco caracteres após normalizar
+espaços. Ao editar pedidos, uma nova janela não pode terminar no passado;
+preservar a janela antiga permite corrigir outros dados de um pedido atrasado.
 
 ## Como rodar localmente
+
+### Regras de operação e acompanhamento
+
+- Desativar um entregador ou retirar seu perfil exige resolver os pedidos atribuídos
+  e em rota. Tanto a edição quanto a desativação aplicam a mesma regra; a tela de
+  usuários mostra links para os pedidos ativos. Colocar fora de serviço é bloqueado
+  enquanto houver pedidos em rota.
+- Administrador e atendente seguem as etapas Pendente → Atribuído → Em rota →
+  Entregue. Podem cancelar pedidos abertos e reabrir os encerrados como pendentes,
+  sem entregador. Atribuídos também podem voltar a pendentes. Entregadores apenas
+  avançam de Atribuído para Em rota e de Em rota para Entregue.
+- As listas Pedidos e Minhas entregas consultam novamente a API a cada 15 segundos,
+  apenas com a aba visível, e ao retornar à aba. Os filtros são preservados e a hora
+  da última consulta bem-sucedida é exibida. Não há necessidade de WebSockets.
 
 O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz os comandos para PowerShell e Git Bash, cada um com um comentário explicando o que faz, e cobre:
 
@@ -57,7 +90,7 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_05.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_05.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)
 - Como rodar localmente: [`COMO-RODAR.md`](COMO-RODAR.md)

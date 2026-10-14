@@ -177,6 +177,12 @@ class StatusIn(BaseModel):
     status: OrderStatus
     note: Annotated[str, Field(max_length=255), AfterValidator(clean_text)] | None = None
 
+    @model_validator(mode="after")
+    def cancellation_requires_reason(self) -> "StatusIn":
+        if self.status == "CANCELLED" and len(self.note or "") < 5:
+            raise ValueError("Explique o motivo do cancelamento em pelo menos 5 caracteres.")
+        return self
+
 
 class CustomerRef(ORMModel):
     id: int
@@ -213,6 +219,7 @@ class HistoryOut(BaseModel):
 
 class OrderDetailOut(OrderOut):
     history: list[HistoryOut]
+    allowed_statuses: list[OrderStatus]
 
 
 # Busca de endereço
@@ -308,9 +315,16 @@ class RoutesOverviewOut(BaseModel):
     waiting_orders: int
 
 
+class RouteQualityOut(BaseModel):
+    original_distance_km: float
+    nearest_neighbor_distance_km: float
+    optimized_distance_km: float
+
+
 class RouteGenerationOut(RoutesOverviewOut):
     skipped: list[SkippedCourierOut]
     run: OptimizationRunOut
+    quality: RouteQualityOut
 
 
 class MyRouteOut(BaseModel):
@@ -353,3 +367,78 @@ class BenchmarkOut(BaseModel):
     order_count: int
     repetitions: int
     rows: list[OptimizationRunOut]
+
+
+# Painel operacional e relatórios
+
+class DashboardPeriodOut(BaseModel):
+    start: date
+    end: date
+
+
+class DashboardOrderCountsOut(BaseModel):
+    total: int
+    pending: int
+    assigned: int
+    in_route: int
+    delivered: int
+    cancelled: int
+    completion_rate: float
+
+
+class DashboardCourierCountsOut(BaseModel):
+    total: int
+    available: int
+    busy: int
+    offline: int
+
+
+class DashboardRouteCountsOut(BaseModel):
+    total: int
+    planned: int
+    in_progress: int
+    completed: int
+    cancelled: int
+    total_distance_km: float
+
+
+class DashboardPerformanceOut(BaseModel):
+    run_count: int
+    average_execution_time_ms: float | None
+    best_speedup: float | None
+    latest_mode: ExecutionMode | None
+    latest_executed_at: datetime | None
+
+
+class DashboardRecentOrderOut(BaseModel):
+    id: int
+    customer_name: str
+    courier_name: str | None
+    delivery_address: str
+    status: OrderStatus
+    priority: int
+    created_at: datetime
+
+
+class DashboardSummaryOut(BaseModel):
+    generated_at: datetime
+    period: DashboardPeriodOut
+    orders: DashboardOrderCountsOut
+    couriers: DashboardCourierCountsOut
+    routes: DashboardRouteCountsOut
+    performance: DashboardPerformanceOut
+    recent_orders: list[DashboardRecentOrderOut]
+
+
+class DashboardReportRowOut(BaseModel):
+    order_id: int
+    customer_name: str
+    courier_name: str | None
+    delivery_address: str
+    status: OrderStatus
+    priority: int
+    weight_kg: float
+    created_at: datetime
+    route_id: int | None
+    route_status: RouteStatus | None
+    route_date: date | None

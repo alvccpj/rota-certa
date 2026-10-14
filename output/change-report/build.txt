@@ -1,0 +1,13 @@
+
+> rotacerta-frontend@0.3.0 build
+> tsc -b && vite build
+
+vite v7.1.5 building for production...
+transforming...
+✓ 73 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   1.18 kB │ gzip:   0.63 kB
+dist/assets/index-nUQjLr8b.css   37.18 kB │ gzip:  11.50 kB
+dist/assets/index-DDmsd6cs.js   466.68 kB │ gzip: 143.23 kB
+✓ built in 3.55s

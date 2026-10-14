@@ -18,7 +18,7 @@ from app.database import (
     upgrade_schema,
 )
 from app.optimizer.routing import shutdown_pools
-from app.routers import auth, customers, geocoding, optimizer, orders, routes, users
+from app.routers import auth, customers, dashboard, geocoding, optimizer, orders, routes, users
 from app.seed import DEMO_PASSWORD, seed_demo_data
 
 
@@ -45,8 +45,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="RotaCerta API",
-    version="0.5.0",
-    description="API para cadastro, roteirização e acompanhamento de entregas.",
+    version="0.6.0",
+    description="API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
     lifespan=lifespan,
 )
 app.add_middleware(
@@ -63,6 +63,7 @@ app.include_router(orders.router)
 app.include_router(geocoding.router)
 app.include_router(routes.router)
 app.include_router(optimizer.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/health", tags=["system"])

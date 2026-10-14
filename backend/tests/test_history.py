@@ -53,6 +53,40 @@ class HistoryTestCase(ApiTestCase):
         response = self.client.patch(f"/orders/{order['id']}/status", headers=self.admin, json={"status": "PENDING"})
         self.assertEqual(response.status_code, 409)
 
+    def test_staff_cannot_skip_delivery_stage_and_must_reopen_closed_orders(self) -> None:
+        order = self.client.post("/orders", headers=self.admin,
+                                 json=self.order_payload(assigned_courier_id=self.courier_id())).json()
+        url = f"/orders/{order['id']}/status"
+        before = self.history(order["id"])
+        self.assertEqual(self.client.patch(url, headers=self.admin, json={"status": "DELIVERED"}).status_code, 409)
+        self.assertEqual(self.history(order["id"]), before)
+        for next_status in ("IN_ROUTE", "DELIVERED"):
+            response = self.client.patch(url, headers=self.attendant, json={"status": next_status})
+            self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(self.client.patch(url, headers=self.admin, json={"status": "IN_ROUTE"}).status_code, 409)
+        response = self.client.patch(url, headers=self.admin, json={"status": "PENDING"})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertIsNone(response.json()["assigned_courier"])
+
+    def test_detail_exposes_transitions_for_the_current_profile(self) -> None:
+        order = self.client.post("/orders", headers=self.admin,
+                                 json=self.order_payload(assigned_courier_id=self.courier_id())).json()
+        url = f"/orders/{order['id']}"
+        self.assertEqual(self.client.get(url, headers=self.courier).json()["allowed_statuses"], ["IN_ROUTE"])
+        self.assertEqual(set(self.client.get(url, headers=self.admin).json()["allowed_statuses"]),
+                         {"PENDING", "IN_ROUTE", "CANCELLED"})
+
+    def test_cancellation_requires_meaningful_reason_without_changing_order(self) -> None:
+        order = self.client.post("/orders", headers=self.admin, json=self.order_payload()).json()
+        before = self.history(order["id"])
+        for note in (None, "", "    ", "abcd", " a    b "):
+            with self.subTest(note=note):
+                response = self.client.patch(f"/orders/{order['id']}/status", headers=self.admin,
+                                             json={"status": "CANCELLED", "note": note})
+                self.assertEqual(response.status_code, 422, response.text)
+        self.assertEqual(self.history(order["id"]), before)
+        self.assertEqual(self.client.get(f"/orders/{order['id']}", headers=self.admin).json()["status"], "PENDING")
+
     def test_demo_orders_have_consistent_history(self) -> None:
         delivered = self.client.get("/orders?status=DELIVERED", headers=self.admin).json()[0]
         statuses = [event["status"] for event in self.history(delivered["id"])]

@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app import planning
 from app.database import get_db
 from app.models import Courier, Customer, Order, OrderStatusEvent, User
-from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_within_radius
+from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_window_update_not_past, ensure_within_radius
 from app.schemas import (
     AssignedCourierOut,
     CustomerRef,
@@ -22,12 +22,12 @@ from app.schemas import (
     StatusIn,
 )
 from app.security import ADMIN, ATTENDANT, COURIER, get_current_user, require_roles
+from app.rules import allowed_statuses, ensure_status_transition
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 STATUSES_WITH_COURIER = {"ASSIGNED", "IN_ROUTE", "DELIVERED"}
 LOCKED_STATUSES = {"DELIVERED", "CANCELLED"}
-COURIER_TRANSITIONS = {"ASSIGNED": "IN_ROUTE", "IN_ROUTE": "DELIVERED"}
 STATUS_NOTES = {
     "PENDING": "Pedido voltou para pendente",
     "ASSIGNED": "Pedido marcado como atribuído",
@@ -165,7 +165,8 @@ def get_order(order_id: int, user: User = Depends(get_current_user), db: Session
         )
         for event in order.history
     ]
-    return OrderDetailOut(**order_out(order).model_dump(), history=history)
+    return OrderDetailOut(**order_out(order).model_dump(), history=history,
+                          allowed_statuses=allowed_statuses(order.status, courier=user.role == COURIER))
 
 
 @router.post("", response_model=OrderOut, status_code=status.HTTP_201_CREATED)
@@ -192,6 +193,7 @@ def update_order(
     order = get_visible_order(db, user, order_id)
     if order.status in LOCKED_STATUSES:
         raise HTTPException(status.HTTP_409_CONFLICT, "Pedidos entregues ou cancelados não podem ser editados.")
+    ensure_window_update_not_past(order, data.desired_start, data.desired_end)
     location = (order.latitude, order.longitude)
     apply_order_data(db, user, order, data)
     planning.sync_order_route(db, order, location_changed=location != (order.latitude, order.longitude))
@@ -207,14 +209,13 @@ def change_order_status(
     db: Session = Depends(get_db),
 ) -> OrderOut:
     order = get_visible_order(db, user, order_id)
-    if user.role == COURIER:
-        if COURIER_TRANSITIONS.get(order.status) != data.status:
-            raise HTTPException(
-                status.HTTP_409_CONFLICT,
-                "O entregador só pode avançar o pedido de Atribuído para Em rota e de Em rota para Entregue.",
-            )
-    elif data.status in STATUSES_WITH_COURIER and order.courier is None:
+    ensure_status_transition(order.status, data.status, courier=user.role == COURIER)
+    if data.status in STATUSES_WITH_COURIER and order.courier is None:
         raise HTTPException(status.HTTP_409_CONFLICT, "Atribua um entregador antes de usar este status.")
+    if data.status == "IN_ROUTE":
+        if not order.courier.user.active or order.courier.user.role != COURIER:
+            raise HTTPException(status.HTTP_409_CONFLICT, "O entregador não possui acesso ativo.")
+        ensure_courier_can_take(db, order.courier, order, order.weight_kg)
     if data.status == order.status:
         raise HTTPException(status.HTTP_409_CONFLICT, "O pedido já está nesta situação.")
     if data.status == "PENDING":

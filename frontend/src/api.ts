@@ -68,6 +68,7 @@ export interface Order {
 
 export interface OrderDetail extends Order {
   history: HistoryEvent[];
+  allowed_statuses: OrderStatus[];
 }
 
 export interface OrderInput {
@@ -146,6 +147,11 @@ export interface RoutesOverview {
 }
 
 export interface RouteGeneration extends RoutesOverview {
+  quality: {
+    original_distance_km: number;
+    nearest_neighbor_distance_km: number;
+    optimized_distance_km: number;
+  };
   skipped: { courier: { id: number; full_name: string }; reason: string }[];
   run: OptimizationRun;
 }
@@ -179,6 +185,64 @@ export interface BenchmarkResult {
   order_count: number;
   repetitions: number;
   rows: OptimizationRun[];
+}
+
+export interface DashboardSummary {
+  generated_at: string;
+  period: { start: string; end: string };
+  orders: {
+    total: number;
+    pending: number;
+    assigned: number;
+    in_route: number;
+    delivered: number;
+    cancelled: number;
+    completion_rate: number;
+  };
+  couriers: {
+    total: number;
+    available: number;
+    busy: number;
+    offline: number;
+  };
+  routes: {
+    total: number;
+    planned: number;
+    in_progress: number;
+    completed: number;
+    cancelled: number;
+    total_distance_km: number;
+  };
+  performance: {
+    run_count: number;
+    average_execution_time_ms: number | null;
+    best_speedup: number | null;
+    latest_mode: ExecutionMode | null;
+    latest_executed_at: string | null;
+  };
+  recent_orders: {
+    id: number;
+    customer_name: string;
+    courier_name: string | null;
+    delivery_address: string;
+    status: OrderStatus;
+    priority: number;
+    created_at: string;
+  }[];
+}
+
+export interface DashboardReportRow {
+  order_id: number;
+  customer_name: string;
+  courier_name: string | null;
+  delivery_address: string;
+  status: OrderStatus;
+  priority: number;
+  weight_kg: number;
+  created_at: string;
+  route_id: number | null;
+  route_status: RouteStatus | null;
+  route_date: string | null;
 }
 
 export const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:8000").replace(/\/$/, "");

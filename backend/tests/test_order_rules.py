@@ -1,8 +1,10 @@
 """Testes das regras de atribuição e das validações do pedido."""
 
 import unittest
+from datetime import datetime, timedelta, timezone
 
 from api_base import ApiTestCase
+from app.models import Order
 
 
 class OrderRulesTestCase(ApiTestCase):
@@ -49,6 +51,35 @@ class OrderRulesTestCase(ApiTestCase):
     def test_weight_has_upper_limit(self) -> None:
         response = self.client.post("/orders", headers=self.admin, json=self.order_payload(weight_kg=501))
         self.assertEqual(response.status_code, 422)
+
+    def test_edit_rejects_new_expired_window_and_accepts_future_window(self) -> None:
+        order = self.client.post("/orders", headers=self.admin, json=self.order_payload()).json()
+        end = datetime.now(timezone.utc) - timedelta(days=1)
+        payload = self.order_payload(desired_start=(end - timedelta(hours=1)).isoformat(), desired_end=end.isoformat())
+        response = self.client.put(f"/orders/{order['id']}", headers=self.admin, json=payload)
+        self.assertEqual(response.status_code, 422, response.text)
+        self.assertIsNone(self.client.get(f"/orders/{order['id']}", headers=self.admin).json()["desired_end"])
+        future = datetime.now(timezone.utc) + timedelta(days=1)
+        payload.update(desired_start=future.isoformat(), desired_end=(future + timedelta(hours=1)).isoformat())
+        self.assertEqual(self.client.put(f"/orders/{order['id']}", headers=self.admin, json=payload).status_code, 200)
+
+    def test_edit_preserves_expired_window_but_rejects_changing_its_start(self) -> None:
+        order = self.client.post("/orders", headers=self.admin, json=self.order_payload()).json()
+        end = datetime.now(timezone.utc) - timedelta(days=1)
+        start = end - timedelta(hours=1)
+        with self.session_factory() as db:
+            saved = db.get(Order, order["id"])
+            saved.desired_start, saved.desired_end = start, end
+            db.commit()
+        # Mesmo instante com outro fuso deve contar como janela preservada.
+        local = timezone(timedelta(hours=-3))
+        payload = self.order_payload(priority=3, desired_start=start.astimezone(local).isoformat(),
+                                     desired_end=end.astimezone(local).isoformat())
+        response = self.client.put(f"/orders/{order['id']}", headers=self.admin, json=payload)
+        self.assertEqual(response.status_code, 200, response.text)
+        payload["desired_start"] = (start - timedelta(hours=1)).isoformat()
+        response = self.client.put(f"/orders/{order['id']}", headers=self.admin, json=payload)
+        self.assertEqual(response.status_code, 422, response.text)
 
 
 if __name__ == "__main__":
