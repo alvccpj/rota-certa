@@ -1,13 +1,13 @@
-"""Consultas integradas do painel operacional e do relatório da Sprint 06."""
+"""Consultas integradas do painel, relatórios e histórico operacional."""
 
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.models import Courier, Customer, OptimizationRun, Order, Route, RouteStop, User
+from app.models import Courier, Customer, OptimizationRun, Order, OrderStatusEvent, Route, RouteStop, User
 from app.schemas import (
     DashboardCourierCountsOut,
     DashboardOrderCountsOut,
@@ -17,6 +17,8 @@ from app.schemas import (
     DashboardReportRowOut,
     DashboardRouteCountsOut,
     DashboardSummaryOut,
+    OperationalEventType,
+    OperationalHistoryEventOut,
     OrderStatus,
 )
 
@@ -181,6 +183,9 @@ def operational_report(
     user: User,
     period: Period,
     status_filter: OrderStatus | None = None,
+    query_text: str | None = None,
+    courier_id: int | None = None,
+    priority: int | None = None,
 ) -> list[DashboardReportRowOut]:
     query = (
         select(
@@ -206,11 +211,27 @@ def operational_report(
             Order.created_at >= period.start_at,
             Order.created_at < period.end_at,
         )
-        .order_by(Order.created_at.desc(), Order.id.desc())
-        .limit(2000)
     )
     if status_filter is not None:
         query = query.where(Order.status == status_filter)
+    if courier_id is not None:
+        query = query.where(Order.assigned_courier_id == courier_id)
+    if priority is not None:
+        query = query.where(Order.priority == priority)
+    if query_text:
+        pattern = f"%{query_text.strip()}%"
+        text_conditions = (
+            Customer.full_name.ilike(pattern),
+            Customer.phone.ilike(pattern),
+            Order.delivery_address.ilike(pattern),
+            User.full_name.ilike(pattern),
+        )
+        if query_text.strip().isdigit():
+            query = query.where(or_(*text_conditions, Order.id == int(query_text.strip())))
+        else:
+            query = query.where(or_(*text_conditions))
+
+    query = query.order_by(Order.created_at.desc(), Order.id.desc()).limit(2000)
 
     return [
         DashboardReportRowOut(
@@ -228,3 +249,95 @@ def operational_report(
         )
         for row in db.execute(query).all()
     ]
+
+
+def operational_history(
+    db: Session,
+    user: User,
+    period: Period,
+    event_type: OperationalEventType | None = None,
+    status_filter: OrderStatus | None = None,
+    query_text: str | None = None,
+) -> list[OperationalHistoryEventOut]:
+    """Reúne mudanças de pedidos e execuções do otimizador em uma linha do tempo."""
+
+    events: list[OperationalHistoryEventOut] = []
+    if event_type in (None, "ORDER_STATUS"):
+        order_query = (
+            select(OrderStatusEvent, Order, Customer, User)
+            .join(Order, Order.id == OrderStatusEvent.order_id)
+            .join(Customer, Customer.id == Order.customer_id)
+            .outerjoin(User, User.id == OrderStatusEvent.changed_by)
+            .where(
+                Order.establishment_id == user.establishment_id,
+                OrderStatusEvent.changed_at >= period.start_at,
+                OrderStatusEvent.changed_at < period.end_at,
+            )
+        )
+        if status_filter is not None:
+            order_query = order_query.where(OrderStatusEvent.status == status_filter)
+        if query_text:
+            pattern = f"%{query_text.strip()}%"
+            conditions = (
+                Customer.full_name.ilike(pattern),
+                Customer.phone.ilike(pattern),
+                Order.delivery_address.ilike(pattern),
+                OrderStatusEvent.note.ilike(pattern),
+                User.full_name.ilike(pattern),
+                cast(Order.id, String).ilike(pattern),
+            )
+            order_query = order_query.where(or_(*conditions))
+        order_query = order_query.order_by(OrderStatusEvent.changed_at.desc(), OrderStatusEvent.id.desc()).limit(500)
+        for event, order, customer, author in db.execute(order_query).all():
+            events.append(
+                OperationalHistoryEventOut(
+                    event_id=f"order-{event.id}",
+                    event_type="ORDER_STATUS",
+                    occurred_at=event.changed_at,
+                    actor_name=author.full_name if author else None,
+                    order_id=order.id,
+                    customer_name=customer.full_name,
+                    status=event.status,
+                    note=event.note,
+                    execution_mode=None,
+                    execution_time_ms=None,
+                    order_count=None,
+                )
+            )
+
+    if event_type in (None, "OPTIMIZATION") and status_filter is None:
+        run_query = select(OptimizationRun).where(
+            OptimizationRun.establishment_id == user.establishment_id,
+            OptimizationRun.executed_at >= period.start_at,
+            OptimizationRun.executed_at < period.end_at,
+        )
+        if query_text:
+            pattern = f"%{query_text.strip()}%"
+            run_query = run_query.where(
+                or_(
+                    OptimizationRun.execution_mode.ilike(pattern),
+                    OptimizationRun.algorithm.ilike(pattern),
+                    OptimizationRun.purpose.ilike(pattern),
+                    cast(OptimizationRun.order_count, String).ilike(pattern),
+                )
+            )
+        run_query = run_query.order_by(OptimizationRun.executed_at.desc(), OptimizationRun.id.desc()).limit(500)
+        for run in db.scalars(run_query):
+            events.append(
+                OperationalHistoryEventOut(
+                    event_id=f"optimization-{run.id}",
+                    event_type="OPTIMIZATION",
+                    occurred_at=run.executed_at,
+                    actor_name="Sistema",
+                    order_id=None,
+                    customer_name=None,
+                    status=None,
+                    note=run.purpose,
+                    execution_mode=run.execution_mode,
+                    execution_time_ms=float(run.execution_time_ms),
+                    order_count=run.order_count,
+                )
+            )
+
+    events.sort(key=lambda event: event.occurred_at, reverse=True)
+    return events[:500]

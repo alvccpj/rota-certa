@@ -11,7 +11,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import OrderFormPage from "./pages/OrderFormPage";
 import OrdersPage from "./pages/OrdersPage";
+import HistoryPage from "./pages/HistoryPage";
 import PerformancePage from "./pages/PerformancePage";
+import ReportsPage from "./pages/ReportsPage";
 import RegisterPage from "./pages/RegisterPage";
 import RoutesPage from "./pages/RoutesPage";
 import UserFormPage from "./pages/UserFormPage";
@@ -25,6 +27,8 @@ export default function App() {
       <Route element={<RequireAuth><Layout /></RequireAuth>}>
         <Route index element={<HomeRedirect />} />
         <Route path="painel" element={<RequireRole roles={STAFF_ROLES}><DashboardPage /></RequireRole>} />
+        <Route path="relatorios" element={<RequireRole roles={STAFF_ROLES}><ReportsPage /></RequireRole>} />
+        <Route path="historico" element={<RequireRole roles={STAFF_ROLES}><HistoryPage /></RequireRole>} />
         <Route path="pedidos" element={<RequireRole roles={STAFF_ROLES}><OrdersPage /></RequireRole>} />
         <Route path="pedidos/novo" element={<RequireRole roles={STAFF_ROLES}><OrderFormPage /></RequireRole>} />
         <Route path="pedidos/:id" element={<OrderDetailPage />} />

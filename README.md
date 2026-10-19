@@ -44,6 +44,7 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Pedidos e entregas | 04 | Clientes, pedidos com local no mapa, atribuição por disponibilidade, capacidade e raio, histórico de situação e entregas pelo celular |
 | Roteirização e desempenho | 05 | Rotas otimizadas a partir dos pedidos atribuídos, mapa com o trajeto de cada entregador, início e conclusão da rota pelo entregador e comparação sequencial, paralela e GPU |
 | Painel operacional e relatórios | 06 | Indicadores integrados de pedidos, entregadores, rotas e desempenho, filtros por período, alertas operacionais, ações rápidas e relatório CSV |
+| Consultas e rastreabilidade | 07 | Relatórios pesquisáveis com filtros combináveis, exportação CSV do resultado e histórico cronológico de pedidos e execuções do otimizador |
 
 ## Como interpretar as rotas
 
@@ -90,7 +91,7 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_06.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_07.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_07.pdf)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)
 - Como rodar localmente: [`COMO-RODAR.md`](COMO-RODAR.md)

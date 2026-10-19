@@ -18,6 +18,8 @@ export default function Layout() {
     staff && { to: "/painel", label: "Visão geral" },
     staff && { to: "/pedidos", label: "Pedidos" },
     staff && { to: "/rotas", label: "Rotas" },
+    staff && { to: "/relatorios", label: "Relatórios" },
+    staff && { to: "/historico", label: "Histórico" },
     !staff && { to: "/entregas", label: "Minhas entregas" },
     staff && { to: "/clientes", label: "Clientes" },
     user.role === "ADMIN" && { to: "/desempenho", label: "Desempenho" },

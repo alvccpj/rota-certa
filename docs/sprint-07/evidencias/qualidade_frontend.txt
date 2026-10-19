@@ -1,0 +1,19 @@
+Validação da Sprint 07 — frontend
+Data: 19/10/2026
+
+Build de produção:
+npm run build
+
+Resultado:
+- TypeScript compilado sem erros;
+- 77 módulos transformados;
+- dist/index.html: 1,21 kB;
+- CSS: 45,46 kB (12,98 kB gzip);
+- JavaScript: 486,07 kB (147,98 kB gzip);
+- build concluído com Vite 7.3.7.
+
+Auditoria de dependências:
+npm audit --audit-level=high
+
+Resultado:
+found 0 vulnerabilities
