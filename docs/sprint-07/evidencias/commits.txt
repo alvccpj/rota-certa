@@ -1,0 +1,6 @@
+Branch: sprint/07-sistema-quase-completo
+Base: master com a Sprint 06 integrada
+
+b09fd52  feat: implementar consultas e rastreabilidade da sprint 07
+
+O commit reúne backend, frontend, testes automatizados, script de captura e evidências funcionais. O documento cumulativo é registrado em commit próprio após sua renderização e revisão visual.
