@@ -1,0 +1,19 @@
+Base local persistida — 19/10/2026
+
+GET /dashboard/summary
+14 pedidos | 2 rotas | 32,245 km | 2 entregadores | 1 execução do otimizador
+
+GET /dashboard/report
+14 pedidos integrados a clientes, entregadores e rotas
+
+GET /dashboard/report?q=Boa Viagem&status=ASSIGNED&priority=1
+1 resultado: Pedido #1 | Maria Silva | Carla Entregadora | Rota #1
+
+GET /dashboard/history
+29 alterações de pedidos | 1 execução do otimizador
+
+POST /routes/generate
+2 rotas persistidas; execução registrada no histórico
+
+Exportação CSV pelo navegador
+Concluída com o único registro retornado pelos filtros aplicados

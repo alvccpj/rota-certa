@@ -442,3 +442,20 @@ class DashboardReportRowOut(BaseModel):
     route_id: int | None
     route_status: RouteStatus | None
     route_date: date | None
+
+
+OperationalEventType = Literal["ORDER_STATUS", "OPTIMIZATION"]
+
+
+class OperationalHistoryEventOut(BaseModel):
+    event_id: str
+    event_type: OperationalEventType
+    occurred_at: datetime
+    actor_name: str | None
+    order_id: int | None
+    customer_name: str | None
+    status: OrderStatus | None
+    note: str | None
+    execution_mode: ExecutionMode | None
+    execution_time_ms: float | None
+    order_count: int | None

@@ -245,6 +245,22 @@ export interface DashboardReportRow {
   route_date: string | null;
 }
 
+export type OperationalEventType = "ORDER_STATUS" | "OPTIMIZATION";
+
+export interface OperationalHistoryEvent {
+  event_id: string;
+  event_type: OperationalEventType;
+  occurred_at: string;
+  actor_name: string | null;
+  order_id: number | null;
+  customer_name: string | null;
+  status: OrderStatus | null;
+  note: string | null;
+  execution_mode: ExecutionMode | null;
+  execution_time_ms: number | null;
+  order_count: number | null;
+}
+
 export const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
 export class ApiError extends Error {

@@ -1,4 +1,4 @@
-"""Gera o documento técnico cumulativo das Sprints 01 a 06.
+"""Gera o documento técnico cumulativo das Sprints 01 a 07.
 
 O mesmo conteúdo é renderizado em HTML, PDF (Chrome headless via Playwright) e
 DOCX (python-docx). As evidências de cada Sprint são produzidas antes pelos
@@ -39,9 +39,11 @@ SPRINT05 = ROOT / "docs" / "sprint-05" / "assets"
 EVIDENCE05 = ROOT / "docs" / "sprint-05" / "evidencias"
 SPRINT06 = ROOT / "docs" / "sprint-06" / "assets"
 EVIDENCE06 = ROOT / "docs" / "sprint-06" / "evidencias"
-NAME = "Grupo_04_RotaCerta_Sprints_01_a_06"
-TITLE = "Documento Técnico Cumulativo das Sprints 01 a 06"
-FOOTER = "RotaCerta  |  Grupo 04  |  Sprints 01 a 06  |  Página "
+SPRINT07 = ROOT / "docs" / "sprint-07" / "assets"
+EVIDENCE07 = ROOT / "docs" / "sprint-07" / "evidencias"
+NAME = "Grupo_04_RotaCerta_Sprints_01_a_07"
+TITLE = "Documento Técnico Cumulativo das Sprints 01 a 07"
+FOOTER = "RotaCerta  |  Grupo 04  |  Sprints 01 a 07  |  Página "
 REPOSITORY = "https://github.com/alvccpj/rota-certa"
 TEAM = (
     ("Álvaro Jordão", "01748200"),
@@ -146,11 +148,19 @@ def evidence06(name: str) -> str:
     return (EVIDENCE06 / name).read_text(encoding="utf-8").rstrip()
 
 
+def s7(name: str) -> Path:
+    return SPRINT07 / name
+
+
+def evidence07(name: str) -> str:
+    return (EVIDENCE07 / name).read_text(encoding="utf-8").rstrip()
+
+
 # Conteúdo
 
 PRESENTATION = [
-    "Este documento reúne as entregas das Sprints 01 a 06 do projeto RotaCerta. A Parte I registra o problema, os objetivos, os requisitos e o planejamento inicial. A Parte II apresenta a arquitetura, os modelos de software e de dados, os protótipos e a estrutura inicial do banco. A Parte III demonstra a estrutura inicial funcionando: banco conectado, login, cadastro de usuários, controle de perfis e o CRUD de pedidos. A Parte IV apresenta o primeiro módulo completo, Pedidos e entregas. A Parte V apresenta o segundo módulo, Roteirização e desempenho. A Parte VI entrega o terceiro módulo, Painel operacional e relatórios, que reúne os dados dos módulos anteriores em indicadores, alertas, filtros e um relatório exportável.",
-    "As Partes I a V mantêm o conteúdo entregue anteriormente. A Parte VI registra a implementação, a integração entre os módulos, as melhorias de interface e navegação, os testes e os ajustes de planejamento da Sprint 06. Todas as telas e respostas mostradas nas Partes III a VI foram capturadas do sistema em execução.",
+    "Este documento reúne as entregas das Sprints 01 a 07 do projeto RotaCerta. As seis primeiras partes registram planejamento, arquitetura, estrutura funcional, os módulos de pedidos e entregas, roteirização e desempenho e o painel operacional. A Parte VII consolida o sistema com relatórios pesquisáveis, filtros combináveis, exportação CSV e histórico operacional.",
+    "As Partes I a VI mantêm o conteúdo entregue anteriormente. A Parte VII demonstra a evolução prática da Sprint 07, com dados persistidos, integração entre os módulos, evidências de execução e validações técnicas. Todas as telas e respostas mostradas nas Partes III a VII foram capturadas do sistema em funcionamento.",
 ]
 
 TOC = [
@@ -214,6 +224,18 @@ TOC = [
     "52  Repositório GitHub",
     "53  Dificuldades encontradas e próximos passos",
     "54  Situação da Sprint 06",
+    "Parte VII  Sprint 07 Sistema quase completo",
+    "55  Dashboard e acompanhamento operacional",
+    "56  Relatórios desenvolvidos",
+    "57  Pesquisas e filtros",
+    "58  Exportação CSV",
+    "59  Logs e histórico de operações",
+    "60  Integração com os módulos anteriores",
+    "61  Testes e qualidade técnica",
+    "62  Ajustes no planejamento e na arquitetura",
+    "63  Repositório GitHub",
+    "64  Dificuldades encontradas e próximos passos",
+    "65  Situação da Sprint 07",
 ]
 
 
@@ -1117,6 +1139,7 @@ def sprint05(doc: Document) -> None:
 
 
 SPRINT06_TEST_COUNT = 90
+SPRINT07_TEST_COUNT = 93
 
 
 def sprint06(doc: Document) -> None:
@@ -1204,7 +1227,7 @@ def sprint06(doc: Document) -> None:
                 ["4", "27/09 a 28/09", "Módulo Pedidos e entregas", "Concluída"],
                 ["5", "29/09 a 03/10", "Módulo Roteirização e desempenho", "Concluída"],
                 ["6", "11/10 a 17/10", "Painel operacional, relatórios e integração", "Concluída"],
-                ["7", "18/10 a 24/10", "Atribuição automática e prioridade nas rotas", "Planejada"],
+                ["7", "18/10 a 24/10", "Dashboard, relatórios, pesquisa, filtros, exportação e histórico", "Concluída"],
                 ["8", "25/10 a 31/10", "Janelas de horário e traçado pelas ruas", "Planejada"],
                 ["9", "01/11 a 07/11", "Testes de usabilidade, segurança e acessibilidade", "Planejada"],
                 ["10", "08/11 a 14/11", "Notificações e evolução dos relatórios", "Planejada"],
@@ -1267,6 +1290,122 @@ def sprint06(doc: Document) -> None:
     )
 
 
+def sprint07(doc: Document) -> None:
+    doc.add(
+        PageBreak(),
+        H("Parte VII  Sprint 07 Sistema quase completo", 1),
+        P("A Sprint 07 aproxima o RotaCerta de sua conclusão funcional. O painel da Sprint anterior foi preservado e conectado a duas novas áreas: Relatórios, para pesquisar, filtrar e exportar os dados operacionais, e Histórico, para acompanhar alterações de pedidos e execuções do otimizador em ordem cronológica."),
+        H("55  Dashboard e acompanhamento operacional"),
+        P("O dashboard em /painel utiliza dados reais do estabelecimento autenticado. O período selecionado controla os totais de pedidos, a taxa de conclusão, as rotas, a distância planejada e as métricas do otimizador. A disponibilidade dos entregadores, os alertas e os pedidos recentes complementam a visão para apoiar decisões diárias."),
+        Table(
+            ["Indicador", "Fonte persistida", "Uso operacional"],
+            [
+                ["Pedidos e distribuição por situação", "orders", "Identificar pendências e acompanhar a conclusão das entregas"],
+                ["Rotas e distância planejada", "routes e route_stops", "Acompanhar o planejamento e a execução logística"],
+                ["Disponibilidade dos entregadores", "users e couriers", "Verificar a capacidade operacional antes de distribuir pedidos"],
+                ["Execuções e tempo do otimizador", "optimization_runs", "Acompanhar o componente avançado e suas métricas"],
+            ],
+            [5.0, 5.2, 7.0],
+        ),
+        Figure([s7("s07_01_dashboard.png")], "Dashboard funcional com catorze pedidos, duas rotas, 32,2 km planejados e métricas do otimizador", 92),
+        H("56  Relatórios desenvolvidos"),
+        P("A página /relatorios cruza pedidos, clientes, entregadores e rotas na mesma consulta. Além da listagem detalhada, os resultados produzem quatro resumos: quantidade de pedidos, peso total, pedidos com rota e entregas concluídas. Cada pedido mantém acesso ao detalhe e ao histórico individual."),
+        Figure([s7("s07_02_relatorios.png")], "Relatório operacional com dados dos módulos anteriores, resumos consolidados e acesso aos pedidos", 88),
+        PageBreak(),
+        H("57  Pesquisas e filtros"),
+        P("A pesquisa livre localiza registros por número do pedido, nome ou telefone do cliente, endereço e nome do entregador. Ela pode ser combinada com período, situação, entregador e prioridade. No histórico, os critérios são período, texto, tipo de operação e situação do pedido. A API aplica todos os critérios antes de devolver os registros, mantendo a interface e a exportação consistentes."),
+        Table(
+            ["Área", "Critérios implementados", "Resultado demonstrado"],
+            [
+                ["Relatório", "texto, período, situação, entregador e prioridade", "Boa Viagem + Atribuído + prioridade Alta retornou somente o pedido #1"],
+                ["Histórico", "texto, período, tipo de operação e situação", "Otimização retornou somente as execuções registradas do otimizador"],
+                ["Dashboard", "período inicial e final", "Indicadores e pedidos recentes recalculados para o intervalo"],
+            ],
+            [3.2, 7.4, 6.6],
+        ),
+        Figure([s7("s07_03_pesquisa_filtros.png")], "Pesquisa e filtros combinados reduzindo o relatório ao pedido de Maria Silva em Boa Viagem", 92),
+        H("58  Exportação CSV"),
+        P("A exportação é aplicável ao projeto porque os pequenos negócios podem arquivar, compartilhar ou analisar a operação em uma planilha. O arquivo CSV contém exatamente o resultado filtrado e inclui pedido, cliente, entregador, endereço, situação, prioridade, peso, cadastro e dados da rota. O separador é ponto e vírgula e o conteúdo inclui marcador UTF-8 para preservar acentos em planilhas configuradas em português."),
+        Figure([s7("s07_04_exportacao_csv.png")], "Confirmação da exportação CSV do único pedido retornado pela pesquisa e pelos filtros", 92),
+        H("59  Logs e histórico de operações"),
+        P("A rota /historico reúne registros persistidos de duas origens. As mudanças de situação vêm de order_status_history e informam pedido, cliente, situação, observação, responsável e data. As execuções do otimizador vêm de optimization_runs e informam modo, quantidade de pedidos, tempo e data. A resposta é ordenada do evento mais recente para o mais antigo e limitada aos quinhentos eventos mais recentes do estabelecimento."),
+        Figure([s7("s07_06_historico_filtrado.png")], "Histórico filtrado por Otimização, comprovando a rastreabilidade das execuções do componente avançado", 92),
+        Code(evidence07("resumo_consultas.txt"), "Resumo das consultas executadas sobre a base persistida durante a validação manual"),
+        H("60  Integração com os módulos anteriores"),
+        P("Clientes e pedidos fornecem os dados pesquisáveis. A atribuição relaciona o pedido ao entregador. A geração de rotas associa as paradas e registra a execução do otimizador. As atualizações realizadas durante a entrega produzem eventos de situação. Dashboard, relatórios, CSV e histórico usam esses mesmos registros, sem manter cópias paralelas."),
+        Numbered([
+            "O Administrador ou Atendente cadastra o cliente e o pedido, aplicando as regras de capacidade, disponibilidade e raio já existentes.",
+            "O pedido atribuído entra na roteirização e recebe o vínculo com uma rota persistida.",
+            "A execução sequencial, paralela ou em GPU é salva em optimization_runs e passa a aparecer no dashboard e no histórico.",
+            "O Entregador inicia a rota e atualiza a entrega; cada transição é salva em order_status_history.",
+            "Os perfis internos pesquisam e filtram os dados, exportam a listagem e auditam a sequência dos eventos.",
+        ]),
+        H("Segurança e limites", 3),
+        Bullets([
+            "Administrador e Atendente acessam dashboard, relatórios e histórico; Entregador recebe HTTP 403.",
+            "Todas as consultas são isoladas por estabelecimento.",
+            "O período máximo de consulta é 366 dias.",
+            "O relatório retorna até 2.000 linhas e o histórico até 500 eventos por consulta.",
+        ]),
+        H("61  Testes e qualidade técnica"),
+        P(f"A suíte do backend terminou com {SPRINT07_TEST_COUNT} testes aprovados e um teste ignorado por exigir GPU NVIDIA com CUDA. Os novos testes verificam a pesquisa por endereço, a combinação de entregador, prioridade e situação, a união do histórico de pedidos com execuções do otimizador, os filtros do histórico e a restrição do perfil Entregador."),
+        Code(evidence07("testes_backend.txt"), "Resultado da suíte automatizada do backend"),
+        P("O frontend foi compilado para produção com TypeScript e Vite. A auditoria das dependências não encontrou vulnerabilidades conhecidas no nível configurado."),
+        Code(evidence07("qualidade_frontend.txt"), "Build de produção e auditoria das dependências do frontend"),
+        H("62  Ajustes no planejamento e na arquitetura"),
+        P("O cronograma anterior reservava a Sprint 07 para atribuição automática e prioridade nas rotas. O enunciado oficial priorizou dashboard, relatórios, pesquisas, filtros, exportação e histórico. O planejamento foi ajustado para cumprir essa sequência sem remover as regras existentes; atribuição automática e uso da prioridade como restrição matemática permanecem no backlog."),
+        Table(
+            ["Ajuste", "Justificativa", "Impacto"],
+            [
+                ["Relatórios ganharam página própria", "Os filtros e a tabela ultrapassaram o escopo de um botão no dashboard", "Navegação mais clara e consulta detalhada sem sobrecarregar o painel"],
+                ["Novo endpoint /dashboard/history", "Era necessário combinar rastreabilidade de pedidos e do otimizador", "Contrato único para a linha do tempo, preservando as tabelas existentes"],
+                ["Exportação reutiliza o resultado filtrado", "Evitar divergência entre a tela e o arquivo", "CSV consistente com todos os critérios aplicados"],
+                ["Novos limites de consulta", "Evitar respostas excessivas durante a demonstração e evolução", "Período, relatório e histórico possuem limites explícitos"],
+            ],
+            [4.6, 7.0, 5.6],
+        ),
+        H("63  Repositório GitHub"),
+        P(f"Repositório oficial. {REPOSITORY}", "Repositório oficial."),
+        P("A implementação foi realizada na branch sprint/07-sistema-quase-completo, criada a partir da master com a Sprint 06 integrada. Código, testes, evidências e documentação foram separados em commits rastreáveis antes da revisão por Pull Request."),
+        Code(evidence07("commits.txt"), "Registro da implementação da Sprint 07"),
+        H("64  Dificuldades encontradas e próximos passos"),
+        H("Dificuldades", 3),
+        Table(
+            ["Dificuldade", "Tratamento adotado"],
+            [
+                ["Combinar filtros de entidades relacionadas sem duplicar pedidos", "Consulta SQLAlchemy mantém um registro por pedido e aplica os critérios antes da ordenação e do limite"],
+                ["Unificar eventos de estruturas diferentes", "Pedidos e otimizações são convertidos para um contrato comum e ordenados por data"],
+                ["Exportar exatamente o que a interface mostra", "O CSV reutiliza as linhas devolvidas pela consulta filtrada"],
+                ["Manter o menu legível com novas áreas", "Navegação horizontal adaptativa no desktop e menu recolhível em telas pequenas"],
+            ],
+            [6.0, 11.2],
+        ),
+        H("Próximos passos", 3),
+        Bullets([
+            "Adicionar paginação no servidor quando o volume real ultrapassar os limites atuais.",
+            "Ampliar os testes de interface de ponta a ponta para todas as combinações de filtros.",
+            "Avaliar exportação em PDF se o usuário precisar de um formato fechado para impressão.",
+            "Executar medições com maior volume de dados e em máquina equipada com GPU CUDA.",
+            "Realizar revisão final de acessibilidade, segurança e apresentação do produto.",
+        ]),
+        H("65  Situação da Sprint 07"),
+        Table(
+            ["Entrega obrigatória", "Situação", "Evidência principal"],
+            [
+                ["Dashboard funcional", "Concluído", "Seção 55: indicadores reais, período, alertas e acompanhamento"],
+                ["Relatórios", "Concluídos", "Seção 56: consulta consolidada e resumos"],
+                ["Pesquisas", "Concluídas", "Seção 57: número, cliente, telefone, endereço e entregador"],
+                ["Filtros", "Concluídos", "Seção 57: período, situação, entregador, prioridade e tipo"],
+                ["Exportação", "Concluída", "Seção 58: CSV correspondente ao resultado filtrado"],
+                ["Logs ou histórico", "Concluídos", "Seção 59: pedidos e execuções do otimizador"],
+                ["Integração com módulos anteriores", "Concluída", "Seção 60: fluxo completo sobre dados persistidos"],
+                ["Repositório atualizado", "Concluído na branch", "Seção 63: código, testes, evidências e documento"],
+            ],
+            [4.5, 2.7, 10.0],
+        ),
+    )
+
+
 def build_content() -> Document:
     doc = Document()
     sprint01(doc)
@@ -1275,6 +1414,7 @@ def build_content() -> Document:
     sprint04(doc)
     sprint05(doc)
     sprint06(doc)
+    sprint07(doc)
     return doc
 
 
@@ -1435,7 +1575,7 @@ def render_docx(doc: Document, path: Path) -> None:
     footer = document.sections[0].footer.paragraphs[0]
     footer.runs[0].text = FOOTER
     document.core_properties.title = f"RotaCerta {TITLE}"
-    document.core_properties.keywords = "RotaCerta, Sprint 01, Sprint 02, Sprint 03, Sprint 04, Sprint 05, Sprint 06"
+    document.core_properties.keywords = "RotaCerta, Sprint 01, Sprint 02, Sprint 03, Sprint 04, Sprint 05, Sprint 06, Sprint 07"
 
     def centered(text, size, bold=False, before=0, after=6):
         p = document.add_paragraph()

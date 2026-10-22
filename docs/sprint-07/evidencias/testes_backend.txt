@@ -1,0 +1,18 @@
+Validação da Sprint 07 — backend
+Data: 19/10/2026
+
+Comando:
+backend\.venv\Scripts\python.exe -m unittest discover -s tests -v
+
+Resultado:
+Ran 93 tests in 80.310s
+OK (skipped=1)
+
+O teste ignorado valida o modo GPU e depende de uma GPU NVIDIA com CUDA, indisponível na máquina de validação. Os testes sequencial e paralelo em CPU foram executados normalmente.
+
+Testes adicionados nesta Sprint:
+- pesquisa do relatório por endereço;
+- combinação de entregador, prioridade e situação;
+- histórico com eventos de pedidos e execuções do otimizador;
+- pesquisa e filtros do histórico;
+- restrição do histórico ao perfil Entregador.

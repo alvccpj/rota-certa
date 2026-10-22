@@ -1,0 +1,142 @@
+GET /dashboard/summary
+{
+  "generated_at": "2026-10-19T18:17:21.714810Z",
+  "period": {
+    "start": "2026-10-13",
+    "end": "2026-10-19"
+  },
+  "orders": {
+    "total": 14,
+    "pending": 2,
+    "assigned": 10,
+    "in_route": 1,
+    "delivered": 1,
+    "cancelled": 0,
+    "completion_rate": 7.1
+  },
+  "couriers": {
+    "total": 2,
+    "available": 2,
+    "busy": 0,
+    "offline": 0
+  },
+  "routes": {
+    "total": 2,
+    "planned": 2,
+    "in_progress": 0,
+    "completed": 0,
+    "cancelled": 0,
+    "total_distance_km": 32.245
+  },
+  "performance": {
+    "run_count": 1,
+    "average_execution_time_ms": 0.758,
+    "best_speedup": null,
+    "latest_mode": "SEQUENTIAL",
+    "latest_executed_at": "2026-10-19T18:17:21.655753"
+  },
+  "recent_orders": [
+    {
+      "id": 14,
+      "customer_name": "Marcos Vieira",
+      "courier_name": "Diego Entregador",
+      "delivery_address": "Av. Norte, 2500 - Tamarineira, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 3,
+      "created_at": "2026-10-19T18:16:54.977289"
+    },
+    {
+      "id": 13,
+      "customer_name": "Juliana Rocha",
+      "courier_name": "Diego Entregador",
+      "delivery_address": "Rua Dr. José Maria, 400 - Encruzilhada, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 1,
+      "created_at": "2026-10-19T18:16:54.977289"
+    },
+    {
+      "id": 12,
+      "customer_name": "Igor Freitas",
+      "courier_name": "Diego Entregador",
+      "delivery_address": "Estrada do Arraial, 1200 - Casa Amarela, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 2,
+      "created_at": "2026-10-19T18:16:54.977288"
+    },
+    {
+      "id": 11,
+      "customer_name": "Helena Barros",
+      "courier_name": "Diego Entregador",
+      "delivery_address": "Rua do Futuro, 300 - Aflitos, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 2,
+      "created_at": "2026-10-19T18:16:54.977288"
+    },
+    {
+      "id": 10,
+      "customer_name": "Gustavo Alves",
+      "courier_name": "Carla Entregadora",
+      "delivery_address": "Av. Caxangá, 1500 - Cordeiro, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 1,
+      "created_at": "2026-10-19T18:16:54.977287"
+    },
+    {
+      "id": 9,
+      "customer_name": "Beatriz Nunes",
+      "courier_name": "Carla Entregadora",
+      "delivery_address": "Rua Conde de Irajá, 200 - Torre, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 3,
+      "created_at": "2026-10-19T18:16:54.977287"
+    },
+    {
+      "id": 8,
+      "customer_name": "Rafael Torres",
+      "courier_name": "Carla Entregadora",
+      "delivery_address": "Av. Rui Barbosa, 700 - Graças, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 2,
+      "created_at": "2026-10-19T18:16:54.977286"
+    },
+    {
+      "id": 7,
+      "customer_name": "Lúcia Ramos",
+      "courier_name": "Carla Entregadora",
+      "delivery_address": "Rua Benfica, 500 - Madalena, Recife - PE",
+      "status": "ASSIGNED",
+      "priority": 2,
+      "created_at": "2026-10-19T18:16:54.977286"
+    }
+  ]
+}
+
+GET /dashboard/report
+14 pedidos integrados.
+
+GET /dashboard/report?q=Boa Viagem&status=ASSIGNED&priority=1
+[
+  {
+    "order_id": 1,
+    "customer_name": "Maria Silva",
+    "courier_name": "Carla Entregadora",
+    "delivery_address": "Av. Boa Viagem, 1200 - Boa Viagem, Recife - PE",
+    "status": "ASSIGNED",
+    "priority": 1,
+    "weight_kg": 2.5,
+    "created_at": "2026-10-19T18:16:54.977281",
+    "route_id": 1,
+    "route_status": "PLANNED",
+    "route_date": "2026-10-19"
+  }
+]
+
+GET /dashboard/history
+{
+  "ORDER_STATUS": 29,
+  "OPTIMIZATION": 1
+}
+
+POST /routes/generate
+2 rotas geradas e execução registrada.
+Arquivo CSV baixado pelo navegador: sim

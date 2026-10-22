@@ -45,7 +45,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="RotaCerta API",
-    version="0.6.0",
+    version="0.7.0",
     description="API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
     lifespan=lifespan,
 )

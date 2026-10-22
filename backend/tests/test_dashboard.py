@@ -1,4 +1,4 @@
-"""Testes do terceiro módulo: painel operacional e relatório integrado."""
+"""Testes do painel, dos relatórios e do histórico operacional integrado."""
 
 from datetime import date, timedelta
 
@@ -51,6 +51,48 @@ class DashboardTestCase(ApiTestCase):
         self.assertEqual(empty.status_code, 200, empty.text)
         self.assertEqual(empty.json(), [])
 
+    def test_report_supports_search_courier_and_priority_filters(self) -> None:
+        by_address = self.client.get(
+            "/dashboard/report", headers=self.admin, params={"q": "Boa Viagem"}
+        )
+        self.assertEqual(by_address.status_code, 200, by_address.text)
+        self.assertEqual([row["customer_name"] for row in by_address.json()], ["Maria Silva"])
+
+        carla = self.courier_id()
+        filtered = self.client.get(
+            "/dashboard/report",
+            headers=self.attendant,
+            params={"courier_id": carla, "priority": 1, "status": "ASSIGNED"},
+        )
+        self.assertEqual(filtered.status_code, 200, filtered.text)
+        self.assertGreaterEqual(len(filtered.json()), 1)
+        self.assertTrue(all(row["courier_name"] == "Carla Entregadora" for row in filtered.json()))
+        self.assertTrue(all(row["priority"] == 1 for row in filtered.json()))
+        self.assertTrue(all(row["status"] == "ASSIGNED" for row in filtered.json()))
+
+    def test_operational_history_combines_order_events_and_optimizer_runs(self) -> None:
+        initial = self.client.get("/dashboard/history", headers=self.admin)
+        self.assertEqual(initial.status_code, 200, initial.text)
+        self.assertGreater(len(initial.json()), 14)
+        self.assertTrue(all(row["event_type"] == "ORDER_STATUS" for row in initial.json()))
+
+        generated = self.client.post("/routes/generate", headers=self.admin, json={})
+        self.assertEqual(generated.status_code, 200, generated.text)
+        combined = self.client.get("/dashboard/history", headers=self.attendant)
+        self.assertEqual(combined.status_code, 200, combined.text)
+        self.assertTrue(any(row["event_type"] == "OPTIMIZATION" for row in combined.json()))
+
+    def test_operational_history_supports_search_type_and_status_filters(self) -> None:
+        delivered = self.client.get(
+            "/dashboard/history",
+            headers=self.admin,
+            params={"type": "ORDER_STATUS", "status": "DELIVERED", "q": "Paulo"},
+        )
+        self.assertEqual(delivered.status_code, 200, delivered.text)
+        self.assertEqual(len(delivered.json()), 1)
+        self.assertEqual(delivered.json()[0]["customer_name"], "Paulo Mendes")
+        self.assertEqual(delivered.json()[0]["actor_name"], "Diego Entregador")
+
     def test_period_validation(self) -> None:
         response = self.client.get(
             "/dashboard/summary",
@@ -71,3 +113,4 @@ class DashboardTestCase(ApiTestCase):
     def test_dashboard_is_restricted_to_staff(self) -> None:
         self.assertEqual(self.client.get("/dashboard/summary", headers=self.courier).status_code, 403)
         self.assertEqual(self.client.get("/dashboard/report", headers=self.courier).status_code, 403)
+        self.assertEqual(self.client.get("/dashboard/history", headers=self.courier).status_code, 403)
