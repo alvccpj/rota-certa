@@ -1,4 +1,4 @@
-"""Gera o PDF único 01 a 08 preservando integralmente as entregas anteriores."""
+"""Gera o PDF único das Sprints 01 a 08 com apresentação e capa atualizadas."""
 import re
 from html import escape
 from pathlib import Path
@@ -7,6 +7,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
 from pypdf import PdfReader, PdfWriter
 
@@ -21,6 +22,10 @@ styles.add(ParagraphStyle(name='Body8', fontName='Arial', fontSize=10, leading=1
 styles.add(ParagraphStyle(name='Head8', fontName='Arial-Bold', fontSize=13, leading=17, spaceBefore=14, spaceAfter=8, keepWithNext=True))
 styles.add(ParagraphStyle(name='Cell8', fontName='Arial', fontSize=8, leading=11))
 styles.add(ParagraphStyle(name='Cover8', fontName='Arial-Bold', fontSize=25, leading=34, alignment=1, spaceAfter=15))
+styles.add(ParagraphStyle(name='IntroTitle', fontName='Arial-Bold', fontSize=17, leading=21, spaceAfter=10))
+styles.add(ParagraphStyle(name='IntroBody', fontName='Arial', fontSize=9.5, leading=13, spaceAfter=7))
+styles.add(ParagraphStyle(name='IntroPart', fontName='Arial-Bold', fontSize=9.5, leading=12, spaceBefore=4, spaceAfter=2))
+styles.add(ParagraphStyle(name='IntroItem', fontName='Arial', fontSize=9, leading=11.5, leftIndent=8, spaceAfter=1))
 
 
 def para(text, style='Body8'):
@@ -29,7 +34,12 @@ def para(text, style='Body8'):
 
 def footer(canvas, doc):
     canvas.setFont('Arial', 8)
-    canvas.drawCentredString(A4[0]/2, 26, f'RotaCerta | Grupo 04 | Sprint 08 | Página {100 + doc.page}')
+    canvas.drawCentredString(A4[0]/2, 26, f'RotaCerta | Grupo 04 | Sprints 01 a 08 | Página {100 + doc.page}')
+
+
+def intro_footer(canvas, doc):
+    canvas.setFont('Arial', 8)
+    canvas.drawCentredString(A4[0]/2, 26, 'RotaCerta | Grupo 04 | Sprints 01 a 08 | Página 2')
 
 
 def main():
@@ -43,9 +53,62 @@ def main():
              para('Sprints 01 a 08 | Grupo 04', 'Cover8'), Spacer(1,35)]
     for name in ['Álvaro Jordão - 01748200','Arthur Sales - 01593811','Vinícius Trigueiro - 01794959','William Coelho de Morais - 01263977','Guilherme de Luna Barros - 01615925']:
         cover.append(para(name))
-    cover += [Spacer(1,25), para('Consolidação em 01/11/2026. As Sprints 01 a 07 são preservadas nas páginas 2 a 100, com seus registros históricos. A Sprint 08 inicia na página 101 e registra o escopo vigente e suas evidências.'),
-              para('Envio no Teams pelo Scrum Master após revisão da equipe.')]
     SimpleDocTemplate(str(TMP/'cover.pdf'),pagesize=A4,rightMargin=48,leftMargin=48).build(cover)
+
+    intro = [
+        para('Apresentação', 'IntroTitle'),
+        para('Este documento reúne as entregas das Sprints 01 a 08 do projeto RotaCerta. As sete primeiras partes registram o planejamento, a arquitetura, a estrutura funcional, os módulos de pedidos e entregas, a roteirização, o desempenho, o painel operacional, os relatórios e a rastreabilidade. A Parte VIII consolida as funcionalidades, as permissões, a usabilidade e as regras de negócio.', 'IntroBody'),
+        para('As Partes I a VII mantêm o conteúdo entregue anteriormente. A Parte VIII demonstra a evolução prática da Sprint 08 com funcionalidades integradas, dados persistidos, evidências de execução e validações técnicas. Todas as telas e respostas mostradas nas Partes III a VIII foram capturadas do sistema em funcionamento.', 'IntroBody'),
+        para('Sumário', 'IntroTitle'),
+    ]
+    toc = [
+        ('Parte I  Sprint 01 Planejamento do projeto', [
+            '1  Identificação da equipe',
+            '2  Tema, problema, objetivos e público alvo',
+            '3  Requisitos funcionais e não funcionais',
+            '4  Casos de uso e Product Backlog',
+            '5  Cronograma semanal revisado',
+        ]),
+        ('Parte II  Sprint 02 Arquitetura e modelagem', [
+            '6  Arquitetura do sistema',
+            '7  Diagrama de classes',
+            '8  Modelo Entidade Relacionamento',
+            '9  Modelo relacional',
+            '10  Protótipos das telas',
+            '11  Banco de dados e projeto no GitHub',
+            '12  Avaliação sequencial e paralela',
+            '13  Aderência às orientações da disciplina',
+        ]),
+        ('Parte III  Sprint 03 Estrutura inicial funcionando', [
+            '14  Estrutura implementada',
+            '15  Banco de dados conectado',
+            '16  Login funcional',
+            '17  Cadastro de usuários',
+            '18  Controle de perfis',
+            '19  CRUD principal: pedidos',
+            '20  Execução local',
+            '21  Testes automatizados',
+            '22  Ajustes no planejamento e na modelagem',
+            '23  Repositório GitHub',
+            '24  Dificuldades encontradas e próximos passos',
+        ]),
+    ]
+    for title, items in toc:
+        intro.append(para(title, 'IntroPart'))
+        intro.extend(para(item, 'IntroItem') for item in items)
+    SimpleDocTemplate(str(TMP/'intro.pdf'), pagesize=A4, rightMargin=48, leftMargin=48, topMargin=40, bottomMargin=45).build(intro, onFirstPage=intro_footer)
+
+    historical_footer = canvas.Canvas(str(TMP/'historical-footers.pdf'), pagesize=A4)
+    for page_number in range(3, 101):
+        historical_footer.setFillColor(colors.white)
+        historical_footer.rect(0, 0, A4[0], 42, fill=1, stroke=0)
+        historical_footer.setFillColor(colors.black)
+        historical_footer.setFont('Arial', 8)
+        historical_footer.drawCentredString(
+            A4[0]/2, 26, f'RotaCerta | Grupo 04 | Sprints 01 a 08 | Página {page_number}'
+        )
+        historical_footer.showPage()
+    historical_footer.save()
     story = [para('Parte VIII  Sprint 08 Consolidação funcional', 'Head8'),
              para(f'Validação final: {count - 1} testes de backend aprovados, um ignorado por ausência de GPU CUDA; 15 testes de frontend aprovados. Build de produção concluído e auditoria npm sem vulnerabilidades. As evidências usam uma base SQLite isolada e persistida, com a aplicação real em execução.'),
              para('Os registros anteriores documentam a evolução do projeto. As regras e decisões desta parte prevalecem onde houver alteração em relação às sprints anteriores.')]
@@ -92,9 +155,13 @@ def main():
         story.append(im)
     SimpleDocTemplate(str(TMP/'sprint08.pdf'),pagesize=A4,leftMargin=48,rightMargin=48,topMargin=40,bottomMargin=65).build(story,onFirstPage=footer,onLaterPages=footer)
     previous=PdfReader(ROOT/'output/pdf/Grupo_04_RotaCerta_Sprints_01_a_07.pdf')
+    historical_footers=PdfReader(TMP/'historical-footers.pdf')
     writer=PdfWriter()
     writer.append(str(TMP/'cover.pdf'))
-    writer.append(previous,pages=(1,len(previous.pages)))
+    writer.append(str(TMP/'intro.pdf'))
+    for page, overlay in zip(previous.pages[2:], historical_footers.pages):
+        page.merge_page(overlay)
+        writer.add_page(page)
     writer.append(str(TMP/'sprint08.pdf'))
     writer.add_metadata({'/Title':'Grupo 04 RotaCerta Sprints 01 a 08','/Author':'Equipe RotaCerta Grupo 04'})
     target=ROOT/'output/pdf/Grupo_04_RotaCerta_Sprints_01_a_08.pdf'
