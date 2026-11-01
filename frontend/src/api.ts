@@ -71,6 +71,11 @@ export interface OrderDetail extends Order {
   allowed_statuses: OrderStatus[];
 }
 
+export interface AutoAssignResult {
+  assigned: { order_id: number; courier_id: number; courier_name: string }[];
+  skipped: { order_id: number; reason: string }[];
+}
+
 export interface OrderInput {
   customer_id: number;
   delivery_address: string;
@@ -107,6 +112,11 @@ export interface RouteStop {
   weight_kg: number;
   distance_from_previous_km: number | null;
   estimated_arrival: string | null;
+  desired_start: string | null;
+  desired_end: string | null;
+  timing_status: "ON_TIME" | "LATE" | "NO_WINDOW";
+  waiting_minutes: number;
+  delay_minutes: number;
 }
 
 export interface DeliveryRoute {

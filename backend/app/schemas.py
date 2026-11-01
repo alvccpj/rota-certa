@@ -271,6 +271,11 @@ class RouteStopOut(BaseModel):
     weight_kg: float
     distance_from_previous_km: float | None
     estimated_arrival: datetime | None
+    desired_start: datetime | None = None
+    desired_end: datetime | None = None
+    waiting_minutes: int = 0
+    delay_minutes: int = 0
+    timing_status: Literal["ON_TIME", "LATE", "NO_WINDOW"] = "NO_WINDOW"
 
 
 class RouteOut(BaseModel):

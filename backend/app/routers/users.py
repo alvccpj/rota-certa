@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Courier, User
 from app.routers.auth import ensure_email_available
-from app.rules import active_loads, ensure_courier_can_leave
+from app.rules import active_loads, ensure_courier_can_leave, kg
 from app.schemas import AvailabilityIn, CourierOption, CourierOut, UserCreate, UserOut, UserUpdate
 from app.security import ADMIN, ATTENDANT, COURIER, hash_password, require_roles
 
@@ -79,6 +79,13 @@ def update_user(
         removing_access = data.role != COURIER or not data.active
         if removing_access or data.availability == "OFFLINE":
             ensure_courier_can_leave(db, user.courier, removing_access=removing_access)
+        if data.role == COURIER and data.load_capacity_kg is not None:
+            load, _ = active_loads(db, [user.courier.id]).get(user.courier.id, (Decimal("0"), 0))
+            if Decimal(str(data.load_capacity_kg)) < load:
+                raise HTTPException(
+                    status.HTTP_409_CONFLICT,
+                    f"A capacidade não pode ser menor que os {kg(load)} kg em entregas ativas.",
+                )
 
     user.full_name = data.full_name
     user.email = data.email.lower()

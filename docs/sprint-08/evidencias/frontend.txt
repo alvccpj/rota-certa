@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: CSV neutralizes formula prefix "="
+ok 1 - CSV neutralizes formula prefix "="
+  ---
+  duration_ms: 2.2503
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "+"
+ok 2 - CSV neutralizes formula prefix "+"
+  ---
+  duration_ms: 0.4691
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "-"
+ok 3 - CSV neutralizes formula prefix "-"
+  ---
+  duration_ms: 0.3619
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "@"
+ok 4 - CSV neutralizes formula prefix "@"
+  ---
+  duration_ms: 0.6798
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "\\t"
+ok 5 - CSV neutralizes formula prefix "\\t"
+  ---
+  duration_ms: 0.462
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "\\r"
+ok 6 - CSV neutralizes formula prefix "\\r"
+  ---
+  duration_ms: 0.2379
+  type: 'test'
+  ...
+# Subtest: CSV neutralizes formula prefix "\\n"
+ok 7 - CSV neutralizes formula prefix "\\n"
+  ---
+  duration_ms: 0.3059
+  type: 'test'
+  ...
+# Subtest: CSV preserves text, accents, separators, quotes, nulls and numeric IDs
+ok 8 - CSV preserves text, accents, separators, quotes, nulls and numeric IDs
+  ---
+  duration_ms: 0.3576
+  type: 'test'
+  ...
+# Subtest: CSV escapes embedded quotes even in formula payloads
+ok 9 - CSV escapes embedded quotes even in formula payloads
+  ---
+  duration_ms: 0.8955
+  type: 'test'
+  ...
+# Subtest: Stop timing shows window, dated ETA and waiting separately
+ok 10 - Stop timing shows window, dated ETA and waiting separately
+  ---
+  duration_ms: 20.7462
+  type: 'test'
+  ...
+# Subtest: Late stop displays the specific delay without an on-time label
+ok 11 - Late stop displays the specific delay without an on-time label
+  ---
+  duration_ms: 1.7111
+  type: 'test'
+  ...
+# Subtest: No-window and missing-ETA stops do not claim an on-time estimate
+ok 12 - No-window and missing-ETA stops do not claim an on-time estimate
+  ---
+  duration_ms: 0.9647
+  type: 'test'
+  ...
+# Subtest: Open-ended delivery windows are supported
+ok 13 - Open-ended delivery windows are supported
+  ---
+  duration_ms: 1.9226
+  type: 'test'
+  ...
+# Subtest: Navigation uses encoded coordinates, a fixed HTTPS host and safe new-tab attributes
+ok 14 - Navigation uses encoded coordinates, a fixed HTTPS host and safe new-tab attributes
+  ---
+  duration_ms: 1.613
+  type: 'test'
+  ...
+# Subtest: Navigation rejects invalid coordinates and accepts the equator and meridian
+ok 15 - Navigation rejects invalid coordinates and accepts the equator and meridian
+  ---
+  duration_ms: 2.8421
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1629.7477

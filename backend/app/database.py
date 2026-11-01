@@ -86,7 +86,17 @@ CREATE INDEX IF NOT EXISTS idx_routes_status ON routes(establishment_id, status)
 
 
 def upgrade_schema() -> bool:
-    """Aplica as alterações da Sprint 05 quando o banco ainda não as tem."""
+    """Aplica incrementalmente as alterações preservando os registros existentes."""
+
+    inspector = inspect(engine)
+    if inspector.has_table("route_stops"):
+        stop_columns = {column["name"] for column in inspector.get_columns("route_stops")}
+        if "waiting_minutes" not in stop_columns:
+            with engine.begin() as connection:
+                connection.exec_driver_sql(
+                    "ALTER TABLE route_stops ADD COLUMN waiting_minutes INTEGER NOT NULL DEFAULT 0"
+                )
+            logger.info("Banco atualizado para a Sprint 08 (espera por janela de entrega).")
 
     if engine.dialect.name != "postgresql":
         return False

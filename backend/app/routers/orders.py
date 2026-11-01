@@ -1,5 +1,6 @@
 """CRUD de pedidos, a entidade principal do RotaCerta."""
 
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
@@ -9,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app import planning
 from app.database import get_db
-from app.models import Courier, Customer, Order, OrderStatusEvent, User
+from app.models import Courier, Customer, Order, OrderStatusEvent, Route, RouteStop, User
 from app.rules import ensure_courier_can_take, ensure_window_not_past, ensure_window_update_not_past, ensure_within_radius
 from app.schemas import (
     AssignedCourierOut,
@@ -47,8 +48,8 @@ def order_out(order: Order) -> OrderOut:
         longitude=order.longitude,
         weight_kg=order.weight_kg,
         priority=order.priority,
-        desired_start=order.desired_start,
-        desired_end=order.desired_end,
+        desired_start=planning.as_utc(order.desired_start) if order.desired_start else None,
+        desired_end=planning.as_utc(order.desired_end) if order.desired_end else None,
         status=order.status,
         assigned_courier=(
             AssignedCourierOut(id=courier.id, full_name=courier.user.full_name) if courier else None
@@ -62,8 +63,9 @@ def visible_orders(user: User) -> Select[tuple[Order]]:
 
     query = select(Order).where(Order.establishment_id == user.establishment_id)
     if user.role == COURIER:
-        courier_id = user.courier.id if user.courier else None
-        query = query.where(Order.assigned_courier_id == courier_id)
+        if user.courier is None:
+            return query.where(False)
+        query = query.where(Order.assigned_courier_id == user.courier.id)
     return query
 
 
@@ -99,6 +101,41 @@ def record(order: Order, user: User, note: str) -> None:
     order.history.append(OrderStatusEvent(status=order.status, note=note, changed_by=user.id))
 
 
+def has_started_route(db: Session, order: Order) -> bool:
+    # As paradas exibem os dados atuais do pedido, sem uma cópia histórica.
+    return db.scalar(
+        select(RouteStop.id)
+        .join(Route, RouteStop.route_id == Route.id)
+        .where(RouteStop.order_id == order.id, Route.status != "PLANNED")
+        .limit(1)
+    ) is not None
+
+
+def ensure_delivery_details_unchanged(db: Session, order: Order, data: OrderIn) -> None:
+    changed = (
+        data.assigned_courier_id != order.assigned_courier_id
+        or data.customer_id != order.customer_id
+        or data.delivery_address != order.delivery_address
+        or Decimal(f"{data.latitude:.6f}") != order.latitude
+        or Decimal(f"{data.longitude:.6f}") != order.longitude
+        or Decimal(f"{data.weight_kg:.2f}") != order.weight_kg
+    )
+    if changed and (order.status == "IN_ROUTE" or has_started_route(db, order)):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "Após a saída para entrega, não é possível alterar entregador, cliente, endereço, posição ou peso. "
+            "Cancele o pedido e cadastre outro para preservar o histórico da rota.",
+        )
+
+
+def delivery_window(order: Order | OrderIn) -> tuple[datetime | None, ...]:
+    # SQLite retorna datas sem fuso; compare instantes, não a representação do fuso.
+    return tuple(
+        value.replace(tzinfo=timezone.utc) if value is not None and value.tzinfo is None else value
+        for value in (order.desired_start, order.desired_end)
+    )
+
+
 def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> None:
     previous_courier_id = order.assigned_courier_id
     courier = get_courier(db, user, data.assigned_courier_id)
@@ -114,8 +151,9 @@ def apply_order_data(db: Session, user: User, order: Order, data: OrderIn) -> No
     order.longitude = Decimal(f"{data.longitude:.6f}")
     order.weight_kg = weight
     order.priority = data.priority
-    order.desired_start = data.desired_start
-    order.desired_end = data.desired_end
+    # Persist UTC explicitly: SQLite discards offsets on DateTime columns.
+    order.desired_start = planning.as_utc(data.desired_start) if data.desired_start else None
+    order.desired_end = planning.as_utc(data.desired_end) if data.desired_end else None
 
     if courier is None and order.status == "IN_ROUTE":
         raise HTTPException(status.HTTP_409_CONFLICT, "Um pedido em rota precisa continuar com o entregador.")
@@ -193,10 +231,14 @@ def update_order(
     order = get_visible_order(db, user, order_id)
     if order.status in LOCKED_STATUSES:
         raise HTTPException(status.HTTP_409_CONFLICT, "Pedidos entregues ou cancelados não podem ser editados.")
+    ensure_delivery_details_unchanged(db, order, data)
     ensure_window_update_not_past(order, data.desired_start, data.desired_end)
     location = (order.latitude, order.longitude)
+    schedule_changed = delivery_window(order) != delivery_window(data)
     apply_order_data(db, user, order, data)
-    planning.sync_order_route(db, order, location_changed=location != (order.latitude, order.longitude))
+    planning.sync_order_route(
+        db, order, location_changed=schedule_changed or location != (order.latitude, order.longitude)
+    )
     db.commit()
     return order_out(order)
 
@@ -219,6 +261,12 @@ def change_order_status(
     if data.status == order.status:
         raise HTTPException(status.HTTP_409_CONFLICT, "O pedido já está nesta situação.")
     if data.status == "PENDING":
+        if has_started_route(db, order):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "O pedido pertence a uma rota iniciada ou concluída e não pode voltar para pendente. "
+                "Cadastre outro pedido para preservar o histórico da rota.",
+            )
         order.courier = None
     order.status = data.status
     record(order, user, data.note or STATUS_NOTES[data.status])

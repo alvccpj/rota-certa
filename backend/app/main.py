@@ -18,7 +18,7 @@ from app.database import (
     upgrade_schema,
 )
 from app.optimizer.routing import shutdown_pools
-from app.routers import auth, customers, dashboard, geocoding, optimizer, orders, routes, users
+from app.routers import assignment, auth, customers, dashboard, geocoding, optimizer, orders, routes, users
 from app.seed import DEMO_PASSWORD, seed_demo_data
 
 
@@ -45,7 +45,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="RotaCerta API",
-    version="0.7.0",
+    version="0.8.0",
     description="API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
     lifespan=lifespan,
 )
@@ -59,6 +59,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(customers.router)
+app.include_router(assignment.router)
 app.include_router(orders.router)
 app.include_router(geocoding.router)
 app.include_router(routes.router)

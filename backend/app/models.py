@@ -160,6 +160,7 @@ class RouteStop(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), unique=True)
     stop_sequence: Mapped[int] = mapped_column(Integer)
     estimated_arrival: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    waiting_minutes: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     distance_from_previous_km: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
     status: Mapped[str] = mapped_column(String(20), default="PENDING")
 

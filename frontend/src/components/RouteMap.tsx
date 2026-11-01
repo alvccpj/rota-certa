@@ -109,7 +109,8 @@ export default function RouteMap({ routes, depot, focusId = null, colorIndex, la
       <div ref={containerRef} className="map-canvas" role="img" aria-label={label} />
       <p className="inline-note">
         As linhas mostram a sequência das paradas. Distâncias geográficas aproximadas, sem considerar ruas e trânsito.
-        Os horários usam velocidade média e tempo de atendimento estimados.
+        Os horários usam velocidade média, tempo de atendimento e espera pela janela de entrega estimados.
+        Não há trânsito nem rastreamento em tempo real.
       </p>
     </div>
   );

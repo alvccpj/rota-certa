@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { api, type OperationalHistoryEvent, type OrderStatus } from "../api";
 import { StatusBadge } from "../components/Badges";
@@ -17,11 +17,14 @@ export default function HistoryPage() {
   const [events, setEvents] = useState<OperationalHistoryEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const requestId = useRef(0);
 
   const load = useCallback(async (filters?: { start: string; end: string; query: string; type: string; status: string }) => {
+    const request = ++requestId.current;
     const current = filters ?? { start: DEFAULT_REPORT_START, end: DEFAULT_REPORT_END, query: "", type: "", status: "" };
     if (!current.start || !current.end || current.start > current.end) {
       setError("Informe um período válido: a data inicial não pode ser posterior à final.");
+      setLoading(false);
       return;
     }
     setLoading(true);
@@ -31,15 +34,19 @@ export default function HistoryPage() {
     if (current.type) params.set("type", current.type);
     if (current.status) params.set("status", current.status);
     try {
-      setEvents(await api<OperationalHistoryEvent[]>(`/dashboard/history?${params}`));
+      const next = await api<OperationalHistoryEvent[]>(`/dashboard/history?${params}`);
+      if (request === requestId.current) setEvents(next);
     } catch (err) {
-      setError((err as Error).message);
+      if (request === requestId.current) setError((err as Error).message);
     } finally {
-      setLoading(false);
+      if (request === requestId.current) setLoading(false);
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+    return () => { requestId.current++; };
+  }, [load]);
 
   function clearFilters() {
     setStart(DEFAULT_REPORT_START);
@@ -60,12 +67,12 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      <form className="report-filters" onSubmit={(event) => { event.preventDefault(); void load({ start, end, query, type, status }); }}>
-        <label className="wide-filter">Pesquisa
+      <form className="report-filters" aria-label="Filtros do histórico" aria-describedby="history-filter-help" onSubmit={(event) => { event.preventDefault(); void load({ start, end, query, type, status }); }}>
+        <label className="wide-filter">Buscar operações
           <input type="search" placeholder="Pedido, cliente, endereço, observação ou responsável" value={query} onChange={(event) => setQuery(event.target.value)} />
         </label>
-        <label>Data inicial<input type="date" value={start} max={end} onChange={(event) => setStart(event.target.value)} /></label>
-        <label>Data final<input type="date" value={end} min={start} onChange={(event) => setEnd(event.target.value)} /></label>
+        <label>Data inicial<input type="date" required value={start} max={end} onChange={(event) => setStart(event.target.value)} /></label>
+        <label>Data final<input type="date" required value={end} min={start} onChange={(event) => setEnd(event.target.value)} /></label>
         <label>Tipo de operação
           <select value={type} onChange={(event) => { setType(event.target.value); if (event.target.value === "OPTIMIZATION") setStatus(""); }}>
             <option value="">Todos</option>
@@ -74,22 +81,26 @@ export default function HistoryPage() {
           </select>
         </label>
         <label>Situação do pedido
-          <select value={status} disabled={type === "OPTIMIZATION"} onChange={(event) => setStatus(event.target.value as OrderStatus | "")}>
+          <select value={status} disabled={type === "OPTIMIZATION"} aria-describedby={type === "OPTIMIZATION" ? "history-status-help" : undefined} onChange={(event) => setStatus(event.target.value as OrderStatus | "")}>
             <option value="">Todas</option>
             {STATUSES.map((value) => <option key={value} value={value}>{STATUS_LABELS[value]}</option>)}
           </select>
         </label>
         <div className="filter-actions">
           <button className="button primary" type="submit" disabled={loading}>{loading ? "Consultando…" : "Aplicar filtros"}</button>
-          <button className="button quiet" type="button" onClick={clearFilters}>Limpar</button>
+          <button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button>
         </div>
       </form>
+      <p className="inline-note" id="history-filter-help">Use Aplicar filtros para atualizar os resultados. Limpar filtros restaura os últimos 7 dias e remove a busca e as demais seleções.</p>
+      {type === "OPTIMIZATION" && <p className="inline-note" id="history-status-help">O filtro de situação do pedido só se aplica às operações de pedidos.</p>}
 
-      {error && <div className="alert error" role="alert">{error}</div>}
-      {!loading && <p className="result-count">{events.length} {events.length === 1 ? "operação encontrada" : "operações encontradas"}</p>}
+      {error && <div className="alert error" role="alert">{error}{" "}<button type="button" className="link" onClick={() => void load({ start, end, query, type, status })}>Tentar de novo</button></div>}
+      {!loading && !error && <p className="result-count" role="status">{events.length} {events.length === 1 ? "operação encontrada" : "operações encontradas"}</p>}
 
-      {!loading && events.length === 0 ? (
-        <div className="empty"><p>Nenhuma operação corresponde aos critérios informados.</p><button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button></div>
+      {loading ? (
+        <p className="muted" role="status">Consultando operações…</p>
+      ) : error ? null : events.length === 0 ? (
+        <div className="empty"><p>Nenhuma operação corresponde aos critérios informados. Ajuste o período ou limpe os filtros para tentar novamente.</p><button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button></div>
       ) : (
         <ol className="operation-history" aria-label="Operações registradas">
           {events.map((event) => (

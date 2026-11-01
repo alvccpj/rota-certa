@@ -3,7 +3,9 @@ import AutoRefresh from "../components/AutoRefresh";
 import { Link } from "react-router";
 import { api, type Availability, type MyRoute, type Order, type OrderStatus, type User } from "../api";
 import { Priority, StatusBadge } from "../components/Badges";
+import NavigationLink from "../components/NavigationLink";
 import RouteMap from "../components/RouteMap";
+import StopTiming from "../components/StopTiming";
 import { useToast } from "../components/Toast";
 import {
   ROUTE_STATUS_LABELS,
@@ -11,7 +13,6 @@ import {
   formatDuration,
   formatKg,
   formatKm,
-  formatTime,
   formatWindow,
 } from "../labels";
 import { useSession, useUser } from "../session";
@@ -127,7 +128,7 @@ export default function DeliveriesPage() {
       {myRoute?.route && <MyRouteCard data={myRoute} starting={starting} onStart={startRoute} />}
 
       <div className="filters" role="group" aria-label="Filtrar por situação">
-        <button type="button" className={filter ? "chip" : "chip active"} onClick={() => setFilter(null)}>
+        <button type="button" className={filter ? "chip" : "chip active"} aria-pressed={!filter} onClick={() => setFilter(null)}>
           Todas <span>{orders.filter((o) => o.status !== "CANCELLED").length}</span>
         </button>
         {STATUSES.map((status) => (
@@ -135,6 +136,7 @@ export default function DeliveriesPage() {
             key={status}
             type="button"
             className={filter === status ? "chip active" : "chip"}
+            aria-pressed={filter === status}
             onClick={() => setFilter(status)}
           >
             {STATUS_LABELS[status]} <span>{counts[status]}</span>
@@ -152,14 +154,15 @@ export default function DeliveriesPage() {
       )}
 
       {loading ? (
-        <p className="muted">Carregando entregas…</p>
-      ) : visible.length === 0 ? (
+        <p className="muted" role="status">Carregando entregas…</p>
+      ) : error && orders.length === 0 ? null : visible.length === 0 ? (
         <div className="empty">
           <p>
             {orders.length === 0
               ? "Nenhuma entrega atribuída a você no momento."
               : "Nenhuma entrega com essa situação."}
           </p>
+          {filter && <button type="button" className="button quiet" onClick={() => setFilter(null)}>Limpar filtros</button>}
         </div>
       ) : (
         <ul className="delivery-list">
@@ -177,7 +180,7 @@ export default function DeliveriesPage() {
                 <p className="address">{order.delivery_address}</p>
                 <dl className="facts">
                   <div>
-                    <dt>Horário</dt>
+                    <dt>Janela de entrega</dt>
                     <dd>{formatWindow(order.desired_start, order.desired_end)}</dd>
                   </div>
                   <div>
@@ -193,6 +196,7 @@ export default function DeliveriesPage() {
                     </div>
                   )}
                 </dl>
+                <NavigationLink latitude={order.latitude} longitude={order.longitude} orderId={order.id} />
                 <div className="delivery-actions">
                   <Link className="button quiet" to={`/pedidos/${order.id}`}>
                     Ver detalhes
@@ -243,9 +247,11 @@ function MyRouteCard({ data, starting, onStart }: { data: MyRoute; starting: boo
             <div>
               <Link to={`/pedidos/${stop.order_id}`}>{stop.customer_name}</Link>
               <span className="sub">{stop.delivery_address}</span>
+              <StopTiming stop={stop} />
+              <NavigationLink latitude={stop.latitude} longitude={stop.longitude} orderId={stop.order_id} />
             </div>
             <div className="stop-meta">
-              <span>{stop === next ? "Próxima · " : ""}{formatTime(stop.estimated_arrival)}</span>
+              {stop === next && <strong>Próxima parada</strong>}
               <StatusBadge status={stop.order_status} />
             </div>
           </li>
