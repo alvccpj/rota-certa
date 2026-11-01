@@ -13,9 +13,11 @@ export function localDate(daysAgo = 0): string {
 export const DEFAULT_REPORT_START = localDate(6);
 export const DEFAULT_REPORT_END = localDate();
 
-function csvCell(value: string | number | null): string {
+export function csvCell(value: string | number | null): string {
   const text = value == null ? "" : String(value);
-  return `"${text.replaceAll('"', '""')}"`;
+  // Aspas de CSV não impedem a execução de fórmulas ao abrir em uma planilha.
+  const safeText = /^[=+@\-\t\r\n]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replaceAll('"', '""')}"`;
 }
 
 export function downloadOperationalReport(rows: DashboardReportRow[], start: string, end: string) {

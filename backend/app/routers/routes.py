@@ -3,12 +3,13 @@
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import planning
 from app.database import get_db
-from app.models import User
+from app.models import Route, User
 from app.schemas import (
     DepotIn,
     DepotOut,
@@ -37,9 +38,29 @@ def update_depot(
     """Define o endereço e a posição de onde saem e para onde voltam as rotas."""
 
     establishment = user.establishment
+    latitude = Decimal(f"{data.latitude:.6f}")
+    longitude = Decimal(f"{data.longitude:.6f}")
+    changed = (data.depot_address, latitude, longitude) != (
+        establishment.depot_address, establishment.depot_latitude, establishment.depot_longitude
+    )
+    if changed:
+        in_progress = db.scalar(
+            select(Route.id).where(
+                Route.establishment_id == establishment.id, Route.status == "IN_PROGRESS"
+            ).limit(1)
+        )
+        if in_progress is not None:
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "Conclua as rotas em andamento antes de alterar o ponto de saída das entregas.",
+            )
+        for route in db.scalars(
+            select(Route).where(Route.establishment_id == establishment.id, Route.status == "PLANNED")
+        ).unique():
+            db.delete(route)
     establishment.depot_address = data.depot_address
-    establishment.depot_latitude = Decimal(f"{data.latitude:.6f}")
-    establishment.depot_longitude = Decimal(f"{data.longitude:.6f}")
+    establishment.depot_latitude = latitude
+    establishment.depot_longitude = longitude
     db.commit()
     return planning.depot_out(establishment)
 

@@ -1340,6 +1340,30 @@ td.num a {
   list-style: none;
 }
 
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.assignment-result {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sign);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.assignment-result ul {
+  display: grid;
+  gap: 6px;
+  padding-left: 22px;
+}
+
 .route-card {
   display: grid;
   gap: 12px;
@@ -1473,6 +1497,53 @@ td.num a {
   font-size: 0.9rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.stop-timing {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.timing-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.timing-badge {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: #eef1ef;
+  color: #46544b;
+  font-weight: 600;
+}
+
+.timing-on-time {
+  background: #dcefe3;
+  color: #205a38;
+}
+
+.timing-late {
+  background: #fbe4e2;
+  color: #972e28;
+}
+
+.timing-waiting {
+  background: #fff1bf;
+  color: #6b4f00;
+}
+
+.navigation-link,
+.stop-list .navigation-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 0;
+  color: var(--sign);
+  font-size: 0.85rem;
+  text-decoration: underline;
 }
 
 .stop-pin {
@@ -2393,6 +2464,16 @@ tr.selected td {
 }
 
 @media (max-width: 520px) {
+  .stop-list li {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  .stop-meta {
+    grid-column: 2;
+    justify-items: start;
+    white-space: normal;
+  }
+
   .dashboard-stats {
     grid-template-columns: 1fr;
   }

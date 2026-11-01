@@ -88,6 +88,7 @@ CREATE TABLE route_stops (
     order_id BIGINT NOT NULL UNIQUE REFERENCES orders(id),
     stop_sequence INTEGER NOT NULL CHECK (stop_sequence > 0),
     estimated_arrival TIMESTAMPTZ,
+    waiting_minutes INTEGER NOT NULL DEFAULT 0 CHECK (waiting_minutes >= 0),
     distance_from_previous_km NUMERIC(10, 3),
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING'
         CHECK (status IN ('PENDING', 'ARRIVED', 'COMPLETED', 'FAILED')),

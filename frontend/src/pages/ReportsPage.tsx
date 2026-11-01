@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { api, type CourierOption, type DashboardReportRow, type OrderStatus } from "../api";
 import { Priority, StatusBadge } from "../components/Badges";
@@ -25,6 +25,8 @@ export default function ReportsPage() {
   const [rows, setRows] = useState<DashboardReportRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const requestId = useRef(0);
+  const [appliedPeriod, setAppliedPeriod] = useState({ start: DEFAULT_REPORT_START, end: DEFAULT_REPORT_END });
 
   const load = useCallback(async (filters?: {
     start: string;
@@ -34,6 +36,7 @@ export default function ReportsPage() {
     courierId: string;
     priority: string;
   }) => {
+    const request = ++requestId.current;
     const current = filters ?? {
       start: DEFAULT_REPORT_START,
       end: DEFAULT_REPORT_END,
@@ -44,6 +47,7 @@ export default function ReportsPage() {
     };
     if (!current.start || !current.end || current.start > current.end) {
       setError("Informe um período válido: a data inicial não pode ser posterior à final.");
+      setLoading(false);
       return;
     }
     setLoading(true);
@@ -54,17 +58,21 @@ export default function ReportsPage() {
     if (current.courierId) params.set("courier_id", current.courierId);
     if (current.priority) params.set("priority", current.priority);
     try {
-      setRows(await api<DashboardReportRow[]>(`/dashboard/report?${params}`));
+      const next = await api<DashboardReportRow[]>(`/dashboard/report?${params}`);
+      if (request !== requestId.current) return;
+      setRows(next);
+      setAppliedPeriod({ start: current.start, end: current.end });
     } catch (err) {
-      setError((err as Error).message);
+      if (request === requestId.current) setError((err as Error).message);
     } finally {
-      setLoading(false);
+      if (request === requestId.current) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     void load();
     api<CourierOption[]>("/couriers").then(setCouriers, () => setCouriers([]));
+    return () => { requestId.current++; };
   }, [load]);
 
   const totals = useMemo(() => ({
@@ -99,9 +107,9 @@ export default function ReportsPage() {
         <button
           type="button"
           className="button report-button"
-          disabled={loading || rows.length === 0}
+          disabled={loading || Boolean(error) || rows.length === 0}
           onClick={() => {
-            downloadOperationalReport(rows, start, end);
+            downloadOperationalReport(rows, appliedPeriod.start, appliedPeriod.end);
             notify(`Relatório exportado com ${rows.length} ${rows.length === 1 ? "pedido" : "pedidos"}.`);
           }}
         >
@@ -111,16 +119,18 @@ export default function ReportsPage() {
 
       <form
         className="report-filters"
+        aria-label="Filtros do relatório"
+        aria-describedby="report-filter-help"
         onSubmit={(event) => {
           event.preventDefault();
           void load(currentFilters());
         }}
       >
-        <label className="wide-filter">Pesquisa
+        <label className="wide-filter">Buscar pedidos
           <input type="search" placeholder="Pedido, cliente, telefone, endereço ou entregador" value={query} onChange={(event) => setQuery(event.target.value)} />
         </label>
-        <label>Data inicial<input type="date" value={start} max={end} onChange={(event) => setStart(event.target.value)} /></label>
-        <label>Data final<input type="date" value={end} min={start} onChange={(event) => setEnd(event.target.value)} /></label>
+        <label>Data inicial<input type="date" required value={start} max={end} onChange={(event) => setStart(event.target.value)} /></label>
+        <label>Data final<input type="date" required value={end} min={start} onChange={(event) => setEnd(event.target.value)} /></label>
         <label>Situação
           <select value={status} onChange={(event) => setStatus(event.target.value as OrderStatus | "")}>
             <option value="">Todas</option>
@@ -141,25 +151,34 @@ export default function ReportsPage() {
         </label>
         <div className="filter-actions">
           <button className="button primary" type="submit" disabled={loading}>{loading ? "Consultando…" : "Aplicar filtros"}</button>
-          <button className="button quiet" type="button" onClick={clearFilters}>Limpar</button>
+          <button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button>
         </div>
       </form>
+      <p className="inline-note" id="report-filter-help">Use Aplicar filtros para atualizar os resultados. Limpar filtros restaura os últimos 7 dias e remove a busca e as demais seleções.</p>
 
-      {error && <div className="alert error" role="alert">{error}</div>}
+      {error && <div className="alert error" role="alert">{error}{" "}<button type="button" className="link" onClick={() => void load(currentFilters())}>Tentar de novo</button></div>}
 
-      <div className="report-summary" aria-label="Resumo do relatório">
-        <div><span>Pedidos encontrados</span><strong>{totals.orders}</strong></div>
-        <div><span>Peso total</span><strong>{formatKg(totals.weight)}</strong></div>
-        <div><span>Com rota</span><strong>{totals.routed}</strong></div>
-        <div><span>Entregues</span><strong>{totals.delivered}</strong></div>
-      </div>
+      {!loading && !error && (
+        <>
+          <p className="result-count" role="status">{rows.length} {rows.length === 1 ? "pedido encontrado" : "pedidos encontrados"} · período consultado: {appliedPeriod.start.split("-").reverse().join("/")} a {appliedPeriod.end.split("-").reverse().join("/")}.</p>
+          <div className="report-summary" aria-label="Resumo do relatório">
+            <div><span>Pedidos encontrados</span><strong>{totals.orders}</strong></div>
+            <div><span>Peso total</span><strong>{formatKg(totals.weight)}</strong></div>
+            <div><span>Com rota</span><strong>{totals.routed}</strong></div>
+            <div><span>Entregues</span><strong>{totals.delivered}</strong></div>
+          </div>
+        </>
+      )}
 
-      {!loading && rows.length === 0 ? (
-        <div className="empty"><p>Nenhum pedido corresponde aos critérios informados.</p><button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button></div>
+      {loading ? (
+        <p className="muted" role="status">Consultando pedidos…</p>
+      ) : error ? null : rows.length === 0 ? (
+        <div className="empty"><p>Nenhum pedido corresponde aos critérios informados. Ajuste o período ou limpe os filtros para tentar novamente.</p><button className="button quiet" type="button" onClick={clearFilters}>Limpar filtros</button></div>
       ) : (
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Pedido</th><th>Cliente</th><th>Destino</th><th>Entregador</th><th>Prioridade</th><th>Situação</th><th>Rota</th><th>Cadastro</th></tr></thead>
+            <caption className="sr-only">Pedidos encontrados no relatório operacional</caption>
+            <thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Endereço de entrega</th><th scope="col">Entregador</th><th scope="col">Prioridade</th><th scope="col">Situação</th><th scope="col">Rota</th><th scope="col">Cadastro</th></tr></thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.order_id}>

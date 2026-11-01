@@ -13,7 +13,9 @@ import {
 import { StatusBadge } from "../components/Badges";
 import Field from "../components/Field";
 import MapPicker from "../components/MapPicker";
+import NavigationLink from "../components/NavigationLink";
 import RouteMap from "../components/RouteMap";
+import StopTiming from "../components/StopTiming";
 import { useToast } from "../components/Toast";
 import {
   MODE_LABELS,
@@ -21,7 +23,6 @@ import {
   formatDuration,
   formatKm,
   formatMs,
-  formatTime,
   routeColor,
 } from "../labels";
 import { useUser } from "../session";
@@ -103,13 +104,14 @@ export default function RoutesPage() {
         <h2 id="route-guide">Como organizar as entregas</h2>
         <ol>
           <li>Defina o ponto de saída no mapa.</li>
-          <li><Link to="/pedidos">Atribua os pedidos</Link> aos entregadores.</li>
+          <li><Link to="/pedidos">Atribua os pedidos</Link> aos entregadores, manualmente ou pela atribuição automática.</li>
           <li>Gere as rotas para calcular a ordem das paradas.</li>
           <li>O entregador inicia sua rota e confirma cada entrega na conta dele.</li>
         </ol>
         <p className="muted">
-          Prioridade e horário são informações para a equipe. Nesta versão, o cálculo considera a distância;
-          ele não garante os horários desejados nem coloca automaticamente os pedidos urgentes primeiro.
+          O trajeto considera a distância geográfica. As previsões indicam espera até o início da janela e
+          atraso após o limite de entrega, sem garantir os horários desejados ou colocar pedidos urgentes primeiro.
+          Não há trânsito em tempo real.
         </p>
       </div>
 
@@ -121,6 +123,7 @@ export default function RoutesPage() {
           </button>
         </div>
       )}
+      {!overview && !error && <p className="muted" role="status">Carregando rotas…</p>}
 
       {depot && (depotMissing || editingDepot) && (
         user.role === "ADMIN" ? (
@@ -285,10 +288,10 @@ function RouteCard({
   onFocus: () => void;
 }) {
   return (
-    <li className={focused ? "route-card focused" : "route-card"} style={{ "--route": color } as CSSProperties}>
+    <li id={`rota-${route.id}`} className={focused ? "route-card focused" : "route-card"} style={{ "--route": color } as CSSProperties}>
       <button type="button" className="route-card-head" onClick={onFocus} aria-pressed={focused}>
         <span className="route-swatch" aria-hidden="true" />
-        <span className="route-courier">{route.courier.full_name}</span>
+        <span className="route-courier">{route.courier.full_name}<span className="sub">Rota #{route.id}</span></span>
         <span className={`route-status route-${route.status.toLowerCase()}`}>{ROUTE_STATUS_LABELS[route.status]}</span>
       </button>
       <dl className="facts">
@@ -297,7 +300,7 @@ function RouteCard({
           <dd>{route.stops.length}</dd>
         </div>
         <div>
-          <dt>Distância</dt>
+          <dt>Distância estimada</dt>
           <dd>{formatKm(route.total_distance_km)}</dd>
         </div>
         <div>
@@ -316,9 +319,10 @@ function RouteCard({
             <div>
               <Link to={`/pedidos/${stop.order_id}`}>{stop.customer_name}</Link>
               <span className="sub">{stop.delivery_address}</span>
+              <StopTiming stop={stop} />
+              <NavigationLink latitude={stop.latitude} longitude={stop.longitude} orderId={stop.order_id} />
             </div>
             <div className="stop-meta">
-              <span>{formatTime(stop.estimated_arrival)}</span>
               <StatusBadge status={stop.order_status} />
             </div>
           </li>

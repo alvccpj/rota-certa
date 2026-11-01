@@ -45,13 +45,16 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Roteirização e desempenho | 05 | Rotas otimizadas a partir dos pedidos atribuídos, mapa com o trajeto de cada entregador, início e conclusão da rota pelo entregador e comparação sequencial, paralela e GPU |
 | Painel operacional e relatórios | 06 | Indicadores integrados de pedidos, entregadores, rotas e desempenho, filtros por período, alertas operacionais, ações rápidas e relatório CSV |
 | Consultas e rastreabilidade | 07 | Relatórios pesquisáveis com filtros combináveis, exportação CSV do resultado e histórico cronológico de pedidos e execuções do otimizador |
+| Consolidação funcional | 08 | Atribuição automática, espera e avisos de atraso, revisão de permissões e proteção de dados das rotas |
 
 ## Como interpretar as rotas
 
 O mapa mostra a sequência de paradas; as distâncias são geográficas (Haversine),
 sem considerar ruas ou trânsito. Os horários estimados usam velocidade média e
 tempo de atendimento configurados. Prioridade e janela de entrega orientam a
-equipe, mas ainda não são restrições do algoritmo.
+equipe. A atribuição automática prioriza urgência e prazo; o agendamento inclui
+espera até a janela e sinaliza atrasos. A ordem das paradas otimiza distância,
+sem garantia de cumprimento de todas as janelas. Veja o escopo final em [Sprint 08](docs/sprint-08/README.md).
 
 Depois de gerar rotas, a tela compara a distância na ordem original dos pedidos
 (por ID), após o vizinho mais próximo e após o 2-opt, incluindo o retorno ao
@@ -73,7 +76,8 @@ preservar a janela antiga permite corrigir outros dados de um pedido atrasado.
   enquanto houver pedidos em rota.
 - Administrador e atendente seguem as etapas Pendente → Atribuído → Em rota →
   Entregue. Podem cancelar pedidos abertos e reabrir os encerrados como pendentes,
-  sem entregador. Atribuídos também podem voltar a pendentes. Entregadores apenas
+  sem entregador, desde que não pertençam a uma rota já iniciada. Nessa situação,
+  uma nova entrega exige novo pedido para preservar o histórico. Atribuídos também podem voltar a pendentes. Entregadores apenas
   avançam de Atribuído para Em rota e de Em rota para Entregue.
 - As listas Pedidos e Minhas entregas consultam novamente a API a cada 15 segundos,
   apenas com a aba visível, e ao retornar à aba. Os filtros são preservados e a hora
@@ -91,7 +95,7 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_07.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_07.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_08.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_08.pdf)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)
 - Como rodar localmente: [`COMO-RODAR.md`](COMO-RODAR.md)

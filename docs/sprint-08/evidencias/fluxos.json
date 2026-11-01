@@ -1,0 +1,334 @@
+{
+  "date": "2026-11-01T17:05:40.279150+00:00",
+  "database": {
+    "status": "ok",
+    "database": "connected",
+    "dialect": "sqlite",
+    "server_version": "3.50.4"
+  },
+  "created_orders": [
+    15,
+    16
+  ],
+  "assignment": {
+    "assigned": 15,
+    "capacity_refused": 16,
+    "history": [
+      {
+        "status": "PENDING",
+        "note": "Pedido cadastrado",
+        "changed_by": "Ana Administradora",
+        "changed_at": "2026-11-01T17:05:40.259712"
+      },
+      {
+        "status": "ASSIGNED",
+        "note": "Atribuído automaticamente a Diego Entregador",
+        "changed_by": "Ana Administradora",
+        "changed_at": "2026-11-01T17:05:51.252128"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "id": 1,
+      "courier": {
+        "id": 1,
+        "full_name": "Carla Entregadora"
+      },
+      "route_date": "2026-11-01",
+      "status": "PLANNED",
+      "algorithm": "NEAREST_NEIGHBOR_2OPT",
+      "execution_mode": "SEQUENTIAL",
+      "total_distance_km": 21.307,
+      "estimated_duration_min": 102,
+      "created_at": "2026-11-01T17:05:51.648731Z",
+      "stops": [
+        {
+          "sequence": 1,
+          "status": "PENDING",
+          "order_id": 8,
+          "order_status": "ASSIGNED",
+          "customer_name": "Rafael Torres",
+          "customer_phone": "(81) 98800-1008",
+          "delivery_address": "Av. Rui Barbosa, 700 - Graças, Recife - PE",
+          "latitude": -8.048,
+          "longitude": -34.899,
+          "priority": 2,
+          "weight_kg": 0.8,
+          "distance_from_previous_km": 2.291,
+          "estimated_arrival": "2026-11-01T17:11:21.555097Z",
+          "desired_start": "2026-11-01T16:00:00Z",
+          "desired_end": "2026-11-01T18:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 2,
+          "status": "PENDING",
+          "order_id": 7,
+          "order_status": "ASSIGNED",
+          "customer_name": "Lúcia Ramos",
+          "customer_phone": "(81) 98800-1007",
+          "delivery_address": "Rua Benfica, 500 - Madalena, Recife - PE",
+          "latitude": -8.0545,
+          "longitude": -34.903,
+          "priority": 2,
+          "weight_kg": 0.5,
+          "distance_from_previous_km": 0.846,
+          "estimated_arrival": "2026-11-01T17:18:23.432398Z",
+          "desired_start": "2026-11-01T15:00:00Z",
+          "desired_end": "2026-11-01T17:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 19,
+          "timing_status": "LATE"
+        },
+        {
+          "sequence": 3,
+          "status": "PENDING",
+          "order_id": 9,
+          "order_status": "ASSIGNED",
+          "customer_name": "Beatriz Nunes",
+          "customer_phone": "(81) 98800-1009",
+          "delivery_address": "Rua Conde de Irajá, 200 - Torre, Recife - PE",
+          "latitude": -8.0478,
+          "longitude": -34.9118,
+          "priority": 3,
+          "weight_kg": 0.6,
+          "distance_from_previous_km": 1.222,
+          "estimated_arrival": "2026-11-01T17:26:19.427748Z",
+          "desired_start": "2026-11-01T17:00:00Z",
+          "desired_end": "2026-11-01T19:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 4,
+          "status": "PENDING",
+          "order_id": 10,
+          "order_status": "ASSIGNED",
+          "customer_name": "Gustavo Alves",
+          "customer_phone": "(81) 98800-1010",
+          "delivery_address": "Av. Caxangá, 1500 - Cordeiro, Recife - PE",
+          "latitude": -8.049,
+          "longitude": -34.926,
+          "priority": 1,
+          "weight_kg": 0.4,
+          "distance_from_previous_km": 1.569,
+          "estimated_arrival": "2026-11-01T18:00:00Z",
+          "desired_start": "2026-11-01T18:00:00Z",
+          "desired_end": "2026-11-01T20:00:00Z",
+          "waiting_minutes": 25,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 5,
+          "status": "PENDING",
+          "order_id": 1,
+          "order_status": "ASSIGNED",
+          "customer_name": "Maria Silva",
+          "customer_phone": "(81) 98800-1001",
+          "delivery_address": "Av. Boa Viagem, 1200 - Boa Viagem, Recife - PE",
+          "latitude": -8.1197,
+          "longitude": -34.9006,
+          "priority": 1,
+          "weight_kg": 2.5,
+          "distance_from_previous_km": 8.344,
+          "estimated_arrival": "2026-11-01T18:25:01.535505Z",
+          "desired_start": "2026-11-01T09:00:00Z",
+          "desired_end": "2026-11-01T11:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 446,
+          "timing_status": "LATE"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "courier": {
+        "id": 2,
+        "full_name": "Diego Entregador"
+      },
+      "route_date": "2026-11-01",
+      "status": "PLANNED",
+      "algorithm": "NEAREST_NEIGHBOR_2OPT",
+      "execution_mode": "SEQUENTIAL",
+      "total_distance_km": 10.94,
+      "estimated_duration_min": 315,
+      "created_at": "2026-11-01T17:05:51.648731Z",
+      "stops": [
+        {
+          "sequence": 1,
+          "status": "PENDING",
+          "order_id": 15,
+          "order_status": "ASSIGNED",
+          "customer_name": "Cliente Sprint Oito",
+          "customer_phone": "(81) 98888-0808",
+          "delivery_address": "Rua da Aurora, 400 - Recife",
+          "latitude": -8.059,
+          "longitude": -34.882,
+          "priority": 1,
+          "weight_kg": 1.0,
+          "distance_from_previous_km": 0.055,
+          "estimated_arrival": "2026-11-01T19:05:40.252891Z",
+          "desired_start": "2026-11-01T19:05:40.252891Z",
+          "desired_end": "2026-11-01T21:05:40.252891Z",
+          "waiting_minutes": 120,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 2,
+          "status": "PENDING",
+          "order_id": 4,
+          "order_status": "ASSIGNED",
+          "customer_name": "Carlos Souza",
+          "customer_phone": "(81) 98800-1004",
+          "delivery_address": "Rua do Espinheiro, 450 - Espinheiro, Recife - PE",
+          "latitude": -8.0452,
+          "longitude": -34.892,
+          "priority": 3,
+          "weight_kg": 0.8,
+          "distance_from_previous_km": 1.889,
+          "estimated_arrival": "2026-11-01T19:15:12.212476Z",
+          "desired_start": "2026-11-01T12:00:00Z",
+          "desired_end": "2026-11-01T14:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 316,
+          "timing_status": "LATE"
+        },
+        {
+          "sequence": 3,
+          "status": "PENDING",
+          "order_id": 11,
+          "order_status": "ASSIGNED",
+          "customer_name": "Helena Barros",
+          "customer_phone": "(81) 98800-1011",
+          "delivery_address": "Rua do Futuro, 300 - Aflitos, Recife - PE",
+          "latitude": -8.039,
+          "longitude": -34.901,
+          "priority": 2,
+          "weight_kg": 2.0,
+          "distance_from_previous_km": 1.207,
+          "estimated_arrival": "2026-11-01T19:23:06.041154Z",
+          "desired_start": "2026-11-01T19:00:00Z",
+          "desired_end": "2026-11-01T21:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 4,
+          "status": "PENDING",
+          "order_id": 12,
+          "order_status": "ASSIGNED",
+          "customer_name": "Igor Freitas",
+          "customer_phone": "(81) 98800-1012",
+          "delivery_address": "Estrada do Arraial, 1200 - Casa Amarela, Recife - PE",
+          "latitude": -8.028,
+          "longitude": -34.915,
+          "priority": 2,
+          "weight_kg": 3.5,
+          "distance_from_previous_km": 1.968,
+          "estimated_arrival": "2026-11-01T20:00:00Z",
+          "desired_start": "2026-11-01T20:00:00Z",
+          "desired_end": "2026-11-01T22:00:00Z",
+          "waiting_minutes": 28,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 5,
+          "status": "PENDING",
+          "order_id": 14,
+          "order_status": "ASSIGNED",
+          "customer_name": "Marcos Vieira",
+          "customer_phone": "(81) 98800-1014",
+          "delivery_address": "Av. Norte, 2500 - Tamarineira, Recife - PE",
+          "latitude": -8.03,
+          "longitude": -34.9,
+          "priority": 3,
+          "weight_kg": 2.2,
+          "distance_from_previous_km": 1.666,
+          "estimated_arrival": "2026-11-01T22:00:00Z",
+          "desired_start": "2026-11-01T22:00:00Z",
+          "desired_end": "2026-11-02T00:00:00Z",
+          "waiting_minutes": 112,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        },
+        {
+          "sequence": 6,
+          "status": "PENDING",
+          "order_id": 13,
+          "order_status": "ASSIGNED",
+          "customer_name": "Juliana Rocha",
+          "customer_phone": "(81) 98800-1013",
+          "delivery_address": "Rua Dr. José Maria, 400 - Encruzilhada, Recife - PE",
+          "latitude": -8.035,
+          "longitude": -34.889,
+          "priority": 1,
+          "weight_kg": 1.8,
+          "distance_from_previous_km": 1.333,
+          "estimated_arrival": "2026-11-01T22:08:11.903014Z",
+          "desired_start": "2026-11-01T21:00:00Z",
+          "desired_end": "2026-11-01T23:00:00Z",
+          "waiting_minutes": 0,
+          "delay_minutes": 0,
+          "timing_status": "ON_TIME"
+        }
+      ]
+    }
+  ],
+  "delivery": {
+    "id": 15,
+    "customer": {
+      "id": 15,
+      "full_name": "Cliente Sprint Oito",
+      "phone": "(81) 98888-0808"
+    },
+    "delivery_address": "Rua da Aurora, 400 - Recife",
+    "latitude": -8.059,
+    "longitude": -34.882,
+    "weight_kg": 1.0,
+    "priority": 1,
+    "desired_start": "2026-11-01T19:05:40.252891Z",
+    "desired_end": "2026-11-01T21:05:40.252891Z",
+    "status": "DELIVERED",
+    "assigned_courier": {
+      "id": 2,
+      "full_name": "Diego Entregador"
+    },
+    "created_at": "2026-11-01T17:05:40.258258"
+  },
+  "csv_downloaded": true,
+  "permissions": [
+    {
+      "profile": "Anônimo",
+      "path": "/orders",
+      "status": 401
+    },
+    {
+      "profile": "Atendente",
+      "path": "/users",
+      "status": 403
+    },
+    {
+      "profile": "Entregador",
+      "path": "/dashboard/summary",
+      "status": 403
+    },
+    {
+      "profile": "Administrador",
+      "path": "/users",
+      "status": 200
+    },
+    {
+      "profile": "Atendente",
+      "path": "/orders",
+      "status": 200
+    }
+  ]
+}

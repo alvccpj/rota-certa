@@ -15,6 +15,21 @@ No Linux ou no macOS, use a versão do Git Bash e troque `.venv/Scripts/activate
 
 ## Pré-requisitos
 
+### Demonstração rápida sem Docker ou PostgreSQL
+
+Com Python e Node.js instalados e as dependências do backend e frontend preparadas,
+execute na raiz do projeto:
+
+```powershell
+.\backend\.venv\Scripts\python.exe tools/run_local_demo.py
+```
+
+Abra http://localhost:5173 e entre com `admin@rotacerta.com.br`, senha `rotacerta123`.
+O banco SQLite de demonstração é salvo em `backend/rotacerta-demo.db`. Ctrl+C encerra
+os dois servidores sem apagar dados. Esse modo serve para demonstração local; a
+instalação PostgreSQL completa continua descrita abaixo. Não é necessário recriar
+o ambiente `.venv` se ele já existir.
+
 | Ferramenta | Versão | Observação |
 | --- | --- | --- |
 | Python | 3.12 ou superior | Para a API |

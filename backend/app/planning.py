@@ -11,6 +11,7 @@ from sqlalchemy import exists, func, select
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.rules import ensure_courier_can_take, ensure_within_radius
 from app.models import Courier, Establishment, OptimizationRun, Order, OrderStatusEvent, Route, RouteStop, User, utc_now
 from app.optimizer import gpu
 from app.optimizer.routing import (
@@ -73,6 +74,23 @@ def courier_ref(courier: Courier) -> AssignedCourierOut:
     return AssignedCourierOut(id=courier.id, full_name=courier.user.full_name)
 
 
+def as_utc(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+
+
+def timing_info(stop: RouteStop) -> dict:
+    end = stop.order.desired_end
+    arrival = stop.estimated_arrival
+    delay = max(0, ceil((as_utc(arrival) - as_utc(end)).total_seconds() / 60)) if arrival and end else 0
+    return {
+        "desired_start": as_utc(stop.order.desired_start) if stop.order.desired_start else None,
+        "desired_end": as_utc(end) if end else None,
+        "waiting_minutes": stop.waiting_minutes or 0,
+        "delay_minutes": delay,
+        "timing_status": "LATE" if delay else ("ON_TIME" if end or stop.order.desired_start else "NO_WINDOW"),
+    }
+
+
 def route_out(route: Route) -> RouteOut:
     return RouteOut(
         id=route.id,
@@ -83,7 +101,7 @@ def route_out(route: Route) -> RouteOut:
         execution_mode=route.execution_mode,
         total_distance_km=float(route.total_distance_km) if route.total_distance_km is not None else None,
         estimated_duration_min=route.estimated_duration_min,
-        created_at=route.created_at,
+        created_at=as_utc(route.created_at),
         stops=[
             RouteStopOut(
                 sequence=stop.stop_sequence,
@@ -100,7 +118,8 @@ def route_out(route: Route) -> RouteOut:
                 distance_from_previous_km=(
                     float(stop.distance_from_previous_km) if stop.distance_from_previous_km is not None else None
                 ),
-                estimated_arrival=stop.estimated_arrival,
+                estimated_arrival=as_utc(stop.estimated_arrival) if stop.estimated_arrival else None,
+                **timing_info(stop),
             )
             for stop in route.stops
         ],
@@ -234,9 +253,11 @@ def run_optimizer(depot: Stop, routes: list[list[Stop]], mode: str, workers: int
 def schedule(route: Route, depot: Stop, start: datetime) -> None:
     """Calcula a distância de cada trecho, o horário estimado de chegada e a duração da rota.
 
-    A estimativa usa a velocidade média e o tempo de atendimento por parada da configuração.
+    A estimativa inclui espera pelo início da janela. Um prazo inviável é sinalizado,
+    nunca ocultado; a ordem de menor distância continua comparável entre CPU e GPU.
     """
 
+    start = as_utc(start)
     speed = settings.average_speed_kmh
     service = settings.service_minutes_per_stop
     minutes = 0.0
@@ -246,6 +267,11 @@ def schedule(route: Route, depot: Stop, start: datetime) -> None:
         leg = haversine_km(previous, point)
         minutes += leg / speed * 60
         stop.distance_from_previous_km = money(leg)
+        arrival = start + timedelta(minutes=minutes)
+        desired_start = stop.order.desired_start
+        wait = max(0.0, (as_utc(desired_start) - arrival).total_seconds() / 60) if desired_start else 0.0
+        stop.waiting_minutes = ceil(wait)
+        minutes += wait
         stop.estimated_arrival = start + timedelta(minutes=minutes)
         minutes += service
         previous = point
@@ -275,11 +301,16 @@ def generate_routes(db: Session, user: User, mode: str, workers: int | None) -> 
     groups: dict[Courier, list[Order]] = {}
     skipped: list[SkippedCourierOut] = []
     for courier, orders in assigned_orders_by_courier(db, establishment.id).items():
-        if courier.availability == "OFFLINE":
+        if not courier.user.active or courier.user.role != "COURIER":
+            reason = "O entregador não possui acesso ativo. Revise a atribuição dos pedidos."
+        elif courier.availability == "OFFLINE":
             reason = "Está fora de serviço, então os pedidos atribuídos não entraram em nenhuma rota."
         elif courier.id in in_progress:
             reason = "Já está com uma rota em andamento. Os novos pedidos entram na próxima rota."
         else:
+            for order in orders:
+                ensure_courier_can_take(db, courier, order, order.weight_kg)
+                ensure_within_radius(establishment, float(order.latitude), float(order.longitude))
             groups[courier] = orders
             continue
         skipped.append(SkippedCourierOut(courier=courier_ref(courier), reason=reason))
@@ -304,7 +335,8 @@ def generate_routes(db: Session, user: User, mode: str, workers: int | None) -> 
     )
 
     for planned in db.scalars(
-        select(Route).where(Route.establishment_id == establishment.id, Route.status == "PLANNED")
+        select(Route).where(Route.establishment_id == establishment.id, Route.status == "PLANNED",
+                            Route.courier_id.in_([courier.id for courier in couriers]))
     ).unique():
         db.delete(planned)
     db.flush()
@@ -384,11 +416,21 @@ def start_route(db: Session, user: User, route_id: int) -> RouteOut:
         raise HTTPException(status.HTTP_409_CONFLICT, "Esta rota já está em andamento.")
     if route.status != "PLANNED":
         raise HTTPException(status.HTTP_409_CONFLICT, "Esta rota já foi encerrada e não pode ser iniciada.")
+    if not route.courier.user.active or route.courier.user.role != "COURIER":
+        raise HTTPException(status.HTTP_409_CONFLICT, "O entregador não possui acesso ativo.")
+    other = db.scalar(select(Route.id).where(Route.courier_id == route.courier_id,
+                                             Route.status == "IN_PROGRESS", Route.id != route.id).limit(1))
+    if other is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Conclua a rota em andamento antes de iniciar outra.")
     if route.courier.availability == "OFFLINE":
         raise HTTPException(
             status.HTTP_409_CONFLICT,
             f"{route.courier.user.full_name} está fora de serviço. Fique disponível antes de iniciar a rota.",
         )
+    for stop in route.stops:
+        if stop.order.status != "ASSIGNED" or stop.order.assigned_courier_id != route.courier_id:
+            raise HTTPException(status.HTTP_409_CONFLICT, "A atribuição mudou. Gere novamente a rota.")
+        ensure_courier_can_take(db, route.courier, stop.order, stop.order.weight_kg)
     route.status = "IN_PROGRESS"
     for stop in route.stops:
         order = stop.order
