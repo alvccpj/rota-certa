@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
+import { homePath, landingPath } from "../access";
 import type { Role } from "../api";
 import ForbiddenPage from "../pages/ForbiddenPage";
 import { useSession, useUser } from "../session";
@@ -12,10 +13,18 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return children;
 }
 
-/** Login e cadastro não fazem sentido para quem já está logado. */
+/**
+ * Login e cadastro não fazem sentido para quem já está logado. Ao entrar, este
+ * redirecionamento acontece antes do navigate do formulário, por isso ele
+ * mesmo devolve o usuário à página que pediu antes do login (Sprint 09, BUG-06).
+ */
 export function PublicOnly({ children }: { children: ReactNode }) {
   const { user } = useSession();
-  if (user) return <Navigate to="/" replace />;
+  const location = useLocation();
+  if (user) {
+    const from = (location.state as { from?: string } | null)?.from;
+    return <Navigate to={landingPath(user.role, from)} replace />;
+  }
   return children;
 }
 
@@ -27,5 +36,5 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
 
 export function HomeRedirect() {
   const user = useUser();
-  return <Navigate to={user.role === "COURIER" ? "/entregas" : "/painel"} replace />;
+  return <Navigate to={homePath(user.role)} replace />;
 }

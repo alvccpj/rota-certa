@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { landingPath } from "../access";
 import { api, ApiError, type Session } from "../api";
 import AuthShell from "../components/AuthShell";
 import Field, { FormAlert } from "../components/Field";
@@ -14,10 +15,10 @@ const DEMO_ACCOUNTS = [
 const DEMO_PASSWORD = "rotacerta123";
 
 export default function LoginPage() {
-  const { signIn } = useSession();
+  const { signIn, notice } = useSession();
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { from?: string; notice?: string } | null;
+  const state = location.state as { from?: string } | null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -40,7 +41,7 @@ export default function LoginPage() {
     try {
       const session = await api<Session>("/auth/login", { method: "POST", body: { email, password } });
       signIn(session);
-      navigate(state?.from ?? "/", { replace: true });
+      navigate(landingPath(session.user.role, state?.from), { replace: true, state: null });
     } catch (err) {
       const error = err as ApiError;
       setErrors(error.fields ?? {});
@@ -55,7 +56,7 @@ export default function LoginPage() {
       <form className="login-form" onSubmit={submit} noValidate>
         <h1>Entrar</h1>
         <p className="muted">Use o e-mail e a senha cadastrados pelo administrador.</p>
-        {state?.notice && !formError && <p className="alert info">{state.notice}</p>}
+        {notice && !formError && <p className="alert info" role="status">{notice}</p>}
         <FormAlert message={formError} />
         <Field label="E-mail" name="email" error={errors.email}>
           {(props) => (

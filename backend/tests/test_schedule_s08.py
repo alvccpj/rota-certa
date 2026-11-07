@@ -50,9 +50,14 @@ class SchedulingTestCase(TestCase):
 
 class SchedulingApiTestCase(ApiTestCase):
     def test_generated_wait_survives_a_new_database_session(self):
+        # Entregador só com este pedido: a espera não depende dos horários dos pedidos de demonstração.
+        courier = self.client.post('/users', headers=self.admin, json={
+            'full_name': 'Entregador Janela', 'email': 'janela.s09@rotacerta.com.br', 'password': 'janela123',
+            'role': 'COURIER', 'load_capacity_kg': 50})
+        self.assertEqual(courier.status_code, 201, courier.text)
         future = datetime.now(timezone.utc) + timedelta(hours=3)
         created = self.client.post('/orders', headers=self.admin, json=self.order_payload(
-            assigned_courier_id=self.courier_id(), desired_start=future.isoformat(),
+            assigned_courier_id=self.courier_id('Entregador Janela'), desired_start=future.isoformat(),
             desired_end=(future + timedelta(hours=1)).isoformat()))
         self.assertEqual(created.status_code, 201, created.text)
         response = self.client.post('/routes/generate', headers=self.admin, json={'mode': 'SEQUENTIAL'})

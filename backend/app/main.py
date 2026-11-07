@@ -1,10 +1,10 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import DataError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -45,7 +45,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="RotaCerta API",
-    version="0.8.0",
+    version="0.9.0",
     description="API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
     lifespan=lifespan,
 )
@@ -65,6 +65,18 @@ app.include_router(geocoding.router)
 app.include_router(routes.router)
 app.include_router(optimizer.router)
 app.include_router(dashboard.router)
+
+
+INVALID_VALUE_MESSAGE = "Algum valor informado está fora do formato aceito. Confira os dados e tente de novo."
+
+
+@app.exception_handler(DataError)
+@app.exception_handler(OverflowError)
+def invalid_value_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Valores que o banco não aceita (ID acima de 64 bits, byte nulo) são erro do cliente, não 500."""
+
+    logger.warning("Valor rejeitado pelo banco em %s %s: %s", request.method, request.url.path, type(exc).__name__)
+    return JSONResponse({"detail": INVALID_VALUE_MESSAGE}, status_code=422)
 
 
 @app.get("/health", tags=["system"])

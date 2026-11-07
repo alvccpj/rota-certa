@@ -115,7 +115,7 @@ export default function OrderFormPage() {
           setAddressHint(`Preenchido com a última entrega de ${preselected.full_name}. Confira antes de salvar.`);
         }
       })
-      .catch((err: ApiError) => active && setLoadError(err.message))
+      .catch((err: ApiError) => active && setLoadError(err.status === 404 ? `O pedido #${id} não foi encontrado.` : err.message))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -223,7 +223,7 @@ export default function OrderFormPage() {
     return collectErrors({
       customer_id: form.customer_id ? null : "Escolha o cliente do pedido.",
       delivery_address:
-        form.delivery_address.trim().length >= 5 ? null : "Informe o endereço com rua, número e bairro.",
+        form.delivery_address.trim().replace(/\s+/g, " ").length >= 5 ? null : "Informe o endereço com rua, número e bairro.",
       location: locationError,
       weight_kg: check.number(form.weight_kg, { label: "o peso", min: 0, max: MAX_WEIGHT_KG }),
       desired_end: endError,

@@ -25,8 +25,10 @@ function storeSession(session: Session | null) {
 interface SessionValue {
   user: User | null;
   signIn: (session: Session) => void;
-  signOut: (notice?: string) => void;
+  signOut: (notice?: string, from?: string) => void;
   updateUser: (user: User) => void;
+  /** Aviso para a tela de login, como o de sessão expirada. */
+  notice: string | null;
 }
 
 const SessionContext = createContext<SessionValue | null>(null);
@@ -34,19 +36,24 @@ const SessionContext = createContext<SessionValue | null>(null);
 export function SessionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(readStoredSession);
+  // O aviso fica no contexto, e não no state da navegação: ao zerar a sessão o
+  // RequireAuth também redireciona e substituía esse state (Sprint 09, BUG-08).
+  const [notice, setNotice] = useState<string | null>(null);
 
   const signOut = useCallback(
-    (notice?: string) => {
+    (message?: string, from?: string) => {
       storeSession(null);
       configureApi(null, () => {});
+      setNotice(message ?? null);
       setSession(null);
-      navigate("/login", { replace: true, state: notice ? { notice } : undefined });
+      navigate("/login", { replace: true, state: from ? { from } : undefined });
     },
     [navigate],
   );
 
   const signIn = useCallback((next: Session) => {
     storeSession(next);
+    setNotice(null);
     setSession(next);
   }, []);
 
@@ -59,7 +66,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  configureApi(session?.access_token ?? null, () => signOut("Sua sessão expirou. Entre novamente para continuar."));
+  // A página atual é guardada para o usuário voltar a ela depois de entrar de novo.
+  configureApi(session?.access_token ?? null, () =>
+    signOut("Sua sessão expirou. Entre novamente para continuar.", window.location.pathname + window.location.search),
+  );
 
   useEffect(() => {
     if (!session) return;
@@ -69,8 +79,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [session?.access_token]);
 
   const value = useMemo(
-    () => ({ user: session?.user ?? null, signIn, signOut, updateUser }),
-    [session, signIn, signOut, updateUser],
+    () => ({ user: session?.user ?? null, signIn, signOut, updateUser, notice }),
+    [session, signIn, signOut, updateUser, notice],
   );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

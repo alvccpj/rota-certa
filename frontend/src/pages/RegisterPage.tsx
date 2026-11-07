@@ -28,7 +28,7 @@ export default function RegisterPage() {
     const found = collectErrors({
       establishment_name: check.required(form.establishment_name, "Informe o nome do negócio."),
       depot_address:
-        form.depot_address.trim().length >= 5 ? null : "Informe o endereço de onde saem as entregas, com rua e número.",
+        form.depot_address.trim().replace(/\s+/g, " ").length >= 5 ? null : "Informe o endereço de onde saem as entregas, com rua e número.",
       full_name: check.personName(form.full_name, "Informe o seu nome."),
       email: check.email(form.email),
       password: check.password(form.password),
