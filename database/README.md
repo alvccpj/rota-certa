@@ -21,3 +21,7 @@ O esquema cobre estabelecimentos, usuários, entregadores, clientes, pedidos, hi
 A tabela `order_status_history` foi adicionada na Sprint 04. Bancos criados antes dela recebem a tabela automaticamente quando a API inicia, sem perda de dados.
 
 Na Sprint 05 as tabelas `routes`, `route_stops` e `optimization_runs` passaram a ser usadas pelo módulo de roteirização. A coluna `execution_mode` de `routes` e de `optimization_runs` aceita também `GPU`, e `optimization_runs` ganhou as colunas `purpose` (geração de rotas ou comparação), `input_source` (pedidos reais ou instância sintética), `run_group` (agrupa as execuções de uma mesma comparação), `speedup`, `efficiency` e `same_routes`. Bancos criados antes recebem essas alterações automaticamente quando a API inicia, sem perda de dados.
+
+Na Sprint 08, `route_stops` ganhou a coluna `waiting_minutes`, com a espera prevista até o início da janela de entrega. Bancos existentes recebem a coluna automaticamente quando a API inicia.
+
+Na Sprint 09 os dados de demonstração passaram a gravar as janelas de entrega em UTC. Antes, no SQLite do modo de demonstração, elas ficavam 3 horas antes do previsto (BUG-07). O modelo de dados atualizado está em [`docs/sprint-09/assets/mer_v09.png`](../docs/sprint-09/assets/mer_v09.png). A suíte de testes pode rodar no PostgreSQL com `TEST_DATABASE_URL` (veja `COMO-RODAR.md`).

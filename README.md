@@ -18,7 +18,7 @@ Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avança
 
 - **Frontend:** React, TypeScript, Vite, React Router e Leaflet (OpenStreetMap)
 - **Backend:** Python, FastAPI, SQLAlchemy, JWT e Argon2
-- **Banco de dados:** PostgreSQL 16
+- **Banco de dados:** PostgreSQL 16 ou superior (testado no 18.1)
 - **Otimização e paralelização:** módulo Python com execução sequencial, paralela em CPU (múltiplos processos) e em GPU com CUDA
 
 ## Otimização e paralelização
@@ -46,6 +46,7 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Painel operacional e relatórios | 06 | Indicadores integrados de pedidos, entregadores, rotas e desempenho, filtros por período, alertas operacionais, ações rápidas e relatório CSV |
 | Consultas e rastreabilidade | 07 | Relatórios pesquisáveis com filtros combináveis, exportação CSV do resultado e histórico cronológico de pedidos e execuções do otimizador |
 | Consolidação funcional | 08 | Atribuição automática, espera e avisos de atraso, revisão de permissões e proteção de dados das rotas |
+| Testes e correções | 09 | 61 casos de teste funcionais, de validação e de navegação na aplicação real, 9 bugs corrigidos com testes de regressão, suíte do backend também no PostgreSQL e documentação técnica atualizada ([Sprint 09](docs/sprint-09/README.md)) |
 
 ## Como interpretar as rotas
 
@@ -54,7 +55,8 @@ sem considerar ruas ou trânsito. Os horários estimados usam velocidade média 
 tempo de atendimento configurados. Prioridade e janela de entrega orientam a
 equipe. A atribuição automática prioriza urgência e prazo; o agendamento inclui
 espera até a janela e sinaliza atrasos. A ordem das paradas otimiza distância,
-sem garantia de cumprimento de todas as janelas. Veja o escopo final em [Sprint 08](docs/sprint-08/README.md).
+sem garantia de cumprimento de todas as janelas. Veja o escopo final em [Sprint 08](docs/sprint-08/README.md)
+e a verificação completa em [Sprint 09](docs/sprint-09/README.md).
 
 Depois de gerar rotas, a tela compara a distância na ordem original dos pedidos
 (por ID), após o vizinho mais próximo e após o 2-opt, incluindo o retorno ao
@@ -95,7 +97,9 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_08.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_08.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_09.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_09.pdf)
+- Arquitetura e modelo de dados atuais: [`docs/sprint-09/assets/arquitetura_v09.png`](docs/sprint-09/assets/arquitetura_v09.png) e [`docs/sprint-09/assets/mer_v09.png`](docs/sprint-09/assets/mer_v09.png)
+- Casos de teste e registro de bugs: [`docs/sprint-09/README.md`](docs/sprint-09/README.md)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)
 - Como rodar localmente: [`COMO-RODAR.md`](COMO-RODAR.md)

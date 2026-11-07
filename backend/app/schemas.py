@@ -1,5 +1,5 @@
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, model_validator
@@ -12,7 +12,34 @@ MAX_ORDER_WEIGHT_KG = 500
 
 
 def clean_text(value: str) -> str:
-    return " ".join(value.split())
+    """Remove caracteres de controle (o PostgreSQL rejeita o byte nulo) e espaços repetidos."""
+
+    visible = "".join(char for char in value if char.isprintable() or char.isspace())
+    return " ".join(visible.split())
+
+
+def address_text(value: str) -> str:
+    """O tamanho mínimo vale para o texto já normalizado, não para os espaços digitados."""
+
+    value = clean_text(value)
+    if len(value) < 5:
+        raise ValueError("Informe o endereço com rua, número e bairro.")
+    return value
+
+
+def business_name(value: str) -> str:
+    value = clean_text(value)
+    if len(value) < 2:
+        raise ValueError("Informe o nome do negócio com pelo menos 2 caracteres.")
+    return value
+
+
+def as_utc(value: datetime | None) -> datetime | None:
+    """Datas sem fuso são interpretadas como UTC, como no restante da aplicação."""
+
+    if value is None:
+        return None
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
 
 
 def person_name(value: str) -> str:
@@ -45,7 +72,8 @@ def strong_password(value: str) -> str:
 
 Name = Annotated[str, Field(min_length=2, max_length=150), AfterValidator(person_name)]
 Phone = Annotated[str | None, Field(max_length=25), AfterValidator(phone_br)]
-Address = Annotated[str, Field(min_length=5, max_length=255), AfterValidator(clean_text)]
+Address = Annotated[str, Field(min_length=5, max_length=255), AfterValidator(address_text)]
+WindowTime = Annotated[datetime | None, AfterValidator(as_utc)]
 Password = Annotated[str, Field(min_length=8, max_length=72), AfterValidator(strong_password)]
 
 
@@ -61,7 +89,7 @@ class LoginIn(BaseModel):
 
 
 class RegisterIn(BaseModel):
-    establishment_name: Annotated[str, Field(min_length=2, max_length=150), AfterValidator(clean_text)]
+    establishment_name: Annotated[str, Field(min_length=2, max_length=150), AfterValidator(business_name)]
     depot_address: Address
     full_name: Name
     email: EmailStr
@@ -162,8 +190,9 @@ class OrderIn(BaseModel):
     longitude: float = Field(ge=-180, le=180)
     weight_kg: float = Field(default=1, gt=0, le=MAX_ORDER_WEIGHT_KG)
     priority: int = Field(default=2, ge=1, le=3)
-    desired_start: datetime | None = None
-    desired_end: datetime | None = None
+    # Normalizadas antes da comparação: misturar data com e sem fuso gerava erro 500.
+    desired_start: WindowTime = None
+    desired_end: WindowTime = None
     assigned_courier_id: int | None = None
 
     @model_validator(mode="after")

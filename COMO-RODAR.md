@@ -233,7 +233,7 @@ Depois de um `git pull` que altere `requirements.txt` ou `package.json`, rode de
 
 ## Testes automatizados
 
-Os testes usam um banco SQLite em memória, então não precisam do PostgreSQL rodando. Execute a partir da **raiz do repositório**.
+Os testes do backend usam, por padrão, um banco SQLite em memória, então não precisam do PostgreSQL rodando. Execute a partir da **raiz do repositório**.
 
 PowerShell:
 
@@ -250,6 +250,48 @@ source backend/.venv/Scripts/activate            # ativa o ambiente virtual da A
 pip install -r backend/requirements-dev.txt      # instala as dependências de teste (só na primeira vez)
 python -m unittest discover backend/tests -v     # roda todos os testes e mostra o resultado de cada um
 ```
+
+### Mesma suíte no PostgreSQL
+
+Com `TEST_DATABASE_URL` definida, os mesmos testes rodam no PostgreSQL real. Cada teste apaga e recria o schema `rotacerta_testes_automatizados` aplicando `database/schema.sql`; o schema `public`, com os dados de desenvolvimento, não é alterado.
+
+PowerShell:
+
+```powershell
+$env:TEST_DATABASE_URL = "postgresql+psycopg://rotacerta:rotacerta_dev@localhost:5432/rotacerta"   # aponta os testes para o PostgreSQL
+python -m unittest discover backend/tests -v                                                        # roda a suíte no PostgreSQL (leva cerca de 2 minutos)
+Remove-Item Env:TEST_DATABASE_URL                                                                   # volta ao SQLite em memória
+```
+
+Git Bash:
+
+```bash
+TEST_DATABASE_URL="postgresql+psycopg://rotacerta:rotacerta_dev@localhost:5432/rotacerta" python -m unittest discover backend/tests -v   # roda a suíte no PostgreSQL só neste comando
+```
+
+### Testes do frontend
+
+```bash
+cd frontend                                                  # entra na pasta do frontend
+node --test src/sprint08.test.mjs src/sprint09.test.mjs      # testa CSV, navegação, destino após login, erros da API e validações
+npm run build                                                # confere os tipos e gera a versão de produção
+```
+
+### Casos de teste na aplicação real (Sprint 09)
+
+Os 61 casos funcionais, de validação e de navegação rodam no Chrome contra a aplicação ligada a um schema isolado do PostgreSQL. Terminal 1, na raiz:
+
+```powershell
+.\backend\.venv\Scripts\python.exe tools/run_test_environment.py                       # recria o schema sprint09_testes e sobe API (8019) e sistema (5189)
+```
+
+Terminal 2, na raiz:
+
+```powershell
+.\backend\.venv\Scripts\python.exe tools/documentation/capture_sprint09_evidence.py    # executa os casos e grava resultados e capturas em docs/sprint-09
+```
+
+Requer o Google Chrome instalado. O schema `public` não é alterado. Detalhes em [`docs/sprint-09/README.md`](docs/sprint-09/README.md).
 
 ## Recomeçar com o banco limpo
 

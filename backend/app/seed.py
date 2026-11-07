@@ -72,7 +72,9 @@ def seed_demo_data(db: Session) -> bool:
     now = datetime.now(timezone.utc)
     today = datetime.now(RECIFE).date()
     for index, (name, phone, address, lat, lon, weight, priority, status, courier_index) in enumerate(DEMO_ORDERS):
-        start = datetime.combine(today, time(9 + index), tzinfo=RECIFE)
+        # Gravado em UTC: o SQLite descarta o fuso e a aplicação lê datas sem fuso como UTC,
+        # o que deslocava as janelas da demonstração em 3 horas (Sprint 09, BUG-07).
+        start = datetime.combine(today, time(9 + index), tzinfo=RECIFE).astimezone(timezone.utc)
         courier = couriers[courier_index] if courier_index is not None else None
         order = Order(
             establishment_id=establishment.id,

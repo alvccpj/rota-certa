@@ -1,9 +1,12 @@
-"""Base dos testes da API com banco SQLite em memória.
+"""Base dos testes da API.
 
-As regras de autenticação, perfis e cadastros não dependem de recursos
-exclusivos do PostgreSQL, então os testes rodam sem o banco da aplicação.
+Por padrão os testes usam SQLite em memória e rodam sem o banco da aplicação.
+Com TEST_DATABASE_URL definida (por exemplo
+postgresql+psycopg://rotacerta:rotacerta_dev@localhost:5432/rotacerta), a mesma
+suíte roda no PostgreSQL real, num schema próprio que é apagado e recriado.
 """
 
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -11,9 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, make_url  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
-from sqlalchemy.pool import StaticPool  # noqa: E402
+from sqlalchemy.pool import NullPool, StaticPool  # noqa: E402
 
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
@@ -22,13 +25,37 @@ from app.seed import DEMO_PASSWORD, seed_demo_data  # noqa: E402
 NEW_PASSWORD = "senhaSegura123"
 
 
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
+TEST_SCHEMA = "rotacerta_testes_automatizados"
+SCHEMA_SQL = Path(__file__).resolve().parents[2] / "database" / "schema.sql"
+
+
+def postgres_test_engine():
+    """Sprint 09: a mesma suíte roda no PostgreSQL real, num schema descartável.
+
+    O schema é recriado a cada teste com database/schema.sql (o DDL usado em
+    produção) e só então recebe as tabelas que a aplicação cria depois.
+    """
+
+    url = make_url(TEST_DATABASE_URL).update_query_dict({"options": f"-csearch_path={TEST_SCHEMA}"})
+    engine = create_engine(url, poolclass=NullPool)
+    with engine.begin() as connection:
+        connection.exec_driver_sql(f"DROP SCHEMA IF EXISTS {TEST_SCHEMA} CASCADE")
+        connection.exec_driver_sql(f"CREATE SCHEMA {TEST_SCHEMA}")
+        connection.exec_driver_sql(SCHEMA_SQL.read_text(encoding="utf-8"))
+    return engine
+
+
 class ApiTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.engine = create_engine(
-            "sqlite://",
-            connect_args={"check_same_thread": False},
-            poolclass=StaticPool,
-        )
+        if TEST_DATABASE_URL:
+            self.engine = postgres_test_engine()
+        else:
+            self.engine = create_engine(
+                "sqlite://",
+                connect_args={"check_same_thread": False},
+                poolclass=StaticPool,
+            )
         Base.metadata.create_all(self.engine)
         self.session_factory = sessionmaker(bind=self.engine, autoflush=False, expire_on_commit=False)
         with self.session_factory() as db:

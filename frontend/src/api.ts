@@ -329,6 +329,10 @@ function toApiError(status: number, data: unknown): ApiError {
   const detail = (data as { detail?: unknown } | null)?.detail;
   if (typeof detail === "string") return new ApiError(status, detail);
   if (Array.isArray(detail)) {
+    // Um ID inválido no endereço (/pedidos/abc) não é campo de formulário: o registro não existe.
+    if (detail.length && (detail as ValidationIssue[]).every((issue) => issue.loc?.[0] === "path")) {
+      return new ApiError(404, "Registro não encontrado. Confira o endereço ou volte para a lista.");
+    }
     const fields: Record<string, string> = {};
     const general: string[] = [];
     for (const issue of detail as ValidationIssue[]) {
