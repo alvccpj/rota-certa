@@ -28,7 +28,8 @@ export default function RouteMap({ routes, depot, focusId = null, colorIndex, la
   const boundsRef = useRef<L.LatLngBounds | null>(null);
 
   useEffect(() => {
-    const map = L.map(containerRef.current!, { scrollWheelZoom: false }).setView(RECIFE, 12);
+    // BUG-13: a transição CSS de zoom pode terminar depois da desmontagem da tela.
+    const map = L.map(containerRef.current!, { scrollWheelZoom: false, zoomAnimation: false }).setView(RECIFE, 12);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap",
