@@ -33,7 +33,7 @@ o ambiente `.venv` se ele já existir.
 | Ferramenta | Versão | Observação |
 | --- | --- | --- |
 | Python | 3.12 ou superior | Para a API |
-| Node.js | 20 ou superior | Para o frontend |
+| Node.js | 20.19+ ou 22.12+ | Para o frontend |
 | PostgreSQL | 16 ou superior | Instale junto com o pgAdmin 4 e anote a senha do usuário `postgres` |
 | Docker Desktop | Qualquer versão recente | Só se for usar a Opção 1 |
 | GPU NVIDIA com driver atualizado | Opcional | Usada pelo modo GPU (CUDA) do otimizador. O sistema funciona sem GPU |
@@ -292,6 +292,37 @@ Terminal 2, na raiz:
 ```
 
 Requer o Google Chrome instalado. O schema `public` não é alterado. Detalhes em [`docs/sprint-09/README.md`](docs/sprint-09/README.md).
+
+### Release Candidate e evidências da Sprint 10
+
+Com o ambiente virtual ativado, na raiz, instale as dependências opcionais e
+inicie o ambiente isolado. `POSTGRES_URL` pode apontar para outro PostgreSQL;
+sem essa variável, usa o banco local `rotacerta` da configuração de exemplo.
+
+```bash
+pip install -r backend/requirements-docs.txt
+python tools/run_test_environment.py --schema sprint10_testes --api-port 8020 --web-port 5190
+```
+
+Esse comando **recria** somente o schema descartável `sprint10_testes`. Em outro
+terminal, com o mesmo ambiente virtual ativado:
+
+```bash
+python tools/documentation/capture_sprint10_evidence.py
+python tools/documentation/export_api_docs.py
+```
+
+O roteiro executa os casos e grava evidências novas em `docs/sprint-10`. Sem CUDA,
+o caso de GPU fica como não executado e os modos de CPU continuam sendo
+verificados. A suíte PostgreSQL inclui os dois testes de concorrência da Sprint 10.
+Para inspecionar banco, contrato e persistência em nova conexão, configure
+`DATABASE_URL` para o schema `sprint10_testes` e execute
+`python tools/documentation/verify_release.py`. Exemplos para Bash/macOS/Linux
+estão em [`docs/sprint-10/README.md`](docs/sprint-10/README.md).
+
+O guia da API, com exemplos e catálogo de endpoints, está em
+[`docs/api/README.md`](docs/api/README.md). Para reconstruir o PDF cumulativo,
+use `python tools/documentation/build_sprint10_document.py` após gerar as evidências.
 
 ## Recomeçar com o banco limpo
 

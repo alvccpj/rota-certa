@@ -4,6 +4,12 @@ Sistema web de roteirização de entregas para pequenos negócios locais. Centra
 
 Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avançados em Ciência da Computação**, do 8º período do curso de Ciência da Computação da **UNINASSAU**, turma **8NA** (2026.2).
 
+**Grupo 04 | Release Candidate `0.10.0-rc.1` | Sprint 10, 10/11/2026.**
+O objetivo é organizar a operação de entregas de pequenos negócios: cadastrar
+clientes e pedidos, distribuir a carga entre entregadores, planejar trajetos e
+acompanhar entregas com histórico e indicadores. A verificação desta candidata,
+suas evidências e pendências estão em [Sprint 10](docs/sprint-10/README.md).
+
 ## Equipe
 
 | Integrante | Matrícula |
@@ -47,6 +53,7 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Consultas e rastreabilidade | 07 | Relatórios pesquisáveis com filtros combináveis, exportação CSV do resultado e histórico cronológico de pedidos e execuções do otimizador |
 | Consolidação funcional | 08 | Atribuição automática, espera e avisos de atraso, revisão de permissões e proteção de dados das rotas |
 | Testes e correções | 09 | 61 casos de teste funcionais, de validação e de navegação na aplicação real, 9 bugs corrigidos com testes de regressão, suíte do backend também no PostgreSQL e documentação técnica atualizada ([Sprint 09](docs/sprint-09/README.md)) |
+| Release Candidate | 10 | Revisão dos fluxos e da interface, ensaio de atribuição concorrente em PostgreSQL, contrato OpenAPI exportado, catálogo de endpoints e documento cumulativo ([Sprint 10](docs/sprint-10/README.md)) |
 
 ## Como interpretar as rotas
 
@@ -69,6 +76,100 @@ espaços. Ao editar pedidos, uma nova janela não pode terminar no passado;
 preservar a janela antiga permite corrigir outros dados de um pedido atrasado.
 
 ## Como rodar localmente
+
+### Requisitos e instalação
+
+- Git; Python 3.12 ou superior; Node.js 20.19+ ou 22.12+; PostgreSQL 16+.
+- Docker com Compose é uma alternativa à instalação manual.
+- GPU NVIDIA/CUDA é opcional. Sem ela, use os modos sequencial e paralelo em CPU.
+
+Com Docker, na raiz do repositório:
+
+```bash
+git clone https://github.com/alvccpj/rota-certa.git
+cd rota-certa
+cp .env.example .env
+docker compose up --build
+```
+
+O Compose cria o banco e aplica `database/schema.sql` na primeira inicialização.
+Abra `http://localhost:5173`; API em `http://localhost:8000`, Swagger em
+`http://localhost:8000/docs`. Confirme `database: connected` em `/health`.
+Se a porta 5432 já estiver ocupada, configure `POSTGRES_PORT=5433` no `.env`.
+
+Sem Docker (Bash no macOS/Linux; versão Windows em [COMO-RODAR](COMO-RODAR.md)):
+
+```bash
+python3 -m venv backend/.venv
+source backend/.venv/bin/activate
+pip install -r backend/requirements.txt
+npm ci --prefix frontend
+cp backend/.env.example backend/.env
+```
+
+No PostgreSQL, conectado como um usuário administrador, execute separadamente:
+
+```sql
+CREATE ROLE rotacerta LOGIN PASSWORD 'rotacerta_dev';
+CREATE DATABASE rotacerta OWNER rotacerta;
+```
+
+Em `backend/.env`, ajuste `DATABASE_URL` para o banco criado, por exemplo
+`postgresql+psycopg://rotacerta:rotacerta_dev@localhost:5432/rotacerta`.
+Na primeira inicialização a API cria as nove tabelas e, com `SEED_DEMO_DATA=true`,
+os dados de exemplo. Bancos de versões anteriores recebem as atualizações
+incrementais descritas em [database/README.md](database/README.md).
+
+Execute em dois terminais:
+
+```bash
+# Terminal 1, com o ambiente virtual ativado
+cd backend
+uvicorn app.main:app --reload
+```
+
+```bash
+# Terminal 2, a partir da raiz
+cd frontend
+npm run dev
+```
+
+Login de demonstração: `admin@rotacerta.com.br`, `atendente@rotacerta.com.br` ou
+`entregador@rotacerta.com.br`; senha `rotacerta123`. `JWT_SECRET` configura a chave
+de autenticação e `CORS_ORIGINS` os endereços aceitos pelo backend;
+`VITE_API_URL` configura o endereço da API no frontend.
+
+### Verificar a versão
+
+Na raiz, com o ambiente virtual ativado:
+
+```bash
+python -m unittest discover backend/tests -v
+npm test --prefix frontend
+npm run build --prefix frontend
+```
+
+Para validar concorrência e o DDL real, execute também a suíte com
+`TEST_DATABASE_URL` apontando para PostgreSQL. Ela recria somente o schema
+descartável `rotacerta_testes_automatizados`. Passo a passo e roteiro de navegador
+em [Sprint 10](docs/sprint-10/README.md). Dependências opcionais do roteiro:
+`pip install -r backend/requirements-docs.txt` e Google Chrome instalado.
+
+### Estrutura do projeto
+
+```text
+backend/app/             API, modelos, regras, autenticação e serviços
+backend/app/routers/     Endpoints por módulo
+backend/app/optimizer/   Algoritmos sequencial, CPU paralela e GPU
+backend/tests/           Testes automatizados de API e regras
+frontend/src/pages/     Telas React
+frontend/src/components/ Componentes e navegação
+database/               DDL PostgreSQL e orientações
+docs/api/               Guia, catálogo de endpoints e OpenAPI
+docs/sprint-*/          Registros e evidências por sprint
+tools/                  Execução local e geração de evidências/documentos
+output/pdf/             PDFs cumulativos para entrega
+```
 
 ### Regras de operação e acompanhamento
 
@@ -97,7 +198,9 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_09.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_09.pdf)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_10.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_10.pdf)
+- Release Candidate e resultados atuais: [`docs/sprint-10/README.md`](docs/sprint-10/README.md)
+- APIs (autenticação, exemplos, rotas e modelos): [`docs/api/README.md`](docs/api/README.md)
 - Arquitetura e modelo de dados atuais: [`docs/sprint-09/assets/arquitetura_v09.png`](docs/sprint-09/assets/arquitetura_v09.png) e [`docs/sprint-09/assets/mer_v09.png`](docs/sprint-09/assets/mer_v09.png)
 - Casos de teste e registro de bugs: [`docs/sprint-09/README.md`](docs/sprint-09/README.md)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)

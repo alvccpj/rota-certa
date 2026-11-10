@@ -1,0 +1,10 @@
+test_concurrent_batches_preserve_capacity_and_single_history (test_release_s10.ReleaseConcurrencyTestCase.test_concurrent_batches_preserve_capacity_and_single_history) ... {"rodada": 1, "requisicoes_simultaneas": 8, "pedidos": 30, "atribuidos_unicos": 20, "pendentes": 10, "cargas_kg": [10.0, 10.0], "eventos_sem_duplicacao": 20}
+{"rodada": 2, "requisicoes_simultaneas": 8, "pedidos": 30, "atribuidos_unicos": 20, "pendentes": 10, "cargas_kg": [10.0, 10.0], "eventos_sem_duplicacao": 20}
+{"rodada": 3, "requisicoes_simultaneas": 8, "pedidos": 30, "atribuidos_unicos": 20, "pendentes": 10, "cargas_kg": [10.0, 10.0], "eventos_sem_duplicacao": 20}
+ok
+test_concurrent_empty_queue_is_idempotent (test_release_s10.ReleaseConcurrencyTestCase.test_concurrent_empty_queue_is_idempotent) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.575s
+
+OK
