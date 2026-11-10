@@ -1,0 +1,64 @@
+F01  Aprovado  Login com credenciais válidas
+F02  Aprovado  Encerrar sessão
+F03  Aprovado  Cadastro de novo negócio
+F04  Aprovado  Cadastro de cliente
+F05  Aprovado  Pesquisa de clientes
+F06  Aprovado  Edição de cliente
+F07  Aprovado  Cadastro de pedido
+F08  Aprovado  Consulta de pedidos com filtro
+F09  Aprovado  Edição de pedido
+F10  Aprovado  Exclusão de pedido com confirmação
+F11  Aprovado  Cadastro de usuário atendente
+F12  Aprovado  Desativação de usuário
+F13  Aprovado  Exclusão de cliente sem pedidos
+F14  Aprovado  Atribuição automática
+F15  Aprovado  Geração de rotas no modo sequencial
+F16  Não executado Geração de rotas na GPU (CUDA)
+F17  Aprovado  Entregador inicia a rota e confirma a entrega
+F18  Aprovado  Cancelamento com justificativa
+F19  Aprovado  Painel com indicadores atualizados
+F20  Aprovado  Relatório filtrado e exportação CSV
+F21  Aprovado  Histórico operacional
+F22  Aprovado  Comparação de desempenho nos modos disponíveis
+V01  Aprovado  Login com campos obrigatórios vazios
+V02  Aprovado  Login com senha incorreta
+V03  Aprovado  Cadastro de negócio com formatos inválidos
+V04  Aprovado  Cliente com nome e telefone inválidos
+V05  Aprovado  Cliente duplicado
+V06  Aprovado  Pedido com campos obrigatórios vazios
+V07  Aprovado  Peso fora dos limites
+V08  Aprovado  Janela de entrega invertida
+V09  Aprovado  Janela de entrega no passado (API)
+V10  Aprovado  Entrega fora do raio de atendimento
+V11  Aprovado  Cancelamento sem motivo suficiente
+V12  Aprovado  E-mail já cadastrado (sem diferenciar maiúsculas)
+V13  Aprovado  Entregador sem capacidade e senha fraca
+V14  Aprovado  Endereço só com espaços (BUG-01 corrigido)
+V15  Aprovado  Janela com e sem fuso horário (BUG-02 corrigido)
+V16  Aprovado  Identificador acima do limite do banco (BUG-03 corrigido)
+V17  Aprovado  Caractere de controle no nome (BUG-04 corrigido)
+V18  Aprovado  Período de relatório invertido
+V19  Aprovado  Capacidade abaixo da carga ativa
+V20  Aprovado  Requisição sem token e com token adulterado
+N01  Aprovado  Página protegida sem login
+N02  Aprovado  Volta à página pedida depois do login (BUG-06 corrigido)
+N03  Aprovado  Página pedida não permitida ao perfil que entrou
+N04  Aprovado  Menu e navegação do perfil Administrador
+N05  Aprovado  Menu e navegação do perfil Atendente
+N06  Aprovado  Menu e navegação do perfil Entregador
+N07  Aprovado  Atendente abre tela exclusiva do administrador
+N08  Aprovado  Entregador abre cadastro de pedido
+N09  Aprovado  Entregador abre pedido de outro entregador
+N10  Aprovado  Endereço inexistente
+N11  Aprovado  Identificador inválido no endereço (BUG-05 corrigido)
+N12  Aprovado  Usuário logado abre login ou cadastro
+N13  Aprovado  Menu no celular
+N14  Aprovado  Continuidade entre lista, detalhe e edição
+N15  Aprovado  Sessão expirada no meio do uso
+N16  Aprovado  Isolamento entre estabelecimentos
+N17  Aprovado  Cadastrar cliente a partir do pedido e voltar
+N18  Aprovado  Voltar do navegador depois de sair
+N19  Aprovado  Menu completo visível no desktop (BUG-09 corrigido)
+60/61 casos aprovados. Registro em /Users/arthur/Desktop/Faculdade/rota-certa/docs/sprint-11/evidencias/casos_de_teste.json
+Regressão visual: 320, 390 e 768 px sem overflow; ações da tabela acessíveis por rolagem interna.
+Capturas dos manuais gravadas com a aplicação real.

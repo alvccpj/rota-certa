@@ -1,7 +1,7 @@
 # API RotaCerta
 
-Versão candidata `0.10.0-rc.1`. Base local: `http://localhost:8000`.
-Não há prefixo `/api`. No ambiente isolado da Sprint 10, a base é `http://127.0.0.1:8020`.
+Versão candidata `0.11.0-rc.1` (Sprint 11). Base local: `http://localhost:8000`.
+Não há prefixo `/api`. No ambiente isolado da Sprint 11, a base é `http://127.0.0.1:8021`.
 
 - [Catálogo completo de rotas, métodos, parâmetros, perfis e modelos de resposta](ENDPOINTS.md).
 - [Contrato OpenAPI 3.1 versionado](openapi.json), com todos os modelos de entrada e saída.
@@ -27,6 +27,8 @@ São públicas: autenticação/cadastro, `/health`, documentação e o comparado
 experimental `POST /optimizer/compare`. Este último calcula sobre coordenadas
 fornecidas no corpo, sem consultar ou gravar pedidos; não confundir com
 `POST /optimizer/benchmark`, restrito a ADMIN e persistido.
+O comparador público aceita até 64 rotas, 500 paradas por rota e 12.000 paradas
+no total, com até 32 processos solicitados. Entradas fora desses limites retornam 422.
 
 ## Convenções de entrada e saída
 
@@ -115,6 +117,8 @@ Erros de negócio usam `{"detail":"Mensagem em português."}`. Validação do
 modelo usa `{"detail":[{"loc":["body","weight_kg"],"msg":"...","type":"..."}]}`.
 A UI pode adaptar mensagens de validação; a API preserva o contrato de erro do FastAPI.
 A busca de endereço indisponível permite marcar a posição diretamente no mapa.
+Uma resposta do geocodificador com estrutura ou coordenadas inválidas também
+retorna 503 com essa orientação; nenhum resultado inválido é enviado ao mapa.
 
 ## Atualizar o contrato
 
@@ -127,3 +131,5 @@ python tools/documentation/export_api_docs.py
 O exportador importa `app.main:app`, sem inicializar o banco, e gera `openapi.json`
 e `ENDPOINTS.md`. O contrato exportado deve coincidir com `GET /openapi.json`.
 O guia deve ser revisado quando mudar uma regra de negócio ou autorização.
+Para registrar o catálogo em uma Sprint sem alterar evidências históricas, use
+`--evidence-dir docs/sprint-11/evidencias`.

@@ -1,0 +1,946 @@
+{
+  "executado_em": "2026-11-10T11:07:55-03:00",
+  "api": "http://127.0.0.1:8021",
+  "app": "http://127.0.0.1:5191",
+  "banco": {
+    "status": "ok",
+    "database": "connected",
+    "dialect": "postgresql",
+    "server_version": "17.10"
+  },
+  "gpu": {
+    "gpu_available": false,
+    "gpu_name": null,
+    "gpu_reason": "O CuPy não está instalado. Veja backend/requirements-gpu.txt."
+  },
+  "total": 61,
+  "aprovados": 60,
+  "reprovados": 0,
+  "nao_executados": 1,
+  "por_tipo": {
+    "Funcional": {
+      "total": 22,
+      "aprovados": 21
+    },
+    "Validação": {
+      "total": 20,
+      "aprovados": 20
+    },
+    "Navegação": {
+      "total": 19,
+      "aprovados": 19
+    }
+  },
+  "casos": [
+    {
+      "id": "F01",
+      "tipo": "Funcional",
+      "modulo": "Autenticação",
+      "titulo": "Login com credenciais válidas",
+      "procedimento": [
+        "Abrir /login",
+        "Informar admin@rotacerta.com.br e a senha de demonstração",
+        "Clicar em Entrar"
+      ],
+      "esperado": "Usuário autenticado e levado ao painel com saudação pelo nome.",
+      "evidencia": "assets/f01_login_painel.png",
+      "obtido": "Redirecionado para /painel; saudação 'Olá, Ana'; /auth/me confirma admin@rotacerta.com.br (ADMIN).",
+      "situacao": "Aprovado",
+      "duracao_s": 1.16
+    },
+    {
+      "id": "F02",
+      "tipo": "Funcional",
+      "modulo": "Autenticação",
+      "titulo": "Encerrar sessão",
+      "procedimento": [
+        "Com a sessão do F01, clicar em Sair",
+        "Tentar abrir /painel pelo endereço"
+      ],
+      "esperado": "Sessão removida; /painel volta a exigir login.",
+      "evidencia": null,
+      "obtido": "Após Sair: /login; sessão local apagada (None); /painel redirecionou ao login.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.08
+    },
+    {
+      "id": "F03",
+      "tipo": "Funcional",
+      "modulo": "Autenticação",
+      "titulo": "Cadastro de novo negócio",
+      "procedimento": [
+        "Abrir /cadastro",
+        "Preencher negócio, endereço de saída, nome, e-mail e senha válidos",
+        "Clicar em Criar conta"
+      ],
+      "esperado": "Conta de administrador criada para um estabelecimento isolado, já autenticada no painel.",
+      "evidencia": "assets/f03_cadastro_negocio.png",
+      "obtido": "Conta criada e autenticada em /painel; topo mostra 'Padaria Sprint Nove'; o novo negócio começa com 0 pedidos.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.22
+    },
+    {
+      "id": "F04",
+      "tipo": "Funcional",
+      "modulo": "Clientes",
+      "titulo": "Cadastro de cliente",
+      "procedimento": [
+        "Abrir Clientes > Novo cliente",
+        "Informar nome e telefone sem formatação",
+        "Clicar em Cadastrar cliente"
+      ],
+      "esperado": "Cliente salvo e listado com telefone no formato (81) 99999-0909.",
+      "evidencia": "assets/f04_cliente_cadastrado.png",
+      "obtido": "Cliente #15 listado com telefone (81) 99999-0909.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.54
+    },
+    {
+      "id": "F05",
+      "tipo": "Funcional",
+      "modulo": "Clientes",
+      "titulo": "Pesquisa de clientes",
+      "procedimento": [
+        "Em Clientes, digitar 'Helena' na busca"
+      ],
+      "esperado": "Somente clientes cujo nome ou telefone contém o termo são exibidos.",
+      "evidencia": null,
+      "obtido": "2 linha(s) exibida(s), todas contendo 'Helena'.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.97
+    },
+    {
+      "id": "F06",
+      "tipo": "Funcional",
+      "modulo": "Clientes",
+      "titulo": "Edição de cliente",
+      "procedimento": [
+        "Na linha do cliente, clicar em Editar",
+        "Trocar o telefone",
+        "Clicar em Salvar alterações"
+      ],
+      "esperado": "Alteração persistida no banco e refletida na lista.",
+      "evidencia": null,
+      "obtido": "API retorna telefone (81) 3333-0909 para o cliente #15.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.19
+    },
+    {
+      "id": "F07",
+      "tipo": "Funcional",
+      "modulo": "Pedidos",
+      "titulo": "Cadastro de pedido",
+      "procedimento": [
+        "Abrir Pedidos > Novo pedido",
+        "Escolher o cliente, endereço, latitude/longitude, peso '3,5', prioridade Alta e janela futura",
+        "Clicar em Cadastrar pedido"
+      ],
+      "esperado": "Pedido salvo como Pendente com os dados informados; tela do pedido aberta.",
+      "evidencia": "assets/f07_pedido_cadastrado.png",
+      "obtido": "Pedido #15: situação PENDING, peso 3.5 kg, prioridade 1.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.62
+    },
+    {
+      "id": "F08",
+      "tipo": "Funcional",
+      "modulo": "Pedidos",
+      "titulo": "Consulta de pedidos com filtro",
+      "procedimento": [
+        "Em Pedidos, clicar no filtro Pendente"
+      ],
+      "esperado": "A lista mostra apenas pedidos pendentes e o filtro fica no endereço da página.",
+      "evidencia": null,
+      "obtido": "3 linhas exibidas, todas Pendente; API confirma 3 pendentes; endereço /pedidos?situacao=PENDING.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.13
+    },
+    {
+      "id": "F09",
+      "tipo": "Funcional",
+      "modulo": "Pedidos",
+      "titulo": "Edição de pedido",
+      "procedimento": [
+        "Abrir o pedido do F07 > Editar pedido",
+        "Alterar o peso para 4",
+        "Clicar em Salvar alterações"
+      ],
+      "esperado": "Novo peso persistido e exibido no pedido.",
+      "evidencia": null,
+      "obtido": "API retorna peso 4.0 kg para o pedido #15.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.22
+    },
+    {
+      "id": "F10",
+      "tipo": "Funcional",
+      "modulo": "Pedidos",
+      "titulo": "Exclusão de pedido com confirmação",
+      "procedimento": [
+        "Criar pedido pendente",
+        "Abrir o pedido e clicar em Excluir",
+        "Confirmar em Excluir pedido"
+      ],
+      "esperado": "Diálogo de confirmação exibido; após confirmar, o pedido deixa de existir (HTTP 404).",
+      "evidencia": "assets/f10_confirmar_exclusao.png",
+      "obtido": "Pedido #16 excluído; consulta posterior retorna HTTP 404.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.55
+    },
+    {
+      "id": "F11",
+      "tipo": "Funcional",
+      "modulo": "Usuários",
+      "titulo": "Cadastro de usuário atendente",
+      "procedimento": [
+        "Abrir Usuários > Novo usuário",
+        "Informar nome, e-mail, senha e perfil Atendente",
+        "Clicar em Cadastrar usuário"
+      ],
+      "esperado": "Usuário criado e capaz de entrar com o perfil Atendente.",
+      "evidencia": null,
+      "obtido": "Login do novo usuário: HTTP 200, perfil ATTENDANT.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.2
+    },
+    {
+      "id": "F12",
+      "tipo": "Funcional",
+      "modulo": "Usuários",
+      "titulo": "Desativação de usuário",
+      "procedimento": [
+        "Na lista de usuários, clicar em Desativar na linha do F11",
+        "Confirmar"
+      ],
+      "esperado": "Usuário marcado como inativo e impedido de entrar.",
+      "evidencia": null,
+      "obtido": "Linha marcada como inativa; novo login retorna HTTP 403: Usuário desativado. Procure o administrador.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.18
+    },
+    {
+      "id": "F13",
+      "tipo": "Funcional",
+      "modulo": "Clientes",
+      "titulo": "Exclusão de cliente sem pedidos",
+      "procedimento": [
+        "Criar cliente sem pedidos",
+        "Clicar em Excluir na linha",
+        "Confirmar em Excluir cliente"
+      ],
+      "esperado": "Cliente removido (HTTP 404 na consulta seguinte).",
+      "evidencia": null,
+      "obtido": "Cliente #16 removido da lista; consulta retorna HTTP 404.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.14
+    },
+    {
+      "id": "F14",
+      "tipo": "Funcional",
+      "modulo": "Atribuição",
+      "titulo": "Atribuição automática",
+      "procedimento": [
+        "Em Pedidos, clicar em Atribuir automaticamente",
+        "Confirmar em Atribuir pedidos"
+      ],
+      "esperado": "Pedidos pendentes elegíveis recebem entregador; resultado e motivos exibidos.",
+      "evidencia": "assets/f14_atribuicao.png",
+      "obtido": "Pedido #15 atribuído a Diego Entregador; histórico: 'Atribuído automaticamente a Diego Entregador'.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.91
+    },
+    {
+      "id": "F15",
+      "tipo": "Funcional",
+      "modulo": "Rotas",
+      "titulo": "Geração de rotas no modo sequencial",
+      "procedimento": [
+        "Abrir Rotas",
+        "Escolher Sequencial e clicar em Gerar rotas"
+      ],
+      "esperado": "Uma rota planejada por entregador, com paradas ordenadas, distância e previsão.",
+      "evidencia": "assets/f15_rotas_sequencial.png",
+      "obtido": "2 rotas SEQUENTIAL. Carla Entregadora: 5 paradas, 21.307 km, Diego Entregador: 8 paradas, 15.934 km.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.56
+    },
+    {
+      "id": "F16",
+      "tipo": "Funcional",
+      "modulo": "Rotas",
+      "titulo": "Geração de rotas na GPU (CUDA)",
+      "procedimento": [
+        "Em Rotas, escolher GPU (CUDA) e clicar em Gerar rotas"
+      ],
+      "esperado": "Rotas geradas pelo kernel CUDA com a mesma distância total do modo sequencial.",
+      "evidencia": null,
+      "obtido": "GPU indisponível nesta máquina: O CuPy não está instalado. Veja backend/requirements-gpu.txt.",
+      "situacao": "Não executado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "F17",
+      "tipo": "Funcional",
+      "modulo": "Entregas",
+      "titulo": "Entregador inicia a rota e confirma a entrega",
+      "procedimento": [
+        "Entrar como o entregador do pedido no celular",
+        "Clicar em Iniciar rota",
+        "Abrir o pedido e clicar em Confirmar entrega"
+      ],
+      "esperado": "Pedido passa a Entregue com autor e horário no histórico.",
+      "evidencia": "assets/f17_entrega_confirmada.png",
+      "obtido": "Pedido #15 DELIVERED; último evento por Diego Entregador em 2026-11-10T11:07:28.878221-03:00.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.27
+    },
+    {
+      "id": "F18",
+      "tipo": "Funcional",
+      "modulo": "Pedidos",
+      "titulo": "Cancelamento com justificativa",
+      "procedimento": [
+        "Criar pedido pendente",
+        "Abrir o pedido > Cancelar pedido",
+        "Informar o motivo e Confirmar cancelamento"
+      ],
+      "esperado": "Pedido Cancelado e motivo gravado no histórico.",
+      "evidencia": "assets/f18_cancelamento.png",
+      "obtido": "Pedido #17 CANCELLED; motivo no histórico: 'Cliente desistiu da compra'.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.56
+    },
+    {
+      "id": "F19",
+      "tipo": "Funcional",
+      "modulo": "Painel",
+      "titulo": "Painel com indicadores atualizados",
+      "procedimento": [
+        "Abrir Visão geral depois dos fluxos anteriores"
+      ],
+      "esperado": "Indicadores calculados com os dados atuais do estabelecimento.",
+      "evidencia": "assets/f19_painel.png",
+      "obtido": "Pedidos: 16 no período, 2 entregue(s), 1 cancelado(s), conclusão 12.5%; rotas: 1 planejada(s), 1 em andamento.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.46
+    },
+    {
+      "id": "F20",
+      "tipo": "Funcional",
+      "modulo": "Relatórios",
+      "titulo": "Relatório filtrado e exportação CSV",
+      "procedimento": [
+        "Abrir Relatórios",
+        "Buscar 'Helena' e Aplicar filtros",
+        "Clicar em Exportar CSV"
+      ],
+      "esperado": "Somente pedidos da cliente; o CSV baixado contém as mesmas linhas.",
+      "evidencia": "assets/f20_relatorio.png",
+      "obtido": "3 linha(s) na tela e 3 no CSV 'rota-certa-relatorio-2026-11-04-a-2026-11-10.csv', todas da cliente Helena.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.58
+    },
+    {
+      "id": "F21",
+      "tipo": "Funcional",
+      "modulo": "Histórico",
+      "titulo": "Histórico operacional",
+      "procedimento": [
+        "Abrir Histórico",
+        "Buscar o número do pedido do F07"
+      ],
+      "esperado": "Eventos do pedido listados com autor e horário.",
+      "evidencia": null,
+      "obtido": "5 eventos do pedido #15; responsáveis: ['Responsável: Ana Administradora', 'Responsável: Diego Entregador'].",
+      "situacao": "Aprovado",
+      "duracao_s": 1.27
+    },
+    {
+      "id": "F22",
+      "tipo": "Funcional",
+      "modulo": "Desempenho",
+      "titulo": "Comparação de desempenho nos modos disponíveis",
+      "procedimento": [
+        "Chamar POST /optimizer/benchmark com 8 entregadores x 60 paradas, 1, 2 e 4 processos; incluir GPU quando disponível"
+      ],
+      "esperado": "Tempos, speedup e eficiência calculados; todos os modos produzem as mesmas rotas.",
+      "evidencia": null,
+      "obtido": "480 pedidos sintéticos; SEQUENTIAL 1p: 7.5 ms, speedup 1.0, eficiência 1.0; PARALLEL 1p: 4.3 ms, speedup 1.755, eficiência 1.7553; PARALLEL 2p: 2.6 ms, speedup 2.852, eficiência 1.426; PARALLEL 4p: 2.0 ms, speedup 3.779, eficiência 0.9448",
+      "situacao": "Aprovado",
+      "duracao_s": 0.27
+    },
+    {
+      "id": "V01",
+      "tipo": "Validação",
+      "modulo": "Autenticação",
+      "titulo": "Login com campos obrigatórios vazios",
+      "procedimento": [
+        "Abrir /login",
+        "Clicar em Entrar sem preencher"
+      ],
+      "esperado": "Mensagens junto aos campos, sem chamada ao servidor.",
+      "evidencia": "assets/v01_login_vazio.png",
+      "obtido": "Mensagens 'Informe o e-mail.' e 'Informe a senha.'; foco no campo email.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.92
+    },
+    {
+      "id": "V02",
+      "tipo": "Validação",
+      "modulo": "Autenticação",
+      "titulo": "Login com senha incorreta",
+      "procedimento": [
+        "Informar e-mail válido e senha errada",
+        "Clicar em Entrar"
+      ],
+      "esperado": "Mensagem genérica, sem revelar qual dado está errado.",
+      "evidencia": "assets/v02_senha_incorreta.png",
+      "obtido": "Exibido 'E-mail ou senha inválidos.'; permaneceu em /login.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.03
+    },
+    {
+      "id": "V03",
+      "tipo": "Validação",
+      "modulo": "Autenticação",
+      "titulo": "Cadastro de negócio com formatos inválidos",
+      "procedimento": [
+        "Em /cadastro, informar e-mail 'paula@', senha 'abc' e endereço curto",
+        "Clicar em Criar conta"
+      ],
+      "esperado": "Cada campo inválido mostra a orientação de correção.",
+      "evidencia": "assets/v03_cadastro_invalido.png",
+      "obtido": "Informe o endereço de onde saem as entregas, com rua e número. | Use pelo menos duas letras. | Informe um e-mail válido, como nome@empresa.com.br. | Use pelo menos 8 caracteres.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.93
+    },
+    {
+      "id": "V04",
+      "tipo": "Validação",
+      "modulo": "Clientes",
+      "titulo": "Cliente com nome e telefone inválidos",
+      "procedimento": [
+        "Em Novo cliente, informar nome '123' e telefone '123'",
+        "Clicar em Cadastrar cliente"
+      ],
+      "esperado": "Mensagens para nome sem letras e telefone sem DDD.",
+      "evidencia": "assets/v04_cliente_invalido.png",
+      "obtido": "Exibidos 'Use pelo menos duas letras.' e 'Informe o telefone com DDD, por exemplo (81) 98800-1001.'",
+      "situacao": "Aprovado",
+      "duracao_s": 0.5
+    },
+    {
+      "id": "V05",
+      "tipo": "Validação",
+      "modulo": "Clientes",
+      "titulo": "Cliente duplicado",
+      "procedimento": [
+        "Enviar POST /customers com o mesmo nome e telefone do cliente do F06"
+      ],
+      "esperado": "HTTP 409 com mensagem de duplicidade.",
+      "evidencia": null,
+      "obtido": "HTTP 409: Já existe um cliente com este nome e telefone.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V06",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Pedido com campos obrigatórios vazios",
+      "procedimento": [
+        "Em Novo pedido, informar só espaços no endereço",
+        "Clicar em Cadastrar pedido"
+      ],
+      "esperado": "Resumo de erros, mensagem por campo e foco no primeiro campo inválido.",
+      "evidencia": "assets/v06_pedido_vazio.png",
+      "obtido": "Escolha o cliente do pedido. | Informe o endereço com rua, número e bairro. | Marque o local de entrega no mapa ou use Buscar endereço. | Informe o peso.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.53
+    },
+    {
+      "id": "V07",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Peso fora dos limites",
+      "procedimento": [
+        "Em Novo pedido, informar peso 0 e depois 600",
+        "Clicar em Cadastrar pedido a cada valor"
+      ],
+      "esperado": "Mensagens 'maior que 0' e 'máximo 500'.",
+      "evidencia": null,
+      "obtido": "0 kg: 'Informe um valor maior que 0.'; 600 kg: 'O valor máximo é 500.'; API com 501 kg: HTTP 422",
+      "situacao": "Aprovado",
+      "duracao_s": 0.22
+    },
+    {
+      "id": "V08",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Janela de entrega invertida",
+      "procedimento": [
+        "Em Novo pedido, informar fim antes do início",
+        "Clicar em Cadastrar pedido"
+      ],
+      "esperado": "Mensagem 'O fim precisa ser depois do início.'",
+      "evidencia": "assets/v08_janela_invertida.png",
+      "obtido": "Exibido 'O fim precisa ser depois do início.' junto ao campo Entregar até.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.52
+    },
+    {
+      "id": "V09",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Janela de entrega no passado (API)",
+      "procedimento": [
+        "POST /orders com desired_end uma hora atrás"
+      ],
+      "esperado": "HTTP 422 com orientação para informar horário futuro.",
+      "evidencia": null,
+      "obtido": "HTTP 422: O horário final da entrega já passou. Informe um horário futuro.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V10",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Entrega fora do raio de atendimento",
+      "procedimento": [
+        "POST /orders com coordenadas de São Paulo"
+      ],
+      "esperado": "HTTP 422 informando a distância e o limite de 30 km.",
+      "evidencia": null,
+      "obtido": "HTTP 422: O local de entrega fica a 2132 km do ponto de saída. O limite de entrega é 30 km.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V11",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Cancelamento sem motivo suficiente",
+      "procedimento": [
+        "Abrir pedido > Cancelar pedido",
+        "Informar 'abc'",
+        "Clicar em Confirmar cancelamento"
+      ],
+      "esperado": "Mensagem pedindo ao menos 5 caracteres; pedido continua ativo.",
+      "evidencia": "assets/v11_motivo_curto.png",
+      "obtido": "Mensagem exibida; pedido #18 continua PENDING.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.54
+    },
+    {
+      "id": "V12",
+      "tipo": "Validação",
+      "modulo": "Usuários",
+      "titulo": "E-mail já cadastrado (sem diferenciar maiúsculas)",
+      "procedimento": [
+        "POST /users com ADMIN@ROTACERTA.COM.BR"
+      ],
+      "esperado": "HTTP 409 informando e-mail em uso.",
+      "evidencia": null,
+      "obtido": "HTTP 409: Já existe um usuário com este e-mail.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V13",
+      "tipo": "Validação",
+      "modulo": "Usuários",
+      "titulo": "Entregador sem capacidade e senha fraca",
+      "procedimento": [
+        "POST /users perfil Entregador sem capacidade",
+        "POST /users com senha 'abcdefgh'"
+      ],
+      "esperado": "HTTP 422 com as duas regras explicadas.",
+      "evidencia": null,
+      "obtido": "Sem capacidade: : Value error, Informe a capacidade de carga do entregador. | Senha fraca: password: Value error, A senha precisa ter letras e números.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V14",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Endereço só com espaços (BUG-01 corrigido)",
+      "procedimento": [
+        "POST /orders com delivery_address de 8 espaços"
+      ],
+      "esperado": "HTTP 422; nada é gravado.",
+      "evidencia": null,
+      "obtido": "HTTP 422: delivery_address: Value error, Informe o endereço com rua, número e bairro.; total de pedidos 17 -> 17.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.01
+    },
+    {
+      "id": "V15",
+      "tipo": "Validação",
+      "modulo": "Pedidos",
+      "titulo": "Janela com e sem fuso horário (BUG-02 corrigido)",
+      "procedimento": [
+        "POST /orders com início sem fuso e fim com -03:00"
+      ],
+      "esperado": "Pedido aceito e datas normalizadas em UTC, sem erro 500.",
+      "evidencia": null,
+      "obtido": "HTTP 201; início 2026-11-10T17:07:37Z, fim 2026-11-10T19:07:37Z.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V16",
+      "tipo": "Validação",
+      "modulo": "API",
+      "titulo": "Identificador acima do limite do banco (BUG-03 corrigido)",
+      "procedimento": [
+        "GET /orders/99999999999999999999",
+        "PUT /customers/9223372036854775808"
+      ],
+      "esperado": "HTTP 422 com mensagem, sem erro 500.",
+      "evidencia": null,
+      "obtido": "HTTP 422 e 422: Algum valor informado está fora do formato aceito. Confira os dados e tente de novo.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V17",
+      "tipo": "Validação",
+      "modulo": "Clientes",
+      "titulo": "Caractere de controle no nome (BUG-04 corrigido)",
+      "procedimento": [
+        "POST /customers com nome contendo o byte nulo (\\u0000)"
+      ],
+      "esperado": "Cliente salvo sem o caractere inválido, sem erro 500.",
+      "evidencia": null,
+      "obtido": "HTTP 201; nome salvo: 'Joana Controle 110718'.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V18",
+      "tipo": "Validação",
+      "modulo": "Relatórios",
+      "titulo": "Período de relatório invertido",
+      "procedimento": [
+        "GET /dashboard/report com data final anterior à inicial"
+      ],
+      "esperado": "HTTP 422 com mensagem sobre o período.",
+      "evidencia": null,
+      "obtido": "HTTP 422: A data final deve ser igual ou posterior à inicial.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "V19",
+      "tipo": "Validação",
+      "modulo": "Usuários",
+      "titulo": "Capacidade abaixo da carga ativa",
+      "procedimento": [
+        "PUT /users do entregador Diego com capacidade 0,1 kg"
+      ],
+      "esperado": "HTTP 422 explicando a carga ativa.",
+      "evidencia": null,
+      "obtido": "HTTP 409: A capacidade não pode ser menor que os 17,3 kg em entregas ativas.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.01
+    },
+    {
+      "id": "V20",
+      "tipo": "Validação",
+      "modulo": "Autenticação",
+      "titulo": "Requisição sem token e com token adulterado",
+      "procedimento": [
+        "GET /orders sem Authorization",
+        "GET /orders com token alterado"
+      ],
+      "esperado": "HTTP 401 nos dois casos.",
+      "evidencia": null,
+      "obtido": "Sem token: HTTP 401 (Sessão inválida ou expirada. Faça login novamente.); adulterado: HTTP 401.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.0
+    },
+    {
+      "id": "N01",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Página protegida sem login",
+      "procedimento": [
+        "Sem sessão, abrir /relatorios"
+      ],
+      "esperado": "Redirecionamento para /login guardando a página pedida.",
+      "evidencia": null,
+      "obtido": "Redirecionado para /login; destino guardado: /relatorios.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.5
+    },
+    {
+      "id": "N02",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Volta à página pedida depois do login (BUG-06 corrigido)",
+      "procedimento": [
+        "Na tela do N01, entrar como administrador"
+      ],
+      "esperado": "Usuário levado a /relatorios, não ao painel.",
+      "evidencia": "assets/n02_retorno_pagina.png",
+      "obtido": "Após o login: /relatorios.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.55
+    },
+    {
+      "id": "N03",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Página pedida não permitida ao perfil que entrou",
+      "procedimento": [
+        "Sem sessão, abrir /relatorios",
+        "Entrar como entregador"
+      ],
+      "esperado": "Entregador levado a Minhas entregas, sem tela de acesso negado.",
+      "evidencia": null,
+      "obtido": "Após o login: /entregas.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.69
+    },
+    {
+      "id": "N04",
+      "tipo": "Navegação",
+      "modulo": "Menu",
+      "titulo": "Menu e navegação do perfil Administrador",
+      "procedimento": [
+        "Entrar como Administrador",
+        "Clicar em cada item do menu"
+      ],
+      "esperado": "Menu com 8 itens (Visão geral, Pedidos, Rotas, Relatórios, Histórico, Clientes, Desempenho, Usuários); cada um abre a tela correspondente e fica destacado.",
+      "evidencia": "assets/n04_menu_administrador.png",
+      "obtido": "Visão geral->/painel; Pedidos->/pedidos; Rotas->/rotas; Relatórios->/relatorios; Histórico->/historico; Clientes->/clientes; Desempenho->/desempenho; Usuários->/usuarios",
+      "situacao": "Aprovado",
+      "duracao_s": 1.54
+    },
+    {
+      "id": "N05",
+      "tipo": "Navegação",
+      "modulo": "Menu",
+      "titulo": "Menu e navegação do perfil Atendente",
+      "procedimento": [
+        "Entrar como Atendente",
+        "Clicar em cada item do menu"
+      ],
+      "esperado": "Menu com 6 itens (Visão geral, Pedidos, Rotas, Relatórios, Histórico, Clientes); cada um abre a tela correspondente e fica destacado.",
+      "evidencia": "assets/n05_menu_atendente.png",
+      "obtido": "Visão geral->/painel; Pedidos->/pedidos; Rotas->/rotas; Relatórios->/relatorios; Histórico->/historico; Clientes->/clientes",
+      "situacao": "Aprovado",
+      "duracao_s": 1.52
+    },
+    {
+      "id": "N06",
+      "tipo": "Navegação",
+      "modulo": "Menu",
+      "titulo": "Menu e navegação do perfil Entregador",
+      "procedimento": [
+        "Entrar como Entregador",
+        "Clicar em cada item do menu"
+      ],
+      "esperado": "Menu com 1 itens (Minhas entregas); cada um abre a tela correspondente e fica destacado.",
+      "evidencia": "assets/n06_menu_entregador.png",
+      "obtido": "Minhas entregas->/entregas",
+      "situacao": "Aprovado",
+      "duracao_s": 1.21
+    },
+    {
+      "id": "N07",
+      "tipo": "Navegação",
+      "modulo": "Permissões",
+      "titulo": "Atendente abre tela exclusiva do administrador",
+      "procedimento": [
+        "Entrar como atendente",
+        "Abrir /usuarios pelo endereço",
+        "Clicar em Voltar para o início"
+      ],
+      "esperado": "Tela de acesso negado explicando quem usa a página; botão leva ao painel; API responde 403.",
+      "evidencia": "assets/n07_acesso_negado.png",
+      "obtido": "Acesso negado exibido; botão levou a /painel; GET /users como atendente: HTTP 403.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.15
+    },
+    {
+      "id": "N08",
+      "tipo": "Navegação",
+      "modulo": "Permissões",
+      "titulo": "Entregador abre cadastro de pedido",
+      "procedimento": [
+        "Como entregador, abrir /pedidos/novo"
+      ],
+      "esperado": "Acesso negado; API bloqueia criação com 403.",
+      "evidencia": null,
+      "obtido": "Tela de acesso negado; POST /orders como entregador: HTTP 403.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.11
+    },
+    {
+      "id": "N09",
+      "tipo": "Navegação",
+      "modulo": "Permissões",
+      "titulo": "Entregador abre pedido de outro entregador",
+      "procedimento": [
+        "Como entregador, abrir o endereço de um pedido atribuído a outro entregador"
+      ],
+      "esperado": "Mensagem de pedido não encontrado; API responde 404 sem expor dados.",
+      "evidencia": null,
+      "obtido": "Pedido #10 de Carla Entregadora: tela 'não foi encontrado'; API HTTP 404.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.06
+    },
+    {
+      "id": "N10",
+      "tipo": "Navegação",
+      "modulo": "Rotas da aplicação",
+      "titulo": "Endereço inexistente",
+      "procedimento": [
+        "Logado, abrir /pagina-que-nao-existe",
+        "Clicar em Ir para o início"
+      ],
+      "esperado": "Página não encontrada dentro do layout; botão leva ao início.",
+      "evidencia": "assets/n10_pagina_inexistente.png",
+      "obtido": "Página não encontrada exibida; botão levou a /painel.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.5
+    },
+    {
+      "id": "N11",
+      "tipo": "Navegação",
+      "modulo": "Rotas da aplicação",
+      "titulo": "Identificador inválido no endereço (BUG-05 corrigido)",
+      "procedimento": [
+        "Abrir /pedidos/abc, /pedidos/abc/editar, /clientes/abc/editar e /usuarios/abc/editar"
+      ],
+      "esperado": "Mensagem de registro não encontrado, e não 'Corrija o campo destacado'.",
+      "evidencia": "assets/n11_id_invalido.png",
+      "obtido": "/pedidos/abc: 'O pedido #abc não foi encontrado'; /pedidos/abc/editar: 'O pedido #abc não foi encontrado.'; /clientes/abc/editar: 'Cliente não encontrado.'; /usuarios/abc/editar: 'Usuário não encontrado.'",
+      "situacao": "Aprovado",
+      "duracao_s": 0.64
+    },
+    {
+      "id": "N12",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Usuário logado abre login ou cadastro",
+      "procedimento": [
+        "Logado como administrador, abrir /login e /cadastro"
+      ],
+      "esperado": "Redirecionado ao painel.",
+      "evidencia": null,
+      "obtido": "/login->/painel; /cadastro->/painel",
+      "situacao": "Aprovado",
+      "duracao_s": 0.06
+    },
+    {
+      "id": "N13",
+      "tipo": "Navegação",
+      "modulo": "Menu",
+      "titulo": "Menu no celular",
+      "procedimento": [
+        "Em 390 px de largura, clicar em Menu",
+        "Escolher Clientes"
+      ],
+      "esperado": "Menu abre, navega e fecha sozinho após a escolha.",
+      "evidencia": "assets/n13_menu_celular.png",
+      "obtido": "Fechado no início; aberto após Menu; navegou para /clientes e fechou; rolagem horizontal 0px.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.6
+    },
+    {
+      "id": "N14",
+      "tipo": "Navegação",
+      "modulo": "Fluxos",
+      "titulo": "Continuidade entre lista, detalhe e edição",
+      "procedimento": [
+        "Abrir um pedido pela lista",
+        "Ir para Editar pedido e clicar em Cancelar",
+        "Clicar no item Pedidos da trilha"
+      ],
+      "esperado": "Cada ação leva à tela esperada sem perder o contexto.",
+      "evidencia": null,
+      "obtido": "/pedidos/20 -> /pedidos/20/editar -> /pedidos/20 -> /pedidos",
+      "situacao": "Aprovado",
+      "duracao_s": 0.37
+    },
+    {
+      "id": "N15",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Sessão expirada no meio do uso",
+      "procedimento": [
+        "Logado em Clientes, invalidar o token salvo no navegador",
+        "Recarregar a página",
+        "Entrar novamente"
+      ],
+      "esperado": "Aviso de sessão expirada no login e retorno à mesma página após entrar.",
+      "evidencia": "assets/n15_sessao_expirada.png",
+      "obtido": "Aviso exibido no login; após entrar, voltou para /clientes?busca=Helena.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.9
+    },
+    {
+      "id": "N16",
+      "tipo": "Navegação",
+      "modulo": "Permissões",
+      "titulo": "Isolamento entre estabelecimentos",
+      "procedimento": [
+        "Como administrador da Padaria (F03), abrir um pedido da RotaCerta pelo endereço"
+      ],
+      "esperado": "Pedido de outro negócio não é exibido; API responde 404.",
+      "evidencia": null,
+      "obtido": "Tela 'não foi encontrado'; API HTTP 404; clientes visíveis para a Padaria: 0.",
+      "situacao": "Aprovado",
+      "duracao_s": 0.72
+    },
+    {
+      "id": "N17",
+      "tipo": "Navegação",
+      "modulo": "Fluxos",
+      "titulo": "Cadastrar cliente a partir do pedido e voltar",
+      "procedimento": [
+        "Em Novo pedido, clicar em Cadastrar cliente",
+        "Salvar o cliente"
+      ],
+      "esperado": "Retorno automático ao Novo pedido com o fluxo preservado.",
+      "evidencia": null,
+      "obtido": "/clientes/novo?voltar=%2Fpedidos%2Fnovo -> /pedidos/novo?cliente=18",
+      "situacao": "Aprovado",
+      "duracao_s": 0.18
+    },
+    {
+      "id": "N18",
+      "tipo": "Navegação",
+      "modulo": "Acesso",
+      "titulo": "Voltar do navegador depois de sair",
+      "procedimento": [
+        "Logado no painel, clicar em Sair",
+        "Usar o botão Voltar do navegador"
+      ],
+      "esperado": "A área protegida não é reaberta.",
+      "evidencia": null,
+      "obtido": "Após Voltar: /login.",
+      "situacao": "Aprovado",
+      "duracao_s": 1.61
+    },
+    {
+      "id": "N19",
+      "tipo": "Navegação",
+      "modulo": "Menu",
+      "titulo": "Menu completo visível no desktop (BUG-09 corrigido)",
+      "procedimento": [
+        "Entrar como administrador em telas de 1024, 1280, 1366 e 1920 px",
+        "Medir a posição de cada item do menu"
+      ],
+      "esperado": "Os 8 itens ficam inteiros na tela, sem rolagem escondida.",
+      "evidencia": "assets/n19_menu_completo.png",
+      "obtido": "1024px: 8 itens visíveis; 1280px: 8 itens visíveis; 1366px: 8 itens visíveis; 1920px: 8 itens visíveis",
+      "situacao": "Aprovado",
+      "duracao_s": 3.02
+    }
+  ]
+}

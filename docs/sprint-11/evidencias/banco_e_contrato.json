@@ -1,0 +1,1148 @@
+{
+  "executado_em": "2026-11-10T11:10:19-03:00",
+  "ambiente": {
+    "sistema": "Darwin",
+    "arquitetura": "arm64",
+    "python": "3.14.7",
+    "processadores_logicos": 10
+  },
+  "tabelas": {
+    "couriers": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "user_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "load_capacity_kg",
+          "tipo": "NUMERIC(8, 2)",
+          "nulo": false
+        },
+        {
+          "nome": "availability",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "couriers_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "couriers_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "couriers_user_id_fkey",
+          "constrained_columns": [
+            "user_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "users",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "couriers_availability_check",
+          "sqltext": "availability::text = ANY (ARRAY['AVAILABLE'::character varying, 'BUSY'::character varying, 'OFFLINE'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "couriers_load_capacity_kg_check",
+          "sqltext": "load_capacity_kg > 0::numeric",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [
+        {
+          "column_names": [
+            "user_id"
+          ],
+          "name": "couriers_user_id_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "indices": [
+        {
+          "name": "couriers_user_id_key",
+          "unique": true,
+          "column_names": [
+            "user_id"
+          ],
+          "duplicates_constraint": "couriers_user_id_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 2
+    },
+    "customers": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "full_name",
+          "tipo": "VARCHAR(150)",
+          "nulo": false
+        },
+        {
+          "nome": "phone",
+          "tipo": "VARCHAR(25)",
+          "nulo": true
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "customers_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "customers_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [],
+      "restricoes_unique": [],
+      "indices": [],
+      "registros": 17
+    },
+    "establishments": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "name",
+          "tipo": "VARCHAR(150)",
+          "nulo": false
+        },
+        {
+          "nome": "document",
+          "tipo": "VARCHAR(20)",
+          "nulo": true
+        },
+        {
+          "nome": "depot_address",
+          "tipo": "VARCHAR(255)",
+          "nulo": false
+        },
+        {
+          "nome": "depot_latitude",
+          "tipo": "NUMERIC(9, 6)",
+          "nulo": true
+        },
+        {
+          "nome": "depot_longitude",
+          "tipo": "NUMERIC(9, 6)",
+          "nulo": true
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "establishments_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [],
+      "restricoes_check": [],
+      "restricoes_unique": [],
+      "indices": [],
+      "registros": 2
+    },
+    "optimization_runs": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "executed_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        },
+        {
+          "nome": "algorithm",
+          "tipo": "VARCHAR(40)",
+          "nulo": false
+        },
+        {
+          "nome": "execution_mode",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "worker_count",
+          "tipo": "INTEGER",
+          "nulo": false
+        },
+        {
+          "nome": "order_count",
+          "tipo": "INTEGER",
+          "nulo": false
+        },
+        {
+          "nome": "courier_count",
+          "tipo": "INTEGER",
+          "nulo": false
+        },
+        {
+          "nome": "execution_time_ms",
+          "tipo": "NUMERIC(12, 3)",
+          "nulo": false
+        },
+        {
+          "nome": "total_distance_km",
+          "tipo": "NUMERIC(12, 3)",
+          "nulo": false
+        },
+        {
+          "nome": "purpose",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "input_source",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "run_group",
+          "tipo": "VARCHAR(36)",
+          "nulo": true
+        },
+        {
+          "nome": "speedup",
+          "tipo": "NUMERIC(10, 3)",
+          "nulo": true
+        },
+        {
+          "nome": "efficiency",
+          "tipo": "NUMERIC(8, 4)",
+          "nulo": true
+        },
+        {
+          "nome": "same_routes",
+          "tipo": "BOOLEAN",
+          "nulo": true
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "optimization_runs_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "optimization_runs_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "optimization_runs_courier_count_check",
+          "sqltext": "courier_count >= 0",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_execution_mode_check",
+          "sqltext": "execution_mode::text = ANY (ARRAY['SEQUENTIAL'::character varying, 'PARALLEL'::character varying, 'GPU'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_execution_time_ms_check",
+          "sqltext": "execution_time_ms >= 0::numeric",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_input_source_check",
+          "sqltext": "input_source::text = ANY (ARRAY['REAL'::character varying, 'SYNTHETIC'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_order_count_check",
+          "sqltext": "order_count >= 0",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_purpose_check",
+          "sqltext": "purpose::text = ANY (ARRAY['ROUTE_GENERATION'::character varying, 'BENCHMARK'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_total_distance_km_check",
+          "sqltext": "total_distance_km >= 0::numeric",
+          "comment": null
+        },
+        {
+          "name": "optimization_runs_worker_count_check",
+          "sqltext": "worker_count > 0",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [],
+      "indices": [
+        {
+          "name": "idx_optimization_runs_group",
+          "unique": false,
+          "column_names": [
+            "establishment_id",
+            "run_group"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        },
+        {
+          "name": "idx_optimization_runs_mode",
+          "unique": false,
+          "column_names": [
+            "establishment_id",
+            "execution_mode"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 5
+    },
+    "order_status_history": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "order_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "status",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "note",
+          "tipo": "VARCHAR(255)",
+          "nulo": true
+        },
+        {
+          "nome": "changed_by",
+          "tipo": "BIGINT",
+          "nulo": true
+        },
+        {
+          "nome": "changed_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "order_status_history_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "order_status_history_changed_by_fkey",
+          "constrained_columns": [
+            "changed_by"
+          ],
+          "referred_schema": null,
+          "referred_table": "users",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "order_status_history_order_id_fkey",
+          "constrained_columns": [
+            "order_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "orders",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {
+            "ondelete": "CASCADE"
+          },
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "order_status_history_status_check",
+          "sqltext": "status::text = ANY (ARRAY['PENDING'::character varying, 'ASSIGNED'::character varying, 'IN_ROUTE'::character varying, 'DELIVERED'::character varying, 'CANCELLED'::character varying]::text[])",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [],
+      "indices": [
+        {
+          "name": "idx_order_status_history_order",
+          "unique": false,
+          "column_names": [
+            "order_id",
+            "changed_at"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 48
+    },
+    "orders": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "customer_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "assigned_courier_id",
+          "tipo": "BIGINT",
+          "nulo": true
+        },
+        {
+          "nome": "delivery_address",
+          "tipo": "VARCHAR(255)",
+          "nulo": false
+        },
+        {
+          "nome": "latitude",
+          "tipo": "NUMERIC(9, 6)",
+          "nulo": false
+        },
+        {
+          "nome": "longitude",
+          "tipo": "NUMERIC(9, 6)",
+          "nulo": false
+        },
+        {
+          "nome": "weight_kg",
+          "tipo": "NUMERIC(8, 2)",
+          "nulo": false
+        },
+        {
+          "nome": "priority",
+          "tipo": "SMALLINT",
+          "nulo": false
+        },
+        {
+          "nome": "desired_start",
+          "tipo": "TIMESTAMP",
+          "nulo": true
+        },
+        {
+          "nome": "desired_end",
+          "tipo": "TIMESTAMP",
+          "nulo": true
+        },
+        {
+          "nome": "status",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "orders_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "orders_assigned_courier_id_fkey",
+          "constrained_columns": [
+            "assigned_courier_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "couriers",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "orders_customer_id_fkey",
+          "constrained_columns": [
+            "customer_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "customers",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "orders_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "orders_check",
+          "sqltext": "desired_end IS NULL OR desired_start IS NULL OR desired_end >= desired_start",
+          "comment": null
+        },
+        {
+          "name": "orders_priority_check",
+          "sqltext": "priority >= 1 AND priority <= 3",
+          "comment": null
+        },
+        {
+          "name": "orders_status_check",
+          "sqltext": "status::text = ANY (ARRAY['PENDING'::character varying, 'ASSIGNED'::character varying, 'IN_ROUTE'::character varying, 'DELIVERED'::character varying, 'CANCELLED'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "orders_weight_kg_check",
+          "sqltext": "weight_kg > 0::numeric",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [],
+      "indices": [
+        {
+          "name": "idx_orders_courier",
+          "unique": false,
+          "column_names": [
+            "assigned_courier_id"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        },
+        {
+          "name": "idx_orders_establishment_status",
+          "unique": false,
+          "column_names": [
+            "establishment_id",
+            "status"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 19
+    },
+    "route_stops": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "route_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "order_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "stop_sequence",
+          "tipo": "INTEGER",
+          "nulo": false
+        },
+        {
+          "nome": "estimated_arrival",
+          "tipo": "TIMESTAMP",
+          "nulo": true
+        },
+        {
+          "nome": "waiting_minutes",
+          "tipo": "INTEGER",
+          "nulo": false
+        },
+        {
+          "nome": "distance_from_previous_km",
+          "tipo": "NUMERIC(10, 3)",
+          "nulo": true
+        },
+        {
+          "nome": "status",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "route_stops_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "route_stops_order_id_fkey",
+          "constrained_columns": [
+            "order_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "orders",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "route_stops_route_id_fkey",
+          "constrained_columns": [
+            "route_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "routes",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {
+            "ondelete": "CASCADE"
+          },
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "route_stops_status_check",
+          "sqltext": "status::text = ANY (ARRAY['PENDING'::character varying, 'ARRIVED'::character varying, 'COMPLETED'::character varying, 'FAILED'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "route_stops_stop_sequence_check",
+          "sqltext": "stop_sequence > 0",
+          "comment": null
+        },
+        {
+          "name": "route_stops_waiting_minutes_check",
+          "sqltext": "waiting_minutes >= 0",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [
+        {
+          "column_names": [
+            "order_id"
+          ],
+          "name": "route_stops_order_id_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        },
+        {
+          "column_names": [
+            "route_id",
+            "stop_sequence"
+          ],
+          "name": "route_stops_route_id_stop_sequence_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "indices": [
+        {
+          "name": "route_stops_order_id_key",
+          "unique": true,
+          "column_names": [
+            "order_id"
+          ],
+          "duplicates_constraint": "route_stops_order_id_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        },
+        {
+          "name": "route_stops_route_id_stop_sequence_key",
+          "unique": true,
+          "column_names": [
+            "route_id",
+            "stop_sequence"
+          ],
+          "duplicates_constraint": "route_stops_route_id_stop_sequence_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 13
+    },
+    "routes": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "courier_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "route_date",
+          "tipo": "DATE",
+          "nulo": false
+        },
+        {
+          "nome": "status",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "algorithm",
+          "tipo": "VARCHAR(40)",
+          "nulo": false
+        },
+        {
+          "nome": "execution_mode",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "total_distance_km",
+          "tipo": "NUMERIC(10, 3)",
+          "nulo": true
+        },
+        {
+          "nome": "estimated_duration_min",
+          "tipo": "INTEGER",
+          "nulo": true
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "routes_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "routes_courier_id_fkey",
+          "constrained_columns": [
+            "courier_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "couriers",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        },
+        {
+          "name": "routes_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "routes_execution_mode_check",
+          "sqltext": "execution_mode::text = ANY (ARRAY['SEQUENTIAL'::character varying, 'PARALLEL'::character varying, 'GPU'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "routes_status_check",
+          "sqltext": "status::text = ANY (ARRAY['PLANNED'::character varying, 'IN_PROGRESS'::character varying, 'COMPLETED'::character varying, 'CANCELLED'::character varying]::text[])",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [],
+      "indices": [
+        {
+          "name": "idx_routes_courier_date",
+          "unique": false,
+          "column_names": [
+            "courier_id",
+            "route_date"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        },
+        {
+          "name": "idx_routes_status",
+          "unique": false,
+          "column_names": [
+            "establishment_id",
+            "status"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 2
+    },
+    "users": {
+      "colunas": [
+        {
+          "nome": "id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "establishment_id",
+          "tipo": "BIGINT",
+          "nulo": false
+        },
+        {
+          "nome": "full_name",
+          "tipo": "VARCHAR(150)",
+          "nulo": false
+        },
+        {
+          "nome": "email",
+          "tipo": "VARCHAR(180)",
+          "nulo": false
+        },
+        {
+          "nome": "password_hash",
+          "tipo": "VARCHAR(255)",
+          "nulo": false
+        },
+        {
+          "nome": "role",
+          "tipo": "VARCHAR(20)",
+          "nulo": false
+        },
+        {
+          "nome": "active",
+          "tipo": "BOOLEAN",
+          "nulo": false
+        },
+        {
+          "nome": "created_at",
+          "tipo": "TIMESTAMP",
+          "nulo": false
+        }
+      ],
+      "chave_primaria": {
+        "constrained_columns": [
+          "id"
+        ],
+        "name": "users_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "chaves_estrangeiras": [
+        {
+          "name": "users_establishment_id_fkey",
+          "constrained_columns": [
+            "establishment_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "establishments",
+          "referred_columns": [
+            "id"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "restricoes_check": [
+        {
+          "name": "users_role_check",
+          "sqltext": "role::text = ANY (ARRAY['ADMIN'::character varying, 'ATTENDANT'::character varying, 'COURIER'::character varying]::text[])",
+          "comment": null
+        }
+      ],
+      "restricoes_unique": [
+        {
+          "column_names": [
+            "email"
+          ],
+          "name": "users_email_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "indices": [
+        {
+          "name": "idx_users_establishment",
+          "unique": false,
+          "column_names": [
+            "establishment_id"
+          ],
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        },
+        {
+          "name": "users_email_key",
+          "unique": true,
+          "column_names": [
+            "email"
+          ],
+          "duplicates_constraint": "users_email_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ],
+      "registros": 6
+    }
+  },
+  "integridade": [
+    {
+      "relacionamento": "couriers.establishment_id -> establishments.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "couriers.user_id -> users.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "customers.establishment_id -> establishments.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "optimization_runs.establishment_id -> establishments.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "order_status_history.changed_by -> users.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "order_status_history.order_id -> orders.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "orders.assigned_courier_id -> couriers.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "orders.customer_id -> customers.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "orders.establishment_id -> establishments.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "route_stops.order_id -> orders.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "route_stops.route_id -> routes.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "routes.courier_id -> couriers.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "routes.establishment_id -> establishments.id",
+      "orfaos": 0
+    },
+    {
+      "relacionamento": "users.establishment_id -> establishments.id",
+      "orfaos": 0
+    }
+  ],
+  "schema": "sprint11_testes",
+  "postgresql": "17.10 (Homebrew)",
+  "isolamento": {
+    "pedido e cliente": 0,
+    "pedido e entregador": 0,
+    "rota e entregador": 0,
+    "parada e pedido": 0
+  },
+  "integracao": {
+    "contrato_igual_ao_servido": true,
+    "operacoes_http": 37,
+    "pedidos_api_e_sql_mesmos_ids_e_status": 19,
+    "nova_sessao_leu_dados_persistidos": true,
+    "health": {
+      "status": "ok",
+      "database": "connected",
+      "dialect": "postgresql",
+      "server_version": "17.10"
+    }
+  },
+  "situacao": "Aprovado"
+}

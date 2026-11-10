@@ -3,6 +3,7 @@
     backend/.venv/bin/python tools/documentation/export_api_docs.py
 """
 
+import argparse
 import inspect
 import json
 import sys
@@ -36,6 +37,9 @@ def schema_name(schema):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--evidence-dir", type=Path, help="Destino opcional do catálogo JSON desta execução.")
+    args = parser.parse_args()
     target = ROOT / "docs" / "api"
     target.mkdir(parents=True, exist_ok=True)
     contract = app.openapi()
@@ -86,8 +90,10 @@ def main():
                       "dependem da operação; veja o guia de erros e as regras de negócio.", ""]
     (target / "openapi.json").write_text(json.dumps(contract, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (target / "ENDPOINTS.md").write_text("\n".join(lines), encoding="utf-8")
-    (ROOT / "docs/sprint-10/evidencias/catalogo_api.json").write_text(
-        json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if args.evidence_dir:
+        args.evidence_dir.mkdir(parents=True, exist_ok=True)
+        (args.evidence_dir / "catalogo_api.json").write_text(
+            json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{len(catalog)} operações HTTP documentadas; versão {app.version}.")
 
 

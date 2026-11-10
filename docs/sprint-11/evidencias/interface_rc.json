@@ -1,0 +1,30 @@
+[
+  {
+    "largura_px": 320,
+    "situacao": "Aprovado",
+    "viewport": 320,
+    "document": 320,
+    "table_width": 286,
+    "table_scroll": 972
+  },
+  {
+    "largura_px": 390,
+    "situacao": "Aprovado",
+    "viewport": 390,
+    "document": 390,
+    "table_width": 356,
+    "table_scroll": 972
+  },
+  {
+    "largura_px": 768,
+    "situacao": "Aprovado",
+    "viewport": 768,
+    "document": 768,
+    "table_width": 734,
+    "table_scroll": 972
+  },
+  {
+    "caso": "Swagger com endpoints carregados",
+    "situacao": "Aprovado"
+  }
+]

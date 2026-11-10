@@ -3,6 +3,7 @@
 Defina DATABASE_URL para o schema de testes e opcionalmente API_URL.
 """
 
+import argparse
 import json
 import os
 import platform
@@ -21,6 +22,9 @@ from app import models  # noqa: F401
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--evidence-dir", type=Path, default=ROOT / "docs/sprint-10/evidencias")
+    args = parser.parse_args()
     engine = create_engine(os.environ["DATABASE_URL"])
     assert engine.dialect.name == "postgresql", "Verifique a RC no PostgreSQL real."
     inspector = inspect(engine)
@@ -81,7 +85,8 @@ def main():
                                "nova_sessao_leu_dados_persistidos": True,
                                "health": client.get("/health").json()}
     result["situacao"] = "Aprovado"
-    destination = ROOT / "docs/sprint-10/evidencias/banco_e_contrato.json"
+    args.evidence_dir.mkdir(parents=True, exist_ok=True)
+    destination = args.evidence_dir / "banco_e_contrato.json"
     destination.write_text(json.dumps(result, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
     engine.dispose()
     print(f"{len(tables)} tabelas, {len(result['integridade'])} relacionamentos sem órfãos, contrato sincronizado e API/SQL consistentes.")
