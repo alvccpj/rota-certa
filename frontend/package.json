@@ -1,11 +1,12 @@
 {
   "name": "rotacerta-frontend",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.10.0-rc.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "node --test src/sprint08.test.mjs src/sprint09.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
