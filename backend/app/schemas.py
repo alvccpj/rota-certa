@@ -254,9 +254,9 @@ class OrderDetailOut(OrderOut):
 # Busca de endereço
 
 class GeocodeResult(BaseModel):
-    label: str
-    latitude: float
-    longitude: float
+    label: str = Field(min_length=1)
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
 
 
 # Ponto de saída das entregas

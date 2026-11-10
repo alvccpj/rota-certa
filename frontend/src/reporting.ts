@@ -16,7 +16,7 @@ export const DEFAULT_REPORT_END = localDate();
 export function csvCell(value: string | number | null): string {
   const text = value == null ? "" : String(value);
   // Aspas de CSV não impedem a execução de fórmulas ao abrir em uma planilha.
-  const safeText = /^[=+@\-\t\r\n]/.test(text) ? `'${text}` : text;
+  const safeText = /^\s*[=+@\-]|^[\t\r\n]/.test(text) ? `'${text}` : text;
   return `"${safeText.replaceAll('"', '""')}"`;
 }
 

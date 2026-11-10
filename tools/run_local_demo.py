@@ -56,7 +56,7 @@ def main():
         children.append(subprocess.Popen([node, str(vite), '--host', '127.0.0.1',
                                          '--port', str(args.web_port), '--strictPort'],
                                         cwd=ROOT / 'frontend', env=env))
-        print(f'Abra http://localhost:{args.web_port} | admin@rotacerta.com.br | rotacerta123', flush=True)
+        print(f'Abra http://localhost:{args.web_port} | Acesso de demonstração: consulte o README', flush=True)
         print(f'Banco de demonstração: {db_path}. Ctrl+C para encerrar.', flush=True)
         while all(process.poll() is None for process in children):
             time.sleep(0.5)
