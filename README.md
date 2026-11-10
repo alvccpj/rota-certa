@@ -4,11 +4,16 @@ Sistema web de roteirização de entregas para pequenos negócios locais. Centra
 
 Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avançados em Ciência da Computação**, do 8º período do curso de Ciência da Computação da **UNINASSAU**, turma **8NA** (2026.2).
 
-**Grupo 04 | Release Candidate `0.10.0-rc.1` | Sprint 10, 10/11/2026.**
+**Grupo 04 | Release Candidate `0.11.0-rc.1` | Sprint 11, 10/11/2026.**
 O objetivo é organizar a operação de entregas de pequenos negócios: cadastrar
 clientes e pedidos, distribuir a carga entre entregadores, planejar trajetos e
 acompanhar entregas com histórico e indicadores. A verificação desta candidata,
-suas evidências e pendências estão em [Sprint 10](docs/sprint-10/README.md).
+suas evidências e pendências estão em [Sprint 11](docs/sprint-11/README.md).
+
+Para aprender a usar, consulte o [Manual do Usuário](docs/manuais/MANUAL_DO_USUARIO.md).
+Para instalar e manter, consulte o [Manual Técnico](docs/manuais/MANUAL_TECNICO.md).
+O [índice da documentação](docs/README.md) reúne requisitos, casos de uso,
+diagramas finais, regras, APIs e revisão de código.
 
 ## Equipe
 
@@ -54,6 +59,7 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Consolidação funcional | 08 | Atribuição automática, espera e avisos de atraso, revisão de permissões e proteção de dados das rotas |
 | Testes e correções | 09 | 61 casos de teste funcionais, de validação e de navegação na aplicação real, 9 bugs corrigidos com testes de regressão, suíte do backend também no PostgreSQL e documentação técnica atualizada ([Sprint 09](docs/sprint-09/README.md)) |
 | Release Candidate | 10 | Revisão dos fluxos e da interface, ensaio de atribuição concorrente em PostgreSQL, contrato OpenAPI exportado, catálogo de endpoints e documento cumulativo ([Sprint 10](docs/sprint-10/README.md)) |
+| Preparação para entrega | 11 | Manuais do usuário e técnico, documentação final consolidada, revisão de código com correções e organização do repositório ([Sprint 11](docs/sprint-11/README.md)) |
 
 ## Como interpretar as rotas
 
@@ -152,7 +158,7 @@ npm run build --prefix frontend
 Para validar concorrência e o DDL real, execute também a suíte com
 `TEST_DATABASE_URL` apontando para PostgreSQL. Ela recria somente o schema
 descartável `rotacerta_testes_automatizados`. Passo a passo e roteiro de navegador
-em [Sprint 10](docs/sprint-10/README.md). Dependências opcionais do roteiro:
+em [Sprint 11](docs/sprint-11/README.md). Dependências opcionais do roteiro:
 `pip install -r backend/requirements-docs.txt` e Google Chrome instalado.
 
 ### Estrutura do projeto
@@ -198,10 +204,11 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_10.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_10.pdf)
-- Release Candidate e resultados atuais: [`docs/sprint-10/README.md`](docs/sprint-10/README.md)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_11.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_11.pdf)
+- Preparação para entrega e resultados atuais: [`docs/sprint-11/README.md`](docs/sprint-11/README.md)
+- Manuais, requisitos e documentação final: [`docs/README.md`](docs/README.md)
 - APIs (autenticação, exemplos, rotas e modelos): [`docs/api/README.md`](docs/api/README.md)
-- Arquitetura e modelo de dados atuais: [`docs/sprint-09/assets/arquitetura_v09.png`](docs/sprint-09/assets/arquitetura_v09.png) e [`docs/sprint-09/assets/mer_v09.png`](docs/sprint-09/assets/mer_v09.png)
+- Arquitetura, classes e modelo de dados atuais: [`docs/final/DOCUMENTACAO_FINAL.md`](docs/final/DOCUMENTACAO_FINAL.md)
 - Casos de teste e registro de bugs: [`docs/sprint-09/README.md`](docs/sprint-09/README.md)
 - Documento de abertura (Sprint 1): [`RotaCerta_Documento_Abertura_Sprint1.pdf`](RotaCerta_Documento_Abertura_Sprint1.pdf)
 - Evidências por Sprint: [`docs/`](docs/)

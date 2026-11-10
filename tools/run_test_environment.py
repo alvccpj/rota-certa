@@ -68,7 +68,7 @@ def main() -> None:
         children.append(subprocess.Popen(
             [node, str(vite), "--host", "127.0.0.1", "--port", str(web_port), "--strictPort"],
             cwd=ROOT / "frontend", env=env))
-        print(f"API http://127.0.0.1:{api_port} | Sistema http://127.0.0.1:{web_port} | admin@rotacerta.com.br / rotacerta123",
+        print(f"API http://127.0.0.1:{api_port} | Sistema http://127.0.0.1:{web_port} | Acesso de demonstração: consulte o README",
               flush=True)
         while all(child.poll() is None for child in children):
             time.sleep(0.5)

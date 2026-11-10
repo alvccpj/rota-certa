@@ -2,6 +2,12 @@
 
 Este guia mostra como subir o banco, a API e o frontend na sua máquina. Cada comando vem seguido de um comentário (`#` no terminal, `--` no SQL) explicando o que ele faz. Os comentários podem ser copiados junto com o comando.
 
+Os manuais completos da Sprint 11 estão em
+[Manual do Usuário](docs/manuais/MANUAL_DO_USUARIO.md) e
+[Manual Técnico](docs/manuais/MANUAL_TECNICO.md). A referência atual de
+arquitetura, requisitos, casos de uso e regras está em
+[Documentação final](docs/final/DOCUMENTACAO_FINAL.md).
+
 ## Antes de começar: qual terminal você está usando?
 
 Os comandos de terminal aparecem em duas versões, porque a sintaxe muda de um para o outro:
@@ -323,6 +329,29 @@ estão em [`docs/sprint-10/README.md`](docs/sprint-10/README.md).
 O guia da API, com exemplos e catálogo de endpoints, está em
 [`docs/api/README.md`](docs/api/README.md). Para reconstruir o PDF cumulativo,
 use `python tools/documentation/build_sprint10_document.py` após gerar as evidências.
+
+### Preparação da entrega e manuais da Sprint 11
+
+Para os registros atuais, use um schema e portas próprios; isso preserva as
+pastas de evidências históricas:
+
+```bash
+python tools/run_test_environment.py --schema sprint11_testes --api-port 8021 --web-port 5191
+```
+
+Em outro terminal, com o mesmo ambiente virtual ativado:
+
+```bash
+python tools/documentation/capture_sprint11_evidence.py
+python tools/documentation/export_api_docs.py --evidence-dir docs/sprint-11/evidencias
+```
+
+O roteiro repete os fluxos principais e captura as telas usadas nos manuais.
+Para a inspeção, configure `DATABASE_URL` para o schema `sprint11_testes` e
+`API_URL=http://127.0.0.1:8021`, depois execute
+`python tools/documentation/verify_release.py --evidence-dir docs/sprint-11/evidencias`.
+O PDF completo é reconstruído com `python tools/documentation/build_sprint11_document.py`.
+O [registro da Sprint 11](docs/sprint-11/README.md) descreve resultados e pendências.
 
 ## Recomeçar com o banco limpo
 

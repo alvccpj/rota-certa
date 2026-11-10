@@ -1,0 +1,50 @@
+{
+  "executado_em": "2026-11-10T11:14:52-03:00",
+  "procedimento": [
+    "pg_dump --format=custom --no-owner --no-acl",
+    "createdb em destino descartável novo",
+    "pg_restore --no-owner --no-acl",
+    "comparar contagens e SHA-256 de todas as linhas das nove tabelas do schema sprint11_testes"
+  ],
+  "situacao": "Aprovado",
+  "dados_origem_e_destino_identicos": true,
+  "tabelas": {
+    "couriers": {
+      "registros": 2,
+      "sha256_linhas": "6afea0d818b51aaa9d45a900007a8fda9a5aa24a31f37c6e0b1e5206ac72f8d3"
+    },
+    "customers": {
+      "registros": 17,
+      "sha256_linhas": "fcbeffd55cf5b5a5383486ea3a71708fc57073c7871941804823527497afecf9"
+    },
+    "establishments": {
+      "registros": 2,
+      "sha256_linhas": "17cb0d282f40de6f05414ee2d735f84b336be111b18862b395f215591802bbd6"
+    },
+    "optimization_runs": {
+      "registros": 5,
+      "sha256_linhas": "3ce1ec8b81248d0247ad1de994bd36dc11c1a438269e82da57ef473c709884df"
+    },
+    "order_status_history": {
+      "registros": 48,
+      "sha256_linhas": "f4d6bb172bc22847dc2a7ee07bc35967300ebe1b5e770c87fe26f27e5684c801"
+    },
+    "orders": {
+      "registros": 19,
+      "sha256_linhas": "429280368d8a61ee307601d4166bbc26dd31b2928ce67eb4d43b212e9ef7219f"
+    },
+    "route_stops": {
+      "registros": 13,
+      "sha256_linhas": "30b5ee039a652450f24672f4cb6a37550f59a55ca5c5ab2e89f9feb0102e9e75"
+    },
+    "routes": {
+      "registros": 2,
+      "sha256_linhas": "d2e5ce4d14359316e18b58eda74475cb55a739c717f40783c9743c5e92823372"
+    },
+    "users": {
+      "registros": 6,
+      "sha256_linhas": "3388f12e5f5c3eab16785b06fa956afe0d567239952d5c3a48caa7e6673bcb78"
+    }
+  },
+  "observacao": "Somente dados de teste; nenhum backup ou senha foi adicionado ao repositório."
+}

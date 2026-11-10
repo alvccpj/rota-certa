@@ -1,0 +1,3 @@
+Comando: docker compose config --quiet
+Código de saída: 0
+Configuração válida; containers não iniciados nesta rodada.

@@ -36,6 +36,11 @@ for (const [input, expected] of [
   ["\t=1+1", `"'\t=1+1"`],
   ["\r=1+1", `"'\r=1+1"`],
   ["\n=1+1", `"'\n=1+1"`],
+  [" =1+1", `"' =1+1"`],
+  ["  +1+1", `"'  +1+1"`],
+  ["  -1+1", `"'  -1+1"`],
+  ["  @SUM(A1)", `"'  @SUM(A1)"`],
+  [" \t=1+1", `"' \t=1+1"`],
 ]) {
   test(`CSV neutralizes formula prefix ${JSON.stringify(input[0])}`, () => {
     assert.equal(csvCell(input), expected);

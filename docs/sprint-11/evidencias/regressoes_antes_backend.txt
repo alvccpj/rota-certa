@@ -1,0 +1,893 @@
+test_comparator_accepts_exact_limits (test_delivery_s11.CompareLimitsTestCase.test_comparator_accepts_exact_limits) ... ok
+test_public_comparator_rejects_more_than_12000_stops_in_total (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_12000_stops_in_total) ... FAIL
+test_public_comparator_rejects_more_than_500_stops_per_route (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_500_stops_per_route) ... FAIL
+test_public_comparator_rejects_more_than_64_routes (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_64_routes) ... FAIL
+test_empty_search_and_valid_coordinates_remain_supported (test_delivery_s11.GeocoderBoundaryTestCase.test_empty_search_and_valid_coordinates_remain_supported) ... ok
+test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) ...
+  test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='nan', longitude='0') ... ERROR
+  test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='91', longitude='0') ... FAIL
+  test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='0', longitude='181') ... FAIL
+  test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='texto', longitude='0') ... ERROR
+test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) ...
+  test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload={'error': 'temporariamente indisponível'}) ... ERROR
+  test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[None]) ... ERROR
+  test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[{'display_name': 'Local sem coordenadas'}]) ... ERROR
+  test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[{'lat': '-8', 'lon': '-34', 'address': 'inválido'}]) ... ERROR
+
+======================================================================
+ERROR: test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='nan', longitude='0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 30, in test_invalid_upstream_coordinates_do_not_reach_the_map
+    response = self.search([{"lat": latitude, "lon": longitude, "display_name": "Local"}])
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 339, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'latitude'
+when serializing list item 0
+
+======================================================================
+ERROR: test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='texto', longitude='0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 30, in test_invalid_upstream_coordinates_do_not_reach_the_map
+    response = self.search([{"lat": latitude, "lon": longitude, "display_name": "Local"}])
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+    result = context.run(func, *args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/routers/geocoding.py", line 23, in geocode
+    return geocoding.search_address(q.strip(), near)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 53, in search_address
+    GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
+                                                     ~~~~~^^^^^^^^^^^^^
+ValueError: could not convert string to float: 'texto'
+
+======================================================================
+ERROR: test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload={'error': 'temporariamente indisponível'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 23, in test_invalid_upstream_structure_returns_manual_map_guidance
+    response = self.search(payload)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+    result = context.run(func, *args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/routers/geocoding.py", line 23, in geocode
+    return geocoding.search_address(q.strip(), near)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 53, in search_address
+    GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
+                        ~~~~~~~~~~~~^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 16, in format_label
+    address = item.get("address") or {}
+              ^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
+
+======================================================================
+ERROR: test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[None])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 23, in test_invalid_upstream_structure_returns_manual_map_guidance
+    response = self.search(payload)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+    result = context.run(func, *args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/routers/geocoding.py", line 23, in geocode
+    return geocoding.search_address(q.strip(), near)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 53, in search_address
+    GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
+                        ~~~~~~~~~~~~^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 16, in format_label
+    address = item.get("address") or {}
+              ^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+======================================================================
+ERROR: test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[{'display_name': 'Local sem coordenadas'}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 23, in test_invalid_upstream_structure_returns_manual_map_guidance
+    response = self.search(payload)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+    result = context.run(func, *args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/routers/geocoding.py", line 23, in geocode
+    return geocoding.search_address(q.strip(), near)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 53, in search_address
+    GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
+                                                           ~~~~^^^^^^^
+KeyError: 'lat'
+
+======================================================================
+ERROR: test_invalid_upstream_structure_returns_manual_map_guidance (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_structure_returns_manual_map_guidance) (payload=[{'lat': '-8', 'lon': '-34', 'address': 'inválido'}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 23, in test_invalid_upstream_structure_returns_manual_map_guidance
+    response = self.search(payload)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 17, in search
+    return self.client.get("/geocode", headers=self.admin, params={"q": "Rua do Teste"})
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 479, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 451, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 354, in handle_request
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py", line 351, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 347, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 454, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/from_thread.py", line 272, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+    result = context.run(func, *args)
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/routers/geocoding.py", line 23, in geocode
+    return geocoding.search_address(q.strip(), near)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 53, in search_address
+    GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
+                        ~~~~~~~~~~~~^^^^^^
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/app/geocoding.py", line 17, in format_label
+    road = address.get("road") or address.get("pedestrian")
+           ^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
+
+======================================================================
+FAIL: test_public_comparator_rejects_more_than_12000_stops_in_total (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_12000_stops_in_total)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 55, in test_public_comparator_rejects_more_than_12000_stops_in_total
+    with self.assertRaises(ValidationError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_public_comparator_rejects_more_than_500_stops_per_route (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_500_stops_per_route)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 51, in test_public_comparator_rejects_more_than_500_stops_per_route
+    with self.assertRaises(ValidationError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_public_comparator_rejects_more_than_64_routes (test_delivery_s11.CompareLimitsTestCase.test_public_comparator_rejects_more_than_64_routes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 47, in test_public_comparator_rejects_more_than_64_routes
+    with self.assertRaises(ValidationError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='91', longitude='0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 31, in test_invalid_upstream_coordinates_do_not_reach_the_map
+    self.assertEqual(response.status_code, 503, response.text)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 503 : [{"label":"Local","latitude":91.0,"longitude":0.0}]
+
+======================================================================
+FAIL: test_invalid_upstream_coordinates_do_not_reach_the_map (test_delivery_s11.GeocoderBoundaryTestCase.test_invalid_upstream_coordinates_do_not_reach_the_map) (latitude='0', longitude='181')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/arthur/Desktop/Faculdade/rota-certa/backend/tests/test_delivery_s11.py", line 31, in test_invalid_upstream_coordinates_do_not_reach_the_map
+    self.assertEqual(response.status_code, 503, response.text)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 200 != 503 : [{"label":"Local","latitude":0.0,"longitude":181.0}]
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.643s
+
+FAILED (failures=5, errors=6)

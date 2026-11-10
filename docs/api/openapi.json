@@ -3,7 +3,7 @@
   "info": {
     "title": "RotaCerta API",
     "description": "API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
-    "version": "0.10.0-rc.1"
+    "version": "0.11.0-rc.1"
   },
   "paths": {
     "/auth/login": {
@@ -2151,6 +2151,7 @@
               "$ref": "#/components/schemas/StopInput"
             },
             "type": "array",
+            "maxItems": 500,
             "title": "Stops"
           }
         },
@@ -2785,14 +2786,19 @@
         "properties": {
           "label": {
             "type": "string",
+            "minLength": 1,
             "title": "Label"
           },
           "latitude": {
             "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
             "title": "Latitude"
           },
           "longitude": {
             "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
             "title": "Longitude"
           }
         },
@@ -3057,6 +3063,7 @@
               "$ref": "#/components/schemas/CourierRouteInput"
             },
             "type": "array",
+            "maxItems": 64,
             "minItems": 1,
             "title": "Routes"
           },

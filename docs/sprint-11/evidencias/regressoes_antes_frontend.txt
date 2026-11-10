@@ -1,0 +1,189 @@
+
+> rotacerta-frontend@0.10.0-rc.1 test
+> node --test src/sprint08.test.mjs src/sprint09.test.mjs
+
+✔ CSV neutralizes formula prefix "=" (0.381208ms)
+✔ CSV neutralizes formula prefix "+" (0.058166ms)
+✔ CSV neutralizes formula prefix "-" (0.041541ms)
+✔ CSV neutralizes formula prefix "@" (0.043083ms)
+✔ CSV neutralizes formula prefix "\t" (0.036667ms)
+✔ CSV neutralizes formula prefix "\r" (0.02975ms)
+✔ CSV neutralizes formula prefix "\n" (0.028875ms)
+✖ CSV neutralizes formula prefix " " (0.375417ms)
+✖ CSV neutralizes formula prefix " " (0.102125ms)
+✖ CSV neutralizes formula prefix " " (0.095791ms)
+✖ CSV neutralizes formula prefix " " (0.059208ms)
+✖ CSV neutralizes formula prefix " " (0.056542ms)
+✔ CSV preserves text, accents, separators, quotes, nulls and numeric IDs (0.045125ms)
+✔ CSV escapes embedded quotes even in formula payloads (0.048875ms)
+✔ Stop timing shows window, dated ETA and waiting separately (4.531166ms)
+✔ Late stop displays the specific delay without an on-time label (0.245167ms)
+✔ No-window and missing-ETA stops do not claim an on-time estimate (0.152833ms)
+✔ Open-ended delivery windows are supported (0.315333ms)
+✔ Navigation uses encoded coordinates, a fixed HTTPS host and safe new-tab attributes (0.310708ms)
+✔ Navigation rejects invalid coordinates and accepts the equator and meridian (0.384834ms)
+✔ Cada perfil tem a sua página inicial (0.442375ms)
+✔ Depois do login, ADMIN pedindo /relatorios vai para /relatorios (0.111125ms)
+✔ Depois do login, ADMIN pedindo /clientes?busca=Ana vai para /clientes?busca=Ana (0.088125ms)
+✔ Depois do login, ADMIN pedindo /usuarios/3/editar vai para /usuarios/3/editar (0.038291ms)
+✔ Depois do login, ATTENDANT pedindo /pedidos/2 vai para /pedidos/2 (0.049417ms)
+✔ Depois do login, ATTENDANT pedindo /usuarios vai para /painel (0.048459ms)
+✔ Depois do login, ATTENDANT pedindo /desempenho vai para /painel (0.029458ms)
+✔ Depois do login, ADMIN pedindo /entregas vai para /painel (0.0295ms)
+✔ Depois do login, COURIER pedindo /pedidos/2 vai para /pedidos/2 (0.04775ms)
+✔ Depois do login, COURIER pedindo /relatorios vai para /entregas (0.083709ms)
+✔ Depois do login, COURIER pedindo /pedidos/2/editar vai para /entregas (0.04575ms)
+✔ Depois do login, COURIER pedindo /pedidos/novo vai para /entregas (0.039666ms)
+✔ Depois do login, ADMIN pedindo /login vai para /painel (0.019875ms)
+✔ Depois do login, ADMIN pedindo /cadastro vai para /painel (0.017417ms)
+✔ Depois do login, ADMIN pedindo //site-externo.com/painel vai para /painel (0.020166ms)
+✔ Depois do login, ADMIN pedindo https://site-externo.com vai para /painel (0.016042ms)
+✔ Depois do login, ADMIN pedindo undefined vai para /painel (0.016958ms)
+✔ A regra de acesso ignora barra final, busca e âncora (0.034917ms)
+✔ ID inválido no endereço é tratado como registro não encontrado (16.780125ms)
+✔ Erros de formulário continuam destacando o campo (0.205625ms)
+✔ Mensagem de regra de negócio da API é exibida como veio (0.113833ms)
+✔ Falha de rede mostra orientação ao usuário (0.188ms)
+✔ Validação do formulário: e-mail sem domínio (0.048958ms)
+✔ Validação do formulário: e-mail vazio (0.019458ms)
+✔ Validação do formulário: telefone sem DDD (0.047875ms)
+✔ Validação do formulário: telefone começando com zero (0.019625ms)
+✔ Validação do formulário: senha curta (0.024875ms)
+✔ Validação do formulário: senha sem número (0.027041ms)
+✔ Validação do formulário: nome só com números (0.128042ms)
+✔ Validação do formulário: peso zero (0.041542ms)
+✔ Validação do formulário: peso acima do limite (0.022333ms)
+✔ Validação do formulário: peso com texto (0.023041ms)
+✔ Validação do formulário: telefone válido (0.023292ms)
+✔ Validação do formulário: senha válida (0.035916ms)
+✔ Números aceitam vírgula decimal e telefones são formatados (0.035333ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 50
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 169.170417
+
+✖ failing tests:
+
+test at src/sprint08.test.mjs:45:3
+✖ CSV neutralizes formula prefix " " (0.375417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '" =1+1"'
+  - `"' =1+1"`
+
+      at TestContext.<anonymous> (file:///Users/arthur/Desktop/Faculdade/rota-certa/frontend/src/sprint08.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '" =1+1"',
+    expected: `"' =1+1"`,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/sprint08.test.mjs:45:3
+✖ CSV neutralizes formula prefix " " (0.102125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '"  +1+1"'
+  - `"'  +1+1"`
+
+      at TestContext.<anonymous> (file:///Users/arthur/Desktop/Faculdade/rota-certa/frontend/src/sprint08.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '"  +1+1"',
+    expected: `"'  +1+1"`,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/sprint08.test.mjs:45:3
+✖ CSV neutralizes formula prefix " " (0.095791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '"  -1+1"'
+  - `"'  -1+1"`
+
+      at TestContext.<anonymous> (file:///Users/arthur/Desktop/Faculdade/rota-certa/frontend/src/sprint08.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '"  -1+1"',
+    expected: `"'  -1+1"`,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/sprint08.test.mjs:45:3
+✖ CSV neutralizes formula prefix " " (0.059208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '"  @SUM(A1)"'
+  - `"'  @SUM(A1)"`
+
+      at TestContext.<anonymous> (file:///Users/arthur/Desktop/Faculdade/rota-certa/frontend/src/sprint08.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '"  @SUM(A1)"',
+    expected: `"'  @SUM(A1)"`,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/sprint08.test.mjs:45:3
+✖ CSV neutralizes formula prefix " " (0.056542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '" \t=1+1"'
+  - `"' \t=1+1"`
+
+      at TestContext.<anonymous> (file:///Users/arthur/Desktop/Faculdade/rota-certa/frontend/src/sprint08.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '" \t=1+1"',
+    expected: `"' \t=1+1"`,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -47,9 +47,23 @@ def search_address(query: str, near: tuple[float, float] | None = None) -> list[
         )
         response.raise_for_status()
         items = response.json()
-    except (httpx.HTTPError, ValueError) as exc:
+        if not isinstance(items, list):
+            raise ValueError("Resposta de geocodificação fora do formato esperado.")
+        results = []
+        for item in items:
+            if not isinstance(item, dict):
+                raise ValueError("Endereço fora do formato esperado.")
+            address = item.get("address")
+            if address is not None:
+                if not isinstance(address, dict):
+                    raise ValueError("Endereço fora do formato esperado.")
+                for key in ("road", "pedestrian", "city", "town", "village", "municipality", "house_number",
+                            "suburb", "neighbourhood", "quarter", "ISO3166-2-lvl4", "state"):
+                    if address.get(key) is not None and not isinstance(address[key], str):
+                        raise ValueError("Campo textual de endereço fora do formato esperado.")
+            results.append(GeocodeResult(
+                label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]),
+            ))
+        return results
+    except (httpx.HTTPError, ValueError, TypeError, KeyError) as exc:
         raise GeocodingUnavailable from exc
-    return [
-        GeocodeResult(label=format_label(item), latitude=float(item["lat"]), longitude=float(item["lon"]))
-        for item in items
-    ]

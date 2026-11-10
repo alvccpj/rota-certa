@@ -26,7 +26,7 @@ Na Sprint 08, `route_stops` ganhou a coluna `waiting_minutes`, com a espera prev
 
 Na Sprint 09 os dados de demonstração passaram a gravar as janelas de entrega em UTC. Antes, no SQLite do modo de demonstração, elas ficavam 3 horas antes do previsto (BUG-07). O modelo de dados atualizado está em [`docs/sprint-09/assets/mer_v09.png`](../docs/sprint-09/assets/mer_v09.png). A suíte de testes pode rodar no PostgreSQL com `TEST_DATABASE_URL` (veja `COMO-RODAR.md`).
 
-## Estrutura final da Release Candidate
+## Estrutura da Release Candidate da Sprint 10
 
 Na Sprint 10, versão `0.10.0-rc.1`, o DDL continua em `schema.sql`; não foi
 necessária uma nova migração. As nove tabelas e suas colunas foram comparadas
@@ -65,3 +65,17 @@ Evidências: [`banco_e_contrato.json`](../docs/sprint-10/evidencias/banco_e_cont
 Para repetir a inspeção, execute `tools/documentation/verify_release.py`
 com `DATABASE_URL` apontando para o schema de testes. Ele consulta a estrutura,
 procura referências órfãs e cruza os IDs e situações da API com o SQL em outra conexão.
+
+## Conferência na Sprint 11
+
+A versão `0.11.0-rc.1` mantém o mesmo DDL: nove tabelas e 14 FKs, sem nova
+migração. A inspeção foi repetida no schema descartável `sprint11_testes`,
+comparando colunas com o ORM e consultando órfãos e isolamento. Os resultados
+estão em [`banco_e_contrato.json`](../docs/sprint-11/evidencias/banco_e_contrato.json).
+Também foi ensaiado backup/restauração em um segundo banco descartável.
+
+As instruções de configuração, manutenção e backup ficam no
+[Manual Técnico](../docs/manuais/MANUAL_TECNICO.md). Os diagramas e as regras
+vigentes estão na [documentação final](../docs/final/DOCUMENTACAO_FINAL.md).
+Para nova inspeção sem sobrescrever a Sprint 10, use
+`python tools/documentation/verify_release.py --evidence-dir docs/sprint-11/evidencias`.

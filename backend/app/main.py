@@ -19,7 +19,7 @@ from app.database import (
 )
 from app.optimizer.routing import shutdown_pools
 from app.routers import assignment, auth, customers, dashboard, geocoding, optimizer, orders, routes, users
-from app.seed import DEMO_PASSWORD, seed_demo_data
+from app.seed import seed_demo_data
 
 
 def prepare_database() -> None:
@@ -31,7 +31,7 @@ def prepare_database() -> None:
         if settings.seed_demo_data:
             with SessionLocal() as db:
                 if seed_demo_data(db):
-                    logger.info("Dados de demonstração criados. Senha dos usuários: %s", DEMO_PASSWORD)
+                    logger.info("Dados de demonstração criados.")
     except Exception as exc:  # A API continua no ar e /health informa a falha.
         logger.error("Não foi possível preparar o banco de dados: %s", exc)
 
@@ -45,7 +45,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="RotaCerta API",
-    version="0.10.0-rc.1",
+    version="0.11.0-rc.1",
     description="API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
     lifespan=lifespan,
 )
