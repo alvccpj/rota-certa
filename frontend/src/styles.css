@@ -624,6 +624,8 @@ legend {
 /* Tabela */
 
 .table-wrap {
+  /* Ancora os rótulos absolutos de acessibilidade dentro da área rolável. */
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 12px;

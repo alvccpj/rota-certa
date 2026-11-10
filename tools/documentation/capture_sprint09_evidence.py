@@ -16,6 +16,7 @@ import os
 import re
 import time
 import traceback
+from unittest import SkipTest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -23,7 +24,7 @@ import httpx
 from playwright.sync_api import Page, expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "docs" / "sprint-09"
+OUT = Path(os.environ.get("EVIDENCE_DIR", ROOT / "docs" / "sprint-09"))
 ASSETS = OUT / "assets"
 EVIDENCE = OUT / "evidencias"
 API = os.environ.get("API_URL", "http://127.0.0.1:8019")
@@ -52,6 +53,9 @@ def record(case_id: str, kind: str, module: str, title: str, procedure: list[str
         try:
             entry["obtido"] = fn()
             entry["situacao"] = "Aprovado"
+        except SkipTest as exc:
+            entry["obtido"] = str(exc)
+            entry["situacao"] = "Não executado"
         except Exception as exc:  # o caso falho é registrado e os demais continuam
             entry["obtido"] = f"{type(exc).__name__}: {exc}".strip()[:600]
             entry["situacao"] = "Reprovado"
@@ -261,8 +265,9 @@ def main() -> None:
             admin.goto(APP + "/pedidos")
             admin.get_by_role("group", name="Filtrar por situação").get_by_role("button", name=re.compile("^Pendente")).click()
             admin.wait_for_url(re.compile(r"situacao=PENDING"))
-            rows = admin.locator("tbody tr").all_inner_texts()
             pending = [o for o in api.call("GET", "/orders").json() if o["status"] == "PENDING"]
+            expect(admin.locator("tbody tr")).to_have_count(len(pending))
+            rows = admin.locator("tbody tr").all_inner_texts()
             assert rows and all("Pendente" in row for row in rows), rows
             assert len(rows) == len(pending), (len(rows), len(pending))
             return f"{len(rows)} linhas exibidas, todas Pendente; API confirma {len(pending)} pendentes; endereço {path_of(admin)}."
@@ -373,7 +378,7 @@ def main() -> None:
                 "Rotas geradas pelo kernel CUDA com a mesma distância total do modo sequencial.", "f16_rotas_gpu.png")
         def _():
             if not capabilities.get("gpu_available"):
-                raise RuntimeError(f"GPU indisponível nesta máquina: {capabilities.get('gpu_reason')}")
+                raise SkipTest(f"GPU indisponível nesta máquina: {capabilities.get('gpu_reason')}")
             admin.goto(APP + "/rotas")
             admin.get_by_role("radio", name="GPU (CUDA)").click()
             admin.get_by_role("button", name="Gerar rotas").click()
@@ -466,13 +471,13 @@ def main() -> None:
             assert count >= 4, count
             return f"{count} eventos do pedido #{state['order']}; responsáveis: {sorted(authors)}."
 
-        @record("F22", "Funcional", "Desempenho", "Comparação de desempenho sequencial, CPU e GPU",
-                ["Chamar POST /optimizer/benchmark com 8 entregadores x 60 paradas, 1, 2 e 4 processos e GPU"],
+        @record("F22", "Funcional", "Desempenho", "Comparação de desempenho nos modos disponíveis",
+                ["Chamar POST /optimizer/benchmark com 8 entregadores x 60 paradas, 1, 2 e 4 processos; incluir GPU quando disponível"],
                 "Tempos, speedup e eficiência calculados; todos os modos produzem as mesmas rotas.")
         def _():
             response = api.call("POST", "/optimizer/benchmark", json={
                 "source": "SYNTHETIC", "couriers": 8, "stops_per_courier": 60, "worker_counts": [1, 2, 4],
-                "include_gpu": True, "repetitions": 1, "seed": 9})
+                "include_gpu": bool(capabilities.get("gpu_available")), "repetitions": 1, "seed": 9})
             assert response.status_code == 200, response.text
             data = response.json()
             rows = data["rows"]
@@ -857,8 +862,9 @@ def main() -> None:
             page.get_by_role("link", name="Clientes").click()
             page.wait_for_url("**/clientes")
             expect(nav).to_be_hidden()
+            page.wait_for_load_state("networkidle")
             overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
-            assert hidden_before and overflow <= 0
+            assert hidden_before and overflow <= 0, {"hidden_before": hidden_before, "overflow_px": overflow}
             return f"Fechado no início; aberto após Menu; navegou para {path_of(page)} e fechou; rolagem horizontal {overflow}px."
 
         @record("N14", "Navegação", "Fluxos", "Continuidade entre lista, detalhe e edição",
@@ -969,14 +975,18 @@ def main() -> None:
     summary = {
         "executado_em": datetime.now(RECIFE).isoformat(timespec="seconds"),
         "api": API, "app": APP, "banco": health, "gpu": {k: capabilities.get(k) for k in ("gpu_available", "gpu_name", "gpu_reason")},
-        "total": len(results), "aprovados": approved, "reprovados": len(results) - approved,
+        "total": len(results), "aprovados": approved,
+        "reprovados": sum(r["situacao"] == "Reprovado" for r in results),
+        "nao_executados": sum(r["situacao"] == "Não executado" for r in results),
         "por_tipo": {kind: {"total": sum(1 for r in results if r["tipo"] == kind),
                             "aprovados": sum(1 for r in results if r["tipo"] == kind and r["situacao"] == "Aprovado")}
                      for kind in ("Funcional", "Validação", "Navegação")},
         "casos": results,
     }
     (EVIDENCE / "casos_de_teste.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{approved}/{len(results)} casos aprovados. Registro em docs/sprint-09/evidencias/casos_de_teste.json")
+    print(f"{approved}/{len(results)} casos aprovados. Registro em {EVIDENCE / 'casos_de_teste.json'}")
+    if summary["reprovados"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

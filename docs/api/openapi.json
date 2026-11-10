@@ -1,0 +1,4255 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RotaCerta API",
+    "description": "API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
+    "version": "0.10.0-rc.1"
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Establishment",
+        "description": "Cadastra um novo estabelecimento e o seu primeiro administrador.",
+        "operationId": "register_establishment_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Current User",
+        "operationId": "current_user_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "List Users",
+        "operationId": "list_users_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Users Users Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create User",
+        "operationId": "create_user_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get User",
+        "operationId": "get_user_users__user_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update User",
+        "operationId": "update_user_users__user_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Deactivate User",
+        "description": "Desativa o usuário; o registro é preservado por causa do histórico.",
+        "operationId": "deactivate_user_users__user_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/couriers": {
+      "get": {
+        "tags": [
+          "users",
+          "couriers"
+        ],
+        "summary": "List Couriers",
+        "operationId": "list_couriers_couriers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CourierOption"
+                  },
+                  "type": "array",
+                  "title": "Response List Couriers Couriers Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/couriers/me/availability": {
+      "patch": {
+        "tags": [
+          "users",
+          "couriers"
+        ],
+        "summary": "Update My Availability",
+        "description": "O entregador informa se está disponível para receber pedidos.",
+        "operationId": "update_my_availability_couriers_me_availability_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvailabilityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourierOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/customers": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "List Customers",
+        "operationId": "list_customers_customers_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerOut"
+                  },
+                  "title": "Response List Customers Customers Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "Create Customer",
+        "operationId": "create_customer_customers_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "Read Customer",
+        "operationId": "read_customer_customers__customer_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "Update Customer",
+        "operationId": "update_customer_customers__customer_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "Delete Customer",
+        "operationId": "delete_customer_customers__customer_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/auto-assign": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Auto Assign",
+        "operationId": "auto_assign_orders_auto_assign_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoAssignOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "List Orders",
+        "operationId": "list_orders_orders_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "PENDING",
+                    "ASSIGNED",
+                    "IN_ROUTE",
+                    "DELIVERED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderOut"
+                  },
+                  "title": "Response List Orders Orders Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Create Order",
+        "operationId": "create_order_orders_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get Order",
+        "operationId": "get_order_orders__order_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Update Order",
+        "operationId": "update_order_orders__order_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Delete Order",
+        "operationId": "delete_order_orders__order_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}/status": {
+      "patch": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Change Order Status",
+        "operationId": "change_order_status_orders__order_id__status_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/geocode": {
+      "get": {
+        "tags": [
+          "geocoding"
+        ],
+        "summary": "Geocode",
+        "description": "Sugere coordenadas para um endereço digitado no cadastro do pedido.",
+        "operationId": "geocode_geocode_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 200,
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GeocodeResult"
+                  },
+                  "title": "Response Geocode Geocode Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/establishment/depot": {
+      "get": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Get Depot",
+        "operationId": "get_depot_establishment_depot_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepotOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Update Depot",
+        "description": "Define o endereço e a posição de onde saem e para onde voltam as rotas.",
+        "operationId": "update_depot_establishment_depot_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepotIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepotOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/routes": {
+      "get": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "List Routes",
+        "description": "Rotas do dia (hoje, se a data não for informada) e as que ainda estão em andamento.",
+        "operationId": "list_routes_routes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutesOverviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/routes/generate": {
+      "post": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Generate Routes",
+        "operationId": "generate_routes_routes_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteGenerateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteGenerationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/routes/me": {
+      "get": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "My Route",
+        "operationId": "my_route_routes_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyRouteOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/routes/{route_id}/start": {
+      "patch": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Start Route",
+        "operationId": "start_route_routes__route_id__start_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Route Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/optimizer/capabilities": {
+      "get": {
+        "tags": [
+          "optimizer"
+        ],
+        "summary": "Capabilities",
+        "description": "Núcleos de CPU disponíveis e se o modo GPU pode ser usado nesta máquina.",
+        "operationId": "capabilities_optimizer_capabilities_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapabilitiesOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/optimizer/benchmark": {
+      "post": {
+        "tags": [
+          "optimizer"
+        ],
+        "summary": "Run Benchmark",
+        "description": "Executa os modos sobre a mesma entrada e registra tempo, speedup e eficiência.",
+        "operationId": "run_benchmark_optimizer_benchmark_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenchmarkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/optimizer/runs": {
+      "get": {
+        "tags": [
+          "optimizer"
+        ],
+        "summary": "List Runs",
+        "operationId": "list_runs_optimizer_runs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OptimizationRunOut"
+                  },
+                  "title": "Response List Runs Optimizer Runs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/optimizer/compare": {
+      "post": {
+        "tags": [
+          "optimizer"
+        ],
+        "summary": "Compare Optimizer Modes",
+        "description": "Compara o mesmo algoritmo nos modos sequencial e paralelo (entrada livre, da Sprint 02).",
+        "operationId": "compare_optimizer_modes_optimizer_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Compare Optimizer Modes Optimizer Compare Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/summary": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Summary",
+        "description": "Consolida pedidos, entregadores, rotas e desempenho no período.",
+        "operationId": "summary_dashboard_summary_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/report": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Report",
+        "description": "Lista os dados operacionais usados na exportação CSV da interface.",
+        "operationId": "report_dashboard_report_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "PENDING",
+                    "ASSIGNED",
+                    "IN_ROUTE",
+                    "DELIVERED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "courier_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Courier Id"
+            }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Priority"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DashboardReportRowOut"
+                  },
+                  "title": "Response Report Dashboard Report Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/history": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "History",
+        "description": "Exibe o histórico operacional integrado para auditoria e acompanhamento.",
+        "operationId": "history_dashboard_history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ORDER_STATUS",
+                    "OPTIMIZATION"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "PENDING",
+                    "ASSIGNED",
+                    "IN_ROUTE",
+                    "DELIVERED",
+                    "CANCELLED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperationalHistoryEventOut"
+                  },
+                  "title": "Response History Dashboard History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssignedCourierOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name"
+        ],
+        "title": "AssignedCourierOut"
+      },
+      "AssignedOrderOut": {
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "courier_id": {
+            "type": "integer",
+            "title": "Courier Id"
+          },
+          "courier_name": {
+            "type": "string",
+            "title": "Courier Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "courier_id",
+          "courier_name"
+        ],
+        "title": "AssignedOrderOut"
+      },
+      "AutoAssignOut": {
+        "properties": {
+          "assigned": {
+            "items": {
+              "$ref": "#/components/schemas/AssignedOrderOut"
+            },
+            "type": "array",
+            "title": "Assigned"
+          },
+          "skipped": {
+            "items": {
+              "$ref": "#/components/schemas/SkippedOrderOut"
+            },
+            "type": "array",
+            "title": "Skipped"
+          }
+        },
+        "type": "object",
+        "title": "AutoAssignOut"
+      },
+      "AvailabilityIn": {
+        "properties": {
+          "availability": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "BUSY",
+              "OFFLINE"
+            ],
+            "title": "Availability"
+          }
+        },
+        "type": "object",
+        "required": [
+          "availability"
+        ],
+        "title": "AvailabilityIn"
+      },
+      "BenchmarkIn": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "REAL",
+              "SYNTHETIC"
+            ],
+            "title": "Source",
+            "default": "SYNTHETIC"
+          },
+          "couriers": {
+            "type": "integer",
+            "maximum": 64.0,
+            "minimum": 1.0,
+            "title": "Couriers",
+            "default": 16
+          },
+          "stops_per_courier": {
+            "type": "integer",
+            "maximum": 500.0,
+            "minimum": 2.0,
+            "title": "Stops Per Courier",
+            "default": 200
+          },
+          "worker_counts": {
+            "items": {
+              "type": "integer",
+              "maximum": 64.0,
+              "minimum": 1.0
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Worker Counts"
+          },
+          "include_gpu": {
+            "type": "boolean",
+            "title": "Include Gpu",
+            "default": true
+          },
+          "repetitions": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Repetitions",
+            "default": 3
+          },
+          "seed": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "default": 42
+          }
+        },
+        "type": "object",
+        "title": "BenchmarkIn"
+      },
+      "BenchmarkOut": {
+        "properties": {
+          "run_group": {
+            "type": "string",
+            "title": "Run Group"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "REAL",
+              "SYNTHETIC"
+            ],
+            "title": "Source"
+          },
+          "courier_count": {
+            "type": "integer",
+            "title": "Courier Count"
+          },
+          "order_count": {
+            "type": "integer",
+            "title": "Order Count"
+          },
+          "repetitions": {
+            "type": "integer",
+            "title": "Repetitions"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/OptimizationRunOut"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_group",
+          "source",
+          "courier_count",
+          "order_count",
+          "repetitions",
+          "rows"
+        ],
+        "title": "BenchmarkOut"
+      },
+      "CapabilitiesOut": {
+        "properties": {
+          "cpu_count": {
+            "type": "integer",
+            "title": "Cpu Count"
+          },
+          "gpu_available": {
+            "type": "boolean",
+            "title": "Gpu Available"
+          },
+          "gpu_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpu Name"
+          },
+          "gpu_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpu Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cpu_count",
+          "gpu_available",
+          "gpu_name",
+          "gpu_reason"
+        ],
+        "title": "CapabilitiesOut"
+      },
+      "CourierOption": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "BUSY",
+              "OFFLINE"
+            ],
+            "title": "Availability"
+          },
+          "load_capacity_kg": {
+            "type": "number",
+            "title": "Load Capacity Kg"
+          },
+          "active_load_kg": {
+            "type": "number",
+            "title": "Active Load Kg"
+          },
+          "active_orders": {
+            "type": "integer",
+            "title": "Active Orders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "availability",
+          "load_capacity_kg",
+          "active_load_kg",
+          "active_orders"
+        ],
+        "title": "CourierOption"
+      },
+      "CourierOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "load_capacity_kg": {
+            "type": "number",
+            "title": "Load Capacity Kg"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "BUSY",
+              "OFFLINE"
+            ],
+            "title": "Availability"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "load_capacity_kg",
+          "availability"
+        ],
+        "title": "CourierOut"
+      },
+      "CourierRouteInput": {
+        "properties": {
+          "courier_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Courier Id"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopInput"
+            },
+            "type": "array",
+            "title": "Stops"
+          }
+        },
+        "type": "object",
+        "required": [
+          "courier_id",
+          "stops"
+        ],
+        "title": "CourierRouteInput"
+      },
+      "CustomerIn": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 25
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name"
+        ],
+        "title": "CustomerIn"
+      },
+      "CustomerOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "order_count": {
+            "type": "integer",
+            "title": "Order Count"
+          },
+          "last_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Address"
+          },
+          "last_latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Latitude"
+          },
+          "last_longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Longitude"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "phone",
+          "order_count",
+          "last_address",
+          "last_latitude",
+          "last_longitude",
+          "created_at"
+        ],
+        "title": "CustomerOut"
+      },
+      "CustomerRef": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "phone"
+        ],
+        "title": "CustomerRef"
+      },
+      "DashboardCourierCountsOut": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "available": {
+            "type": "integer",
+            "title": "Available"
+          },
+          "busy": {
+            "type": "integer",
+            "title": "Busy"
+          },
+          "offline": {
+            "type": "integer",
+            "title": "Offline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "available",
+          "busy",
+          "offline"
+        ],
+        "title": "DashboardCourierCountsOut"
+      },
+      "DashboardOrderCountsOut": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "pending": {
+            "type": "integer",
+            "title": "Pending"
+          },
+          "assigned": {
+            "type": "integer",
+            "title": "Assigned"
+          },
+          "in_route": {
+            "type": "integer",
+            "title": "In Route"
+          },
+          "delivered": {
+            "type": "integer",
+            "title": "Delivered"
+          },
+          "cancelled": {
+            "type": "integer",
+            "title": "Cancelled"
+          },
+          "completion_rate": {
+            "type": "number",
+            "title": "Completion Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "pending",
+          "assigned",
+          "in_route",
+          "delivered",
+          "cancelled",
+          "completion_rate"
+        ],
+        "title": "DashboardOrderCountsOut"
+      },
+      "DashboardPerformanceOut": {
+        "properties": {
+          "run_count": {
+            "type": "integer",
+            "title": "Run Count"
+          },
+          "average_execution_time_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Execution Time Ms"
+          },
+          "best_speedup": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Speedup"
+          },
+          "latest_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SEQUENTIAL",
+                  "PARALLEL",
+                  "GPU"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Mode"
+          },
+          "latest_executed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Executed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_count",
+          "average_execution_time_ms",
+          "best_speedup",
+          "latest_mode",
+          "latest_executed_at"
+        ],
+        "title": "DashboardPerformanceOut"
+      },
+      "DashboardPeriodOut": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "DashboardPeriodOut"
+      },
+      "DashboardRecentOrderOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer_name": {
+            "type": "string",
+            "title": "Customer Name"
+          },
+          "courier_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Courier Name"
+          },
+          "delivery_address": {
+            "type": "string",
+            "title": "Delivery Address"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer_name",
+          "courier_name",
+          "delivery_address",
+          "status",
+          "priority",
+          "created_at"
+        ],
+        "title": "DashboardRecentOrderOut"
+      },
+      "DashboardReportRowOut": {
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "customer_name": {
+            "type": "string",
+            "title": "Customer Name"
+          },
+          "courier_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Courier Name"
+          },
+          "delivery_address": {
+            "type": "string",
+            "title": "Delivery Address"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "weight_kg": {
+            "type": "number",
+            "title": "Weight Kg"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "route_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route Id"
+          },
+          "route_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "PLANNED",
+                  "IN_PROGRESS",
+                  "COMPLETED",
+                  "CANCELLED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route Status"
+          },
+          "route_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "customer_name",
+          "courier_name",
+          "delivery_address",
+          "status",
+          "priority",
+          "weight_kg",
+          "created_at",
+          "route_id",
+          "route_status",
+          "route_date"
+        ],
+        "title": "DashboardReportRowOut"
+      },
+      "DashboardRouteCountsOut": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "planned": {
+            "type": "integer",
+            "title": "Planned"
+          },
+          "in_progress": {
+            "type": "integer",
+            "title": "In Progress"
+          },
+          "completed": {
+            "type": "integer",
+            "title": "Completed"
+          },
+          "cancelled": {
+            "type": "integer",
+            "title": "Cancelled"
+          },
+          "total_distance_km": {
+            "type": "number",
+            "title": "Total Distance Km"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "planned",
+          "in_progress",
+          "completed",
+          "cancelled",
+          "total_distance_km"
+        ],
+        "title": "DashboardRouteCountsOut"
+      },
+      "DashboardSummaryOut": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "period": {
+            "$ref": "#/components/schemas/DashboardPeriodOut"
+          },
+          "orders": {
+            "$ref": "#/components/schemas/DashboardOrderCountsOut"
+          },
+          "couriers": {
+            "$ref": "#/components/schemas/DashboardCourierCountsOut"
+          },
+          "routes": {
+            "$ref": "#/components/schemas/DashboardRouteCountsOut"
+          },
+          "performance": {
+            "$ref": "#/components/schemas/DashboardPerformanceOut"
+          },
+          "recent_orders": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardRecentOrderOut"
+            },
+            "type": "array",
+            "title": "Recent Orders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "generated_at",
+          "period",
+          "orders",
+          "couriers",
+          "routes",
+          "performance",
+          "recent_orders"
+        ],
+        "title": "DashboardSummaryOut"
+      },
+      "DepotIn": {
+        "properties": {
+          "depot_address": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Depot Address"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "depot_address",
+          "latitude",
+          "longitude"
+        ],
+        "title": "DepotIn"
+      },
+      "DepotOut": {
+        "properties": {
+          "address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "address",
+          "latitude",
+          "longitude"
+        ],
+        "title": "DepotOut"
+      },
+      "EstablishmentOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "EstablishmentOut"
+      },
+      "GeocodeResult": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "latitude",
+          "longitude"
+        ],
+        "title": "GeocodeResult"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HistoryOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "changed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed By"
+          },
+          "changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Changed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "note",
+          "changed_by",
+          "changed_at"
+        ],
+        "title": "HistoryOut"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "MyRouteOut": {
+        "properties": {
+          "depot": {
+            "$ref": "#/components/schemas/DepotOut"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RouteOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "depot",
+          "route"
+        ],
+        "title": "MyRouteOut"
+      },
+      "OperationalHistoryEventOut": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_STATUS",
+              "OPTIMIZATION"
+            ],
+            "title": "Event Type"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "customer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Name"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "ASSIGNED",
+                  "IN_ROUTE",
+                  "DELIVERED",
+                  "CANCELLED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "execution_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SEQUENTIAL",
+                  "PARALLEL",
+                  "GPU"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Mode"
+          },
+          "execution_time_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Time Ms"
+          },
+          "order_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "actor_name",
+          "order_id",
+          "customer_name",
+          "status",
+          "note",
+          "execution_mode",
+          "execution_time_ms",
+          "order_count"
+        ],
+        "title": "OperationalHistoryEventOut"
+      },
+      "OptimizationRequest": {
+        "properties": {
+          "depot": {
+            "$ref": "#/components/schemas/StopInput"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/CourierRouteInput"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Routes"
+          },
+          "workers": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 32.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "depot",
+          "routes"
+        ],
+        "title": "OptimizationRequest"
+      },
+      "OptimizationRunOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "executed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Executed At"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "ROUTE_GENERATION",
+              "BENCHMARK"
+            ],
+            "title": "Purpose"
+          },
+          "input_source": {
+            "type": "string",
+            "enum": [
+              "REAL",
+              "SYNTHETIC"
+            ],
+            "title": "Input Source"
+          },
+          "run_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Group"
+          },
+          "algorithm": {
+            "type": "string",
+            "title": "Algorithm"
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": [
+              "SEQUENTIAL",
+              "PARALLEL",
+              "GPU"
+            ],
+            "title": "Execution Mode"
+          },
+          "worker_count": {
+            "type": "integer",
+            "title": "Worker Count"
+          },
+          "order_count": {
+            "type": "integer",
+            "title": "Order Count"
+          },
+          "courier_count": {
+            "type": "integer",
+            "title": "Courier Count"
+          },
+          "execution_time_ms": {
+            "type": "number",
+            "title": "Execution Time Ms"
+          },
+          "total_distance_km": {
+            "type": "number",
+            "title": "Total Distance Km"
+          },
+          "speedup": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speedup"
+          },
+          "efficiency": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efficiency"
+          },
+          "same_routes": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Same Routes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "executed_at",
+          "purpose",
+          "input_source",
+          "run_group",
+          "algorithm",
+          "execution_mode",
+          "worker_count",
+          "order_count",
+          "courier_count",
+          "execution_time_ms",
+          "total_distance_km",
+          "speedup",
+          "efficiency",
+          "same_routes"
+        ],
+        "title": "OptimizationRunOut"
+      },
+      "OrderDetailOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "delivery_address": {
+            "type": "string",
+            "title": "Delivery Address"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "weight_kg": {
+            "type": "number",
+            "title": "Weight Kg"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "desired_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired Start"
+          },
+          "desired_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired End"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "assigned_courier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssignedCourierOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryOut"
+            },
+            "type": "array",
+            "title": "History"
+          },
+          "allowed_statuses": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "ASSIGNED",
+                "IN_ROUTE",
+                "DELIVERED",
+                "CANCELLED"
+              ]
+            },
+            "type": "array",
+            "title": "Allowed Statuses"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer",
+          "delivery_address",
+          "latitude",
+          "longitude",
+          "weight_kg",
+          "priority",
+          "desired_start",
+          "desired_end",
+          "status",
+          "assigned_courier",
+          "created_at",
+          "history",
+          "allowed_statuses"
+        ],
+        "title": "OrderDetailOut"
+      },
+      "OrderIn": {
+        "properties": {
+          "customer_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Customer Id"
+          },
+          "delivery_address": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Delivery Address"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "weight_kg": {
+            "type": "number",
+            "maximum": 500.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Weight Kg",
+            "default": 1
+          },
+          "priority": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Priority",
+            "default": 2
+          },
+          "desired_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired Start"
+          },
+          "desired_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired End"
+          },
+          "assigned_courier_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Courier Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_id",
+          "delivery_address",
+          "latitude",
+          "longitude"
+        ],
+        "title": "OrderIn"
+      },
+      "OrderOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "delivery_address": {
+            "type": "string",
+            "title": "Delivery Address"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "weight_kg": {
+            "type": "number",
+            "title": "Weight Kg"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "desired_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired Start"
+          },
+          "desired_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired End"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "assigned_courier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssignedCourierOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer",
+          "delivery_address",
+          "latitude",
+          "longitude",
+          "weight_kg",
+          "priority",
+          "desired_start",
+          "desired_end",
+          "status",
+          "assigned_courier",
+          "created_at"
+        ],
+        "title": "OrderOut"
+      },
+      "RegisterIn": {
+        "properties": {
+          "establishment_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Establishment Name"
+          },
+          "depot_address": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Depot Address"
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 8,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "establishment_name",
+          "depot_address",
+          "full_name",
+          "email",
+          "password"
+        ],
+        "title": "RegisterIn"
+      },
+      "RouteGenerateIn": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "SEQUENTIAL",
+              "PARALLEL",
+              "GPU"
+            ],
+            "title": "Mode",
+            "default": "SEQUENTIAL"
+          },
+          "workers": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 64.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workers"
+          }
+        },
+        "type": "object",
+        "title": "RouteGenerateIn"
+      },
+      "RouteGenerationOut": {
+        "properties": {
+          "depot": {
+            "$ref": "#/components/schemas/DepotOut"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/RouteOut"
+            },
+            "type": "array",
+            "title": "Routes"
+          },
+          "waiting_orders": {
+            "type": "integer",
+            "title": "Waiting Orders"
+          },
+          "skipped": {
+            "items": {
+              "$ref": "#/components/schemas/SkippedCourierOut"
+            },
+            "type": "array",
+            "title": "Skipped"
+          },
+          "run": {
+            "$ref": "#/components/schemas/OptimizationRunOut"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/RouteQualityOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "depot",
+          "routes",
+          "waiting_orders",
+          "skipped",
+          "run",
+          "quality"
+        ],
+        "title": "RouteGenerationOut"
+      },
+      "RouteOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "courier": {
+            "$ref": "#/components/schemas/AssignedCourierOut"
+          },
+          "route_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Route Date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PLANNED",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "algorithm": {
+            "type": "string",
+            "title": "Algorithm"
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": [
+              "SEQUENTIAL",
+              "PARALLEL",
+              "GPU"
+            ],
+            "title": "Execution Mode"
+          },
+          "total_distance_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Distance Km"
+          },
+          "estimated_duration_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Duration Min"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/RouteStopOut"
+            },
+            "type": "array",
+            "title": "Stops"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "courier",
+          "route_date",
+          "status",
+          "algorithm",
+          "execution_mode",
+          "total_distance_km",
+          "estimated_duration_min",
+          "created_at",
+          "stops"
+        ],
+        "title": "RouteOut"
+      },
+      "RouteQualityOut": {
+        "properties": {
+          "original_distance_km": {
+            "type": "number",
+            "title": "Original Distance Km"
+          },
+          "nearest_neighbor_distance_km": {
+            "type": "number",
+            "title": "Nearest Neighbor Distance Km"
+          },
+          "optimized_distance_km": {
+            "type": "number",
+            "title": "Optimized Distance Km"
+          }
+        },
+        "type": "object",
+        "required": [
+          "original_distance_km",
+          "nearest_neighbor_distance_km",
+          "optimized_distance_km"
+        ],
+        "title": "RouteQualityOut"
+      },
+      "RouteStopOut": {
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "title": "Sequence"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ARRIVED",
+              "COMPLETED",
+              "FAILED"
+            ],
+            "title": "Status"
+          },
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Order Status"
+          },
+          "customer_name": {
+            "type": "string",
+            "title": "Customer Name"
+          },
+          "customer_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Phone"
+          },
+          "delivery_address": {
+            "type": "string",
+            "title": "Delivery Address"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "weight_kg": {
+            "type": "number",
+            "title": "Weight Kg"
+          },
+          "distance_from_previous_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance From Previous Km"
+          },
+          "estimated_arrival": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Arrival"
+          },
+          "desired_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired Start"
+          },
+          "desired_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Desired End"
+          },
+          "waiting_minutes": {
+            "type": "integer",
+            "title": "Waiting Minutes",
+            "default": 0
+          },
+          "delay_minutes": {
+            "type": "integer",
+            "title": "Delay Minutes",
+            "default": 0
+          },
+          "timing_status": {
+            "type": "string",
+            "enum": [
+              "ON_TIME",
+              "LATE",
+              "NO_WINDOW"
+            ],
+            "title": "Timing Status",
+            "default": "NO_WINDOW"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sequence",
+          "status",
+          "order_id",
+          "order_status",
+          "customer_name",
+          "customer_phone",
+          "delivery_address",
+          "latitude",
+          "longitude",
+          "priority",
+          "weight_kg",
+          "distance_from_previous_km",
+          "estimated_arrival"
+        ],
+        "title": "RouteStopOut"
+      },
+      "RoutesOverviewOut": {
+        "properties": {
+          "depot": {
+            "$ref": "#/components/schemas/DepotOut"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/RouteOut"
+            },
+            "type": "array",
+            "title": "Routes"
+          },
+          "waiting_orders": {
+            "type": "integer",
+            "title": "Waiting Orders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "depot",
+          "routes",
+          "waiting_orders"
+        ],
+        "title": "RoutesOverviewOut"
+      },
+      "SkippedCourierOut": {
+        "properties": {
+          "courier": {
+            "$ref": "#/components/schemas/AssignedCourierOut"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "courier",
+          "reason"
+        ],
+        "title": "SkippedCourierOut"
+      },
+      "SkippedOrderOut": {
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "reason"
+        ],
+        "title": "SkippedOrderOut"
+      },
+      "StatusIn": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ASSIGNED",
+              "IN_ROUTE",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "title": "Status"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "StatusIn"
+      },
+      "StopInput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "latitude",
+          "longitude"
+        ],
+        "title": "StopInput"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "TokenOut"
+      },
+      "UserCreate": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "ATTENDANT",
+              "COURIER"
+            ],
+            "title": "Role"
+          },
+          "load_capacity_kg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1000.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Load Capacity Kg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name",
+          "email",
+          "password",
+          "role"
+        ],
+        "title": "UserCreate"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "ATTENDANT",
+              "COURIER"
+            ],
+            "title": "Role"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "establishment": {
+            "$ref": "#/components/schemas/EstablishmentOut"
+          },
+          "courier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CourierOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "email",
+          "role",
+          "active",
+          "created_at",
+          "establishment"
+        ],
+        "title": "UserOut"
+      },
+      "UserUpdate": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "ATTENDANT",
+              "COURIER"
+            ],
+            "title": "Role"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": true
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 72,
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "load_capacity_kg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1000.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Load Capacity Kg"
+          },
+          "availability": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AVAILABLE",
+                  "BUSY",
+                  "OFFLINE"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availability"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name",
+          "email",
+          "role"
+        ],
+        "title": "UserUpdate"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

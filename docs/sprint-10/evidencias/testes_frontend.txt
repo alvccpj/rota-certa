@@ -1,0 +1,62 @@
+
+> rotacerta-frontend@0.10.0-rc.1 test
+> node --test src/sprint08.test.mjs src/sprint09.test.mjs
+
+✔ CSV neutralizes formula prefix "=" (0.374875ms)
+✔ CSV neutralizes formula prefix "+" (0.0585ms)
+✔ CSV neutralizes formula prefix "-" (0.034417ms)
+✔ CSV neutralizes formula prefix "@" (0.045791ms)
+✔ CSV neutralizes formula prefix "\t" (0.037125ms)
+✔ CSV neutralizes formula prefix "\r" (0.028625ms)
+✔ CSV neutralizes formula prefix "\n" (0.026625ms)
+✔ CSV preserves text, accents, separators, quotes, nulls and numeric IDs (0.044125ms)
+✔ CSV escapes embedded quotes even in formula payloads (0.045458ms)
+✔ Stop timing shows window, dated ETA and waiting separately (6.752916ms)
+✔ Late stop displays the specific delay without an on-time label (0.29275ms)
+✔ No-window and missing-ETA stops do not claim an on-time estimate (0.163084ms)
+✔ Open-ended delivery windows are supported (0.332208ms)
+✔ Navigation uses encoded coordinates, a fixed HTTPS host and safe new-tab attributes (0.34775ms)
+✔ Navigation rejects invalid coordinates and accepts the equator and meridian (0.373333ms)
+✔ Cada perfil tem a sua página inicial (0.635042ms)
+✔ Depois do login, ADMIN pedindo /relatorios vai para /relatorios (0.104959ms)
+✔ Depois do login, ADMIN pedindo /clientes?busca=Ana vai para /clientes?busca=Ana (0.084125ms)
+✔ Depois do login, ADMIN pedindo /usuarios/3/editar vai para /usuarios/3/editar (0.036459ms)
+✔ Depois do login, ATTENDANT pedindo /pedidos/2 vai para /pedidos/2 (0.048667ms)
+✔ Depois do login, ATTENDANT pedindo /usuarios vai para /painel (0.047667ms)
+✔ Depois do login, ATTENDANT pedindo /desempenho vai para /painel (0.030834ms)
+✔ Depois do login, ADMIN pedindo /entregas vai para /painel (0.030958ms)
+✔ Depois do login, COURIER pedindo /pedidos/2 vai para /pedidos/2 (0.046042ms)
+✔ Depois do login, COURIER pedindo /relatorios vai para /entregas (0.095875ms)
+✔ Depois do login, COURIER pedindo /pedidos/2/editar vai para /entregas (0.041209ms)
+✔ Depois do login, COURIER pedindo /pedidos/novo vai para /entregas (0.031333ms)
+✔ Depois do login, ADMIN pedindo /login vai para /painel (0.019791ms)
+✔ Depois do login, ADMIN pedindo /cadastro vai para /painel (0.017542ms)
+✔ Depois do login, ADMIN pedindo //site-externo.com/painel vai para /painel (0.021667ms)
+✔ Depois do login, ADMIN pedindo https://site-externo.com vai para /painel (0.017958ms)
+✔ Depois do login, ADMIN pedindo undefined vai para /painel (0.019167ms)
+✔ A regra de acesso ignora barra final, busca e âncora (0.043ms)
+✔ ID inválido no endereço é tratado como registro não encontrado (10.041042ms)
+✔ Erros de formulário continuam destacando o campo (0.203625ms)
+✔ Mensagem de regra de negócio da API é exibida como veio (0.10775ms)
+✔ Falha de rede mostra orientação ao usuário (0.181917ms)
+✔ Validação do formulário: e-mail sem domínio (0.047625ms)
+✔ Validação do formulário: e-mail vazio (0.02075ms)
+✔ Validação do formulário: telefone sem DDD (0.048417ms)
+✔ Validação do formulário: telefone começando com zero (0.020958ms)
+✔ Validação do formulário: senha curta (0.025542ms)
+✔ Validação do formulário: senha sem número (0.027875ms)
+✔ Validação do formulário: nome só com números (0.123458ms)
+✔ Validação do formulário: peso zero (0.041542ms)
+✔ Validação do formulário: peso acima do limite (0.022166ms)
+✔ Validação do formulário: peso com texto (0.021459ms)
+✔ Validação do formulário: telefone válido (0.023417ms)
+✔ Validação do formulário: senha válida (0.037125ms)
+✔ Números aceitam vírgula decimal e telefones são formatados (0.035583ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.699625
