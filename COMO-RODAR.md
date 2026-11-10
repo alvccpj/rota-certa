@@ -375,3 +375,18 @@ Na próxima vez que a API subir, ela recria as tabelas e os dados de demonstraç
 | PowerShell diz que "a execução de scripts foi desabilitada" | Rode uma vez `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` e ative o ambiente de novo. |
 | `/health` mostra o banco desconectado | O PostgreSQL não está rodando ou o `DATABASE_URL` aponta para a porta errada. Confira o serviço do PostgreSQL e o `backend/.env`. |
 | A porta 5432 já está em uso (Docker) | Já existe um PostgreSQL na máquina. Troque `POSTGRES_PORT` para `5433` no `.env`. |
+
+## Verificação da versão final (Sprint 12)
+
+Use a tag `v1.0.0` para reproduzir a entrega congelada. Com PostgreSQL
+configurado e dependências instaladas conforme os passos anteriores:
+
+```bash
+python tools/documentation/verify_code_freeze.py
+python tools/run_test_environment.py --schema sprint12_testes --api-port 8022 --web-port 5192
+```
+
+O segundo comando recria somente o schema descartável `sprint12_testes`. Em
+outro terminal, execute `python tools/documentation/capture_sprint12_evidence.py`.
+O ensaio usa outro schema, `sprint120_testes`, e portas 8023/5193; consulte
+`docs/sprint-12/ENSAIO_APRESENTACAO.md` antes de executar seu roteiro.

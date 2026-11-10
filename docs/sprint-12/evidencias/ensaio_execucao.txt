@@ -1,0 +1,9 @@
+01 Ambiente, autenticação, painel e perfis: Aprovado
+02 Cadastro de cliente e pedido real: Aprovado
+03 Atribuição automática com persistência: Aprovado
+04 Rotas reais, heurística e mapa: Aprovado
+05 Entregador inicia rota e confirma entrega: Aprovado
+06 Relatório, CSV e histórico operacional: Aprovado
+07 Comparação CPU real: mesma entrada, tempo e igualdade: Aprovado
+08 Navegação vertical 9:16 para preparação do vídeo: Aprovado
+Ensaio técnico: 9.791 s. Falas humanas pendentes.

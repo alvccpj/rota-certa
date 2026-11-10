@@ -1,5 +1,6 @@
 """Confere organização, links locais Markdown e padrões de segredo sem imprimir valores."""
 
+import argparse
 import json
 import re
 import subprocess
@@ -18,6 +19,10 @@ SECRET_PATTERNS = {
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--evidence-dir", type=Path, default=OUT.parent)
+    args = parser.parse_args()
+    destination = args.evidence_dir / OUT.name
     paths = sorted(set(subprocess.check_output(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT, text=True).splitlines()))
     unwanted, secrets, bad_links = [], [], []
@@ -53,8 +58,8 @@ def main():
               "protecao_gitignore": ignored,
               "limites": "Verifica arquivos atuais de texto e padrões explícitos, não todo o histórico Git nem segredos em serviços externos. Exemplos públicos de demonstração permanecem identificados.",
               "situacao": "Aprovado" if not (unwanted or secrets or bad_links) and all(ignored.values()) else "Reprovado"}
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     if result["situacao"] != "Aprovado":
         raise SystemExit(1)

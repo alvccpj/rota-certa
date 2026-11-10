@@ -1,0 +1,18 @@
+{
+  "executado_em": "2026-11-10T11:56:19-03:00",
+  "arquivos_versionados_ou_preparados": 510,
+  "arquivos_texto_inspecionados": 259,
+  "links_locais_conferidos": 89,
+  "artefatos_locais_indevidos": [],
+  "padroes_de_segredo_encontrados": [],
+  "links_quebrados": [],
+  "protecao_gitignore": {
+    ".env": true,
+    "backend/.env": true,
+    "frontend/.env": true,
+    "backend/rotacerta-demo.db": true,
+    "tmp/verificacao.txt": true
+  },
+  "limites": "Verifica arquivos atuais de texto e padrões explícitos, não todo o histórico Git nem segredos em serviços externos. Exemplos públicos de demonstração permanecem identificados.",
+  "situacao": "Aprovado"
+}

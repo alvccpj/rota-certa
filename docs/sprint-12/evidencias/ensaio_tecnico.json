@@ -1,0 +1,173 @@
+{
+  "executado_em": "2026-11-10T11:49:59-03:00",
+  "tipo": "Ensaio técnico automatizado na aplicação real, sem narração humana",
+  "versao": "1.0.0",
+  "api": "http://127.0.0.1:8023",
+  "frontend": "http://127.0.0.1:5193",
+  "etapas": [
+    {
+      "etapa": "01 Ambiente, autenticação, painel e perfis",
+      "duracao_s": 1.864,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "02 Cadastro de cliente e pedido real",
+      "duracao_s": 0.929,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "03 Atribuição automática com persistência",
+      "duracao_s": 0.705,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "04 Rotas reais, heurística e mapa",
+      "duracao_s": 1.263,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "05 Entregador inicia rota e confirma entrega",
+      "duracao_s": 0.886,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "06 Relatório, CSV e histórico operacional",
+      "duracao_s": 1.406,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "07 Comparação CPU real: mesma entrada, tempo e igualdade",
+      "duracao_s": 0.982,
+      "situacao": "Aprovado"
+    },
+    {
+      "etapa": "08 Navegação vertical 9:16 para preparação do vídeo",
+      "duracao_s": 0.611,
+      "situacao": "Aprovado"
+    }
+  ],
+  "ambiente": {
+    "status": "ok",
+    "database": "connected",
+    "dialect": "postgresql",
+    "server_version": "17.10",
+    "schema_conferido_sql": "sprint120_testes"
+  },
+  "rotas": [
+    {
+      "id": 1,
+      "km": 21.307,
+      "paradas": 5
+    },
+    {
+      "id": 2,
+      "km": 15.934,
+      "paradas": 8
+    }
+  ],
+  "pedido": {
+    "id": 15,
+    "status_final": "DELIVERED",
+    "autor_entrega": "Diego Entregador",
+    "historico": [
+      "PENDING",
+      "ASSIGNED",
+      "IN_ROUTE",
+      "DELIVERED"
+    ]
+  },
+  "benchmark": {
+    "run_group": "383b2543-b827-45f8-a9a9-c6d7f8d789f5",
+    "source": "SYNTHETIC",
+    "courier_count": 8,
+    "order_count": 480,
+    "repetitions": 3,
+    "rows": [
+      {
+        "id": 2,
+        "executed_at": "2026-11-10T14:50:07.881445Z",
+        "purpose": "BENCHMARK",
+        "input_source": "SYNTHETIC",
+        "run_group": "383b2543-b827-45f8-a9a9-c6d7f8d789f5",
+        "algorithm": "NEAREST_NEIGHBOR_2OPT",
+        "execution_mode": "SEQUENTIAL",
+        "worker_count": 1,
+        "order_count": 480,
+        "courier_count": 8,
+        "execution_time_ms": 4.45,
+        "total_distance_km": 708.292,
+        "speedup": 1.0,
+        "efficiency": 1.0,
+        "same_routes": true
+      },
+      {
+        "id": 3,
+        "executed_at": "2026-11-10T14:50:07.881610Z",
+        "purpose": "BENCHMARK",
+        "input_source": "SYNTHETIC",
+        "run_group": "383b2543-b827-45f8-a9a9-c6d7f8d789f5",
+        "algorithm": "NEAREST_NEIGHBOR_2OPT",
+        "execution_mode": "PARALLEL",
+        "worker_count": 1,
+        "order_count": 480,
+        "courier_count": 8,
+        "execution_time_ms": 4.836,
+        "total_distance_km": 708.292,
+        "speedup": 0.92,
+        "efficiency": 0.9202,
+        "same_routes": true
+      },
+      {
+        "id": 4,
+        "executed_at": "2026-11-10T14:50:07.881636Z",
+        "purpose": "BENCHMARK",
+        "input_source": "SYNTHETIC",
+        "run_group": "383b2543-b827-45f8-a9a9-c6d7f8d789f5",
+        "algorithm": "NEAREST_NEIGHBOR_2OPT",
+        "execution_mode": "PARALLEL",
+        "worker_count": 2,
+        "order_count": 480,
+        "courier_count": 8,
+        "execution_time_ms": 2.224,
+        "total_distance_km": 708.292,
+        "speedup": 2.0,
+        "efficiency": 1.0002,
+        "same_routes": true
+      },
+      {
+        "id": 5,
+        "executed_at": "2026-11-10T14:50:07.881655Z",
+        "purpose": "BENCHMARK",
+        "input_source": "SYNTHETIC",
+        "run_group": "383b2543-b827-45f8-a9a9-c6d7f8d789f5",
+        "algorithm": "NEAREST_NEIGHBOR_2OPT",
+        "execution_mode": "PARALLEL",
+        "worker_count": 4,
+        "order_count": 480,
+        "courier_count": 8,
+        "execution_time_ms": 2.024,
+        "total_distance_km": 708.292,
+        "speedup": 2.199,
+        "efficiency": 0.5496,
+        "same_routes": true
+      }
+    ]
+  },
+  "hardware": {
+    "cpu_count": 10,
+    "gpu_available": false,
+    "gpu_name": null,
+    "gpu_reason": "O CuPy não está instalado. Veja backend/requirements-gpu.txt."
+  },
+  "erros_javascript": [],
+  "duracao_tecnica_s": 9.791,
+  "tempo_roteiro_com_falas_planejado_s": 570,
+  "limite_horizontal_s": 600,
+  "limites": "Tempo medido apenas da execução técnica automatizada; não comprova tempo de fala, participação dos integrantes ou ensaio humano completo. A entrada sintética é usada apenas para medir o otimizador; cadastro/atribuição/rota/entrega usam pedidos persistidos reais de demonstração.",
+  "situacao": "Aprovado",
+  "captura_complementar": {
+    "executado_em": "2026-11-10T11:55:25-03:00",
+    "arquivo": "assets/ensaio_08_desempenho.png",
+    "procedimento": "Reaberta a tela de desempenho e rolada até Resultado para enquadrar os valores persistidos do mesmo benchmark; não altera a duração técnica medida do ensaio."
+  }
+}

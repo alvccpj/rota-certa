@@ -1,7 +1,8 @@
 # Manual do Usuário do RotaCerta
 
 Grupo 04 | UNINASSAU | Ciência da Computação | Turma 8NA | 2026.2.
-Versão 0.11.0-rc.1, revisada em 10/11/2026.
+Versão 1.0.0, revisada em 10/11/2026. As telas capturadas na Sprint 11
+continuam representando a mesma interface na versão final.
 
 ## 1 Apresentação e público
 

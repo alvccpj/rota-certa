@@ -1,7 +1,7 @@
 # Documentação final consolidada do RotaCerta
 
-Grupo 04 | Versão 0.11.0-rc.1 | Revisão em 10/11/2026.
-Esta referência descreve a implementação preparada na Sprint 11. Os documentos
+Grupo 04 | Versão 1.0.0 | Revisão em 10/11/2026.
+Esta referência descreve a implementação congelada na Sprint 12. Os documentos
 anteriores permanecem como histórico do planejamento e da evolução.
 
 ## 1 Objetivo e produto implementado
@@ -17,8 +17,8 @@ Usuário, e a instalação/manutenção, no Manual Técnico.
 
 Os identificadores RF01 a RF10 são preservados desde o planejamento. A coluna
 abaixo registra como cada requisito se materializou e onde foi verificado.
-As referências F, V e N são os casos repetidos na Sprint 11, em
-`docs/sprint-11/evidencias/casos_de_teste.json`.
+As referências F, V e N são os casos repetidos na Sprint 12, em
+`docs/sprint-12/evidencias/casos_de_teste.json`.
 
 | ID | Implementação vigente | Evidência |
 | --- | --- | --- |
@@ -142,3 +142,11 @@ O índice `docs/README.md` aponta para essas referências. As partes anteriores
 do PDF mantêm contexto histórico; a Parte XI descreve esta versão. A equipe
 deve atualizar as fontes e repetir os testes afetados antes de qualquer nova
 correção posterior à consolidação.
+
+## 10 Consolidação da versão 1.0.0
+
+A Sprint 12 repete as verificações sem acrescentar funcionalidades ou mudar o DDL.
+Os diagramas revisados na Sprint 11 continuam representando a mesma arquitetura
+e as mesmas classes; o número da versão em suas legendas registra a revisão da figura.
+A referência de congelamento é `v1.0.0`, com manifesto em `docs/sprint-12/evidencias/code_freeze.json`.
+Resultados atuais e limitações estão em `docs/sprint-12/README.md`.

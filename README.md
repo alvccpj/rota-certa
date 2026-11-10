@@ -4,11 +4,11 @@ Sistema web de roteirização de entregas para pequenos negócios locais. Centra
 
 Projeto Integrador das disciplinas **Fábrica de Software** e **Tópicos Avançados em Ciência da Computação**, do 8º período do curso de Ciência da Computação da **UNINASSAU**, turma **8NA** (2026.2).
 
-**Grupo 04 | Release Candidate `0.11.0-rc.1` | Sprint 11, 10/11/2026.**
+**Grupo 04 | Versão final `1.0.0` | Sprint 12, 10/11/2026.**
 O objetivo é organizar a operação de entregas de pequenos negócios: cadastrar
 clientes e pedidos, distribuir a carga entre entregadores, planejar trajetos e
-acompanhar entregas com histórico e indicadores. A verificação desta candidata,
-suas evidências e pendências estão em [Sprint 11](docs/sprint-11/README.md).
+acompanhar entregas com histórico e indicadores. A verificação desta versão,
+suas evidências e pendências estão em [Sprint 12](docs/sprint-12/README.md).
 
 Para aprender a usar, consulte o [Manual do Usuário](docs/manuais/MANUAL_DO_USUARIO.md).
 Para instalar e manter, consulte o [Manual Técnico](docs/manuais/MANUAL_TECNICO.md).
@@ -29,7 +29,7 @@ diagramas finais, regras, APIs e revisão de código.
 
 - **Frontend:** React, TypeScript, Vite, React Router e Leaflet (OpenStreetMap)
 - **Backend:** Python, FastAPI, SQLAlchemy, JWT e Argon2
-- **Banco de dados:** PostgreSQL 16 ou superior (testado no 18.1)
+- **Banco de dados:** PostgreSQL 16 ou superior (verificado no 17.10 nesta entrega; 18.1 na Sprint 09)
 - **Otimização e paralelização:** módulo Python com execução sequencial, paralela em CPU (múltiplos processos) e em GPU com CUDA
 
 ## Otimização e paralelização
@@ -59,6 +59,7 @@ O modo CUDA exige uma GPU NVIDIA e o CuPy (`backend/requirements-gpu.txt`). Em m
 | Consolidação funcional | 08 | Atribuição automática, espera e avisos de atraso, revisão de permissões e proteção de dados das rotas |
 | Testes e correções | 09 | 61 casos de teste funcionais, de validação e de navegação na aplicação real, 9 bugs corrigidos com testes de regressão, suíte do backend também no PostgreSQL e documentação técnica atualizada ([Sprint 09](docs/sprint-09/README.md)) |
 | Release Candidate | 10 | Revisão dos fluxos e da interface, ensaio de atribuição concorrente em PostgreSQL, contrato OpenAPI exportado, catálogo de endpoints e documento cumulativo ([Sprint 10](docs/sprint-10/README.md)) |
+| Versão final | 12 | Congelamento 1.0.0, nova verificação, roteiro dos vídeos e ensaio técnico ([Sprint 12](docs/sprint-12/README.md)) |
 | Preparação para entrega | 11 | Manuais do usuário e técnico, documentação final consolidada, revisão de código com correções e organização do repositório ([Sprint 11](docs/sprint-11/README.md)) |
 
 ## Como interpretar as rotas
@@ -158,7 +159,7 @@ npm run build --prefix frontend
 Para validar concorrência e o DDL real, execute também a suíte com
 `TEST_DATABASE_URL` apontando para PostgreSQL. Ela recria somente o schema
 descartável `rotacerta_testes_automatizados`. Passo a passo e roteiro de navegador
-em [Sprint 11](docs/sprint-11/README.md). Dependências opcionais do roteiro:
+em [Sprint 12](docs/sprint-12/README.md). Dependências opcionais do roteiro:
 `pip install -r backend/requirements-docs.txt` e Google Chrome instalado.
 
 ### Estrutura do projeto
@@ -202,10 +203,21 @@ O passo a passo completo está em **[COMO-RODAR.md](COMO-RODAR.md)**. Ele traz o
 - testes automatizados;
 - erros comuns e como resolvê-los.
 
+## Versão final e Code Freeze
+
+A versão estável de apresentação é a tag [`v1.0.0`](https://github.com/alvccpj/rota-certa/tree/v1.0.0).
+Para reproduzir o código congelado: `git fetch --tags` e `git switch --detach v1.0.0`.
+Confira a integridade com `python tools/documentation/verify_code_freeze.py`.
+Novas funcionalidades ficam fora desta entrega. O procedimento de correção crítica,
+validações, limites conhecidos, roteiros dos vídeos e ensaio técnico estão na
+[Sprint 12](docs/sprint-12/README.md) e no [registro de congelamento](docs/sprint-12/CODE_FREEZE.md).
+O ensaio técnico foi automatizado; falas da equipe, gravação e aceitação humana
+precisam ser realizadas pelos integrantes. A GPU CUDA depende de hardware NVIDIA.
+
 ## Documentação
 
-- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_11.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_11.pdf)
-- Preparação para entrega e resultados atuais: [`docs/sprint-11/README.md`](docs/sprint-11/README.md)
+- Documento cumulativo das Sprints: [`output/pdf/Grupo_04_RotaCerta_Sprints_01_a_12.pdf`](output/pdf/Grupo_04_RotaCerta_Sprints_01_a_12.pdf)
+- Versão final, verificações e pendências: [`docs/sprint-12/README.md`](docs/sprint-12/README.md)
 - Manuais, requisitos e documentação final: [`docs/README.md`](docs/README.md)
 - APIs (autenticação, exemplos, rotas e modelos): [`docs/api/README.md`](docs/api/README.md)
 - Arquitetura, classes e modelo de dados atuais: [`docs/final/DOCUMENTACAO_FINAL.md`](docs/final/DOCUMENTACAO_FINAL.md)

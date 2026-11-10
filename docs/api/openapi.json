@@ -3,7 +3,7 @@
   "info": {
     "title": "RotaCerta API",
     "description": "API para cadastro, roteirização, acompanhamento e análise operacional de entregas.",
-    "version": "0.11.0-rc.1"
+    "version": "1.0.0"
   },
   "paths": {
     "/auth/login": {
