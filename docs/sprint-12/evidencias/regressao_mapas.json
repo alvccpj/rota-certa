@@ -1,0 +1,82 @@
+{
+  "executado_em": "2026-11-10T11:50:46-03:00",
+  "casos": [
+    {
+      "ciclo": 1,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 2,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 3,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 4,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 5,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 6,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 7,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 8,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 9,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 10,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 1,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 2,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 3,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 4,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 0
+    },
+    {
+      "ciclo": 5,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 0
+    }
+  ],
+  "erros_javascript": [],
+  "situacao": "Aprovado"
+}

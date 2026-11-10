@@ -1,0 +1,224 @@
+[
+  {
+    "metodo": "POST",
+    "rota": "/auth/login",
+    "acesso": "Público",
+    "entrada": "LoginIn"
+  },
+  {
+    "metodo": "POST",
+    "rota": "/auth/register",
+    "acesso": "Público",
+    "entrada": "RegisterIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/auth/me",
+    "acesso": "Usuário autenticado",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/users",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/users",
+    "acesso": "ADMIN",
+    "entrada": "UserCreate"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/users/{user_id}",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "PUT",
+    "rota": "/users/{user_id}",
+    "acesso": "ADMIN",
+    "entrada": "UserUpdate"
+  },
+  {
+    "metodo": "DELETE",
+    "rota": "/users/{user_id}",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/couriers",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "PATCH",
+    "rota": "/couriers/me/availability",
+    "acesso": "COURIER",
+    "entrada": "AvailabilityIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/customers",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/customers",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": "CustomerIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/customers/{customer_id}",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "PUT",
+    "rota": "/customers/{customer_id}",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": "CustomerIn"
+  },
+  {
+    "metodo": "DELETE",
+    "rota": "/customers/{customer_id}",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/orders/auto-assign",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/orders",
+    "acesso": "Usuário autenticado",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/orders",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": "OrderIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/orders/{order_id}",
+    "acesso": "Usuário autenticado",
+    "entrada": null
+  },
+  {
+    "metodo": "PUT",
+    "rota": "/orders/{order_id}",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": "OrderIn"
+  },
+  {
+    "metodo": "DELETE",
+    "rota": "/orders/{order_id}",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "PATCH",
+    "rota": "/orders/{order_id}/status",
+    "acesso": "Usuário autenticado",
+    "entrada": "StatusIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/geocode",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/establishment/depot",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "PUT",
+    "rota": "/establishment/depot",
+    "acesso": "ADMIN",
+    "entrada": "DepotIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/routes",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/routes/generate",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": "RouteGenerateIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/routes/me",
+    "acesso": "COURIER",
+    "entrada": null
+  },
+  {
+    "metodo": "PATCH",
+    "rota": "/routes/{route_id}/start",
+    "acesso": "Usuário autenticado",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/optimizer/capabilities",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/optimizer/benchmark",
+    "acesso": "ADMIN",
+    "entrada": "BenchmarkIn"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/optimizer/runs",
+    "acesso": "ADMIN",
+    "entrada": null
+  },
+  {
+    "metodo": "POST",
+    "rota": "/optimizer/compare",
+    "acesso": "Público",
+    "entrada": "OptimizationRequest"
+  },
+  {
+    "metodo": "GET",
+    "rota": "/dashboard/summary",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/dashboard/report",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/dashboard/history",
+    "acesso": "ADMIN, ATTENDANT",
+    "entrada": null
+  },
+  {
+    "metodo": "GET",
+    "rota": "/health",
+    "acesso": "Público",
+    "entrada": null
+  }
+]

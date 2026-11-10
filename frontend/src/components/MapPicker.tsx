@@ -24,7 +24,8 @@ export default function MapPicker({ latitude, longitude, onPick, zoom = 13, inva
 
   useEffect(() => {
     const start: [number, number] = latitude != null && longitude != null ? [latitude, longitude] : RECIFE;
-    const map = L.map(containerRef.current!, { scrollWheelZoom: false }).setView(start, zoom);
+    // BUG-13: a transição CSS de zoom pode terminar depois da desmontagem da tela.
+    const map = L.map(containerRef.current!, { scrollWheelZoom: false, zoomAnimation: false }).setView(start, zoom);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap",

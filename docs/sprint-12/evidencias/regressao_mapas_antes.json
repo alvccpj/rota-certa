@@ -1,0 +1,133 @@
+{
+  "executado_em": "2026-11-10T11:47:15-03:00",
+  "casos": [
+    {
+      "ciclo": 1,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 1
+    },
+    {
+      "ciclo": 2,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 2
+    },
+    {
+      "ciclo": 3,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 3
+    },
+    {
+      "ciclo": 4,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 4
+    },
+    {
+      "ciclo": 5,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 5
+    },
+    {
+      "ciclo": 6,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 6
+    },
+    {
+      "ciclo": 7,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 7
+    },
+    {
+      "ciclo": 8,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 8
+    },
+    {
+      "ciclo": 9,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 9
+    },
+    {
+      "ciclo": 10,
+      "tela": "pedido -> pedidos",
+      "erros_acumulados": 10
+    },
+    {
+      "ciclo": 1,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 10
+    },
+    {
+      "ciclo": 2,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 10
+    },
+    {
+      "ciclo": 3,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 10
+    },
+    {
+      "ciclo": 4,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 10
+    },
+    {
+      "ciclo": 5,
+      "tela": "rotas -> pedidos",
+      "erros_acumulados": 10
+    }
+  ],
+  "erros_javascript": [
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    },
+    {
+      "erro": "Cannot read properties of undefined (reading '_leaflet_pos')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '_leaflet_pos')\n    at getPosition (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:1570:19)\n    at NewClass._getMapPanePos (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2989:18)\n    at NewClass._getNewPixelOrigin (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3001:76)\n    at NewClass._move (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:2806:36)\n    at NewClass._onZoomTransitionEnd (http://127.0.0.1:5192/node_modules/.vite/deps/leaflet.js?v=e3ec807a:3152:16)",
+      "url": "http://127.0.0.1:5192/pedidos"
+    }
+  ],
+  "situacao": "Reprovado"
+}

@@ -1,6 +1,6 @@
 # Catálogo dos endpoints
 
-Contrato da versão `0.11.0-rc.1`, gerado por `tools/documentation/export_api_docs.py`.
+Contrato da versão `1.0.0`, gerado por `tools/documentation/export_api_docs.py`.
 
 Consulte [o guia e exemplos](README.md) e [o contrato OpenAPI completo](openapi.json). Os modelos do contrato detalham todos os campos, tipos, limites, valores padrão e obrigatoriedade.
 

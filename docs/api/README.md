@@ -1,7 +1,7 @@
 # API RotaCerta
 
-Versão candidata `0.11.0-rc.1` (Sprint 11). Base local: `http://localhost:8000`.
-Não há prefixo `/api`. No ambiente isolado da Sprint 11, a base é `http://127.0.0.1:8021`.
+Versão final `1.0.0` (Sprint 12). Base local: `http://localhost:8000`.
+Não há prefixo `/api`. No ambiente isolado da Sprint 12, a base é `http://127.0.0.1:8022`.
 
 - [Catálogo completo de rotas, métodos, parâmetros, perfis e modelos de resposta](ENDPOINTS.md).
 - [Contrato OpenAPI 3.1 versionado](openapi.json), com todos os modelos de entrada e saída.
@@ -132,4 +132,4 @@ O exportador importa `app.main:app`, sem inicializar o banco, e gera `openapi.js
 e `ENDPOINTS.md`. O contrato exportado deve coincidir com `GET /openapi.json`.
 O guia deve ser revisado quando mudar uma regra de negócio ou autorização.
 Para registrar o catálogo em uma Sprint sem alterar evidências históricas, use
-`--evidence-dir docs/sprint-11/evidencias`.
+`--evidence-dir docs/sprint-12/evidencias`.

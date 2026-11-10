@@ -1,7 +1,7 @@
 # Manual Técnico do RotaCerta
 
 Grupo 04 | UNINASSAU | Ciência da Computação | Turma 8NA | 2026.2.
-Versão 0.11.0-rc.1, revisada em 10/11/2026.
+Versão 1.0.0, revisada em 10/11/2026.
 
 ## 1 Visão geral da solução
 
@@ -80,7 +80,7 @@ Na raiz de um terminal Bash em macOS ou Linux:
 ```bash
 git clone https://github.com/alvccpj/rota-certa.git
 cd rota-certa
-git switch codex/sprint-11-preparacao-entrega
+git switch --detach v1.0.0
 python3 -m venv backend/.venv
 source backend/.venv/bin/activate
 pip install -r backend/requirements.txt
@@ -426,3 +426,11 @@ Siga `CONTRIBUTING.md` para commits e revisão por outro integrante.
 Registre versão, cenário e mensagem ao abrir uma correção. Use dados fictícios
 para reproduzir. Escalabilidade com grande volume, combinações de escritas
 concorrentes e aceitação externa continuam exigindo validações específicas.
+
+## 18 Versão final e congelamento
+
+A versão 1.0.0 mantém os módulos e o modelo relacional descritos neste manual.
+A nova verificação está em `docs/sprint-12/evidencias`; as capturas da Sprint 11
+continuam ilustrando as mesmas telas. Consulte `docs/sprint-12/CODE_FREEZE.md`
+para reprodução por tag, integridade e procedimento de correção crítica.
+O PDF cumulativo atual é produzido por `tools/documentation/build_sprint12_document.py`.

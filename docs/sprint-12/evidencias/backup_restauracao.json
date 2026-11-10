@@ -1,0 +1,51 @@
+{
+  "executado_em": "2026-11-10T11:50:56-03:00",
+  "origem": "rotacerta_rc/sprint12_testes",
+  "destino": "rotacerta_s12_restore_final/sprint12_testes",
+  "procedimento": [
+    "pg_dump schema em formato custom sem owner/ACL",
+    "createdb em destino descartável novo",
+    "pg_restore sem owner/ACL",
+    "comparar todas as linhas das nove tabelas, ordenadas por ID"
+  ],
+  "situacao": "Aprovado",
+  "dados_origem_e_destino_identicos": true,
+  "tabelas": {
+    "couriers": {
+      "registros": 2,
+      "sha256_linhas": "dc62fa5ad05c0f07c6bca0c5406600047f10e7eca5f12ba8eea9de49347fbcbf"
+    },
+    "customers": {
+      "registros": 17,
+      "sha256_linhas": "5ad3af66360385fa5bf25fd50d9de33d7fa5faa7922fa92e5704e5d539747beb"
+    },
+    "establishments": {
+      "registros": 2,
+      "sha256_linhas": "79187670ee94d5796a87abd968ea5e003bbc9ee7964ef54fe8e7145ab7a3707b"
+    },
+    "optimization_runs": {
+      "registros": 5,
+      "sha256_linhas": "df1571d1bb442f44df4c59e49e05176ef70836268cd4cd88516115618c78651b"
+    },
+    "order_status_history": {
+      "registros": 48,
+      "sha256_linhas": "49a47571fbaf754558aec04648f50c3b0ee773fb5deae8d9ba28815d27952c45"
+    },
+    "orders": {
+      "registros": 19,
+      "sha256_linhas": "094927aa6baf6ea11501014c1a26dcbd0395bac9e504bae75bcf72dcf78aa4bb"
+    },
+    "route_stops": {
+      "registros": 13,
+      "sha256_linhas": "3f833c028b2c64054ead5a4a4c4fe1b6384eaec8e7a3cf58becd50816822d062"
+    },
+    "routes": {
+      "registros": 2,
+      "sha256_linhas": "90479ce6ea70bafece6c1d244c12173e7e4a54d1e0acaa6c6c1552fd8522ea65"
+    },
+    "users": {
+      "registros": 6,
+      "sha256_linhas": "1bb957877e69c19518b6add2c08cf34e08a7d62712e90c8178ca96ce7b28f9ec"
+    }
+  }
+}
